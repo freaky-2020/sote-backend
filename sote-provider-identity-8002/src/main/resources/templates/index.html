@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+        <h1>欢迎你，[[${session.loginUser.userName}]]！</h1>
+        <h2 th:if="${session.nowStatus}==1">你是管理员身份</h2>
+        <h2 th:if="${session.nowStatus}==2">你是教师身份</h2>
+        <h2 th:if="${session.nowStatus}==3">你是学生身份</h2>
+    </div>
+    <div th:if="${session.loginUser.userStatus}==1">
+        <div>
+            <h3>由于你是管理员身份，你可以点击以下任何身份按钮进行身份转换以测试:</h3>
+        </div>
+        <div>
+            <button><a th:href="@{/admin}">管理员</a></button>
+            <button><a th:href="@{/teacher(isAdmin=1)}">教师</a></button>
+            <button><a th:href="@{/student(isAdmin=1)}">学生</a></button>
+        </div>
+    </div>
+</body>
+</html>
