@@ -1,6 +1,6 @@
 spring:
   application:
-    name: identity-service-8002
+    name: identity-service
   profiles:
     active: dev
   cloud:
@@ -15,3 +15,11 @@ feign:
     enabled: true
     max-connections: 200
     max-connections-per-route: 50
+ribbon:
+  eager-load:
+    enabled: true
+    clients:
+      - user-service
+user-service:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
