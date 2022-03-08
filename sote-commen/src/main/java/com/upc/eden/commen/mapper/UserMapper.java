@@ -1,7 +1,7 @@
-package com.upc.eden.user.mapper;
+package com.upc.eden.commen.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.upc.eden.commens.entity.User;
+import com.upc.eden.commen.entity.User;
 
 
 /**

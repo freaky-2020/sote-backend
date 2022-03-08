@@ -1,7 +1,7 @@
-package com.upc.eden.user.service;
+package com.upc.eden.commen.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.upc.eden.commens.entity.User;
+import com.upc.eden.commen.entity.User;
 
 /**
  *

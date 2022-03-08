@@ -68,7 +68,7 @@
         </dependency>
         <dependency>
             <groupId>com.upc.eden</groupId>
-            <artifactId>sote-commens</artifactId>
+            <artifactId>sote-commen</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

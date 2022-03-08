@@ -1,9 +1,10 @@
 package com.upc.eden.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.upc.eden.commens.entity.User;
-import com.upc.eden.user.service.UserService;
+import com.upc.eden.commen.entity.User;
+import com.upc.eden.commen.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -25,16 +26,36 @@ public class UserController {
                            @RequestParam(defaultValue = "2") long size) {
 
         Page<User> page = new Page<>(cp, size);
-        Page<User> userPage = userService.page(page, null);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.orderBy(true, true, "user_status")
+                .orderBy(true, true, "id");
+        Page<User> userPage = userService.page(page, wrapper);
         return userPage;
     }
 
-    @GetMapping("/{userId}")
-    public User findByUserId(@PathVariable Integer userId) {
+    @PostMapping("/add")
+    public boolean add(User user) {
+
+        boolean res = userService.save(user);
+        return res;
+    }
+
+    @PostMapping("/update")
+    public boolean update(User user) {
+
+        Integer userId = user.getUserId();
+        UpdateWrapper<User> wrapper = new UpdateWrapper<>();
+        wrapper.eq("user_id", userId);
+        boolean res = userService.update(user, wrapper);
+        return res;
+    }
+
+    @GetMapping("/delete/{userId}")
+    public boolean delete(@PathVariable Integer userId) {
 
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", userId);
-        User findUser = userService.getOne(wrapper);
-        return findUser;
+        boolean res = userService.remove(wrapper);
+        return res;
     }
 }

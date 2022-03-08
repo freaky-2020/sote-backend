@@ -10,7 +10,7 @@
     <modules>
         <module>sote-provider-user-8001</module>
         <module>sote-provider-identity-8002</module>
-        <module>sote-commens</module>
+        <module>sote-commen</module>
         <module>sote-gateway-10010</module>
         <module>sote-auth-9401</module>
     </modules>

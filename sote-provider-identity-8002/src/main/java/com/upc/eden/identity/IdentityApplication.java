@@ -1,7 +1,7 @@
 package com.upc.eden.identity;
 
-import com.upc.eden.commens.clients.UserClient;
-import com.upc.eden.commens.config.DefaultFeignConfiguration;
+import com.upc.eden.commen.clients.UserClient;
+import com.upc.eden.commen.config.DefaultFeignConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;

@@ -1,7 +1,7 @@
 package com.upc.eden.identity.controller;
 
-import com.upc.eden.commens.clients.UserClient;
-import com.upc.eden.commens.entity.User;
+import com.upc.eden.commen.clients.UserClient;
+import com.upc.eden.commen.entity.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
