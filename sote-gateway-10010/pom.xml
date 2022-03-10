@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sote-gateway</artifactId>
+    <artifactId>sote-gateway-10010</artifactId>
 
     <dependencies>
         <dependency>
