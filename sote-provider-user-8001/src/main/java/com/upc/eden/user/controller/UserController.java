@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.upc.eden.commen.entity.User;
-import com.upc.eden.commen.service.UserService;
+import com.upc.eden.user.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -43,18 +43,18 @@ public class UserController {
     @PostMapping("/update")
     public boolean update(User user) {
 
-        Integer userId = user.getUserId();
+        String userName = user.getUserName();
         UpdateWrapper<User> wrapper = new UpdateWrapper<>();
-        wrapper.eq("user_id", userId);
+        wrapper.eq("user_name", userName);
         boolean res = userService.update(user, wrapper);
         return res;
     }
 
-    @GetMapping("/delete/{userId}")
-    public boolean delete(@PathVariable Integer userId) {
+    @GetMapping("/delete/{userName}")
+    public boolean delete(@PathVariable String userName) {
 
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id", userId);
+        wrapper.eq("user_name", userName);
         boolean res = userService.remove(wrapper);
         return res;
     }

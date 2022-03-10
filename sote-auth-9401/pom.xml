@@ -34,5 +34,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.upc.eden</groupId>
+            <artifactId>sote-commen</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

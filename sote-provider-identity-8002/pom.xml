@@ -63,12 +63,13 @@
         </dependency>
         <dependency>
             <groupId>com.upc.eden</groupId>
-            <artifactId>sote-commens</artifactId>
+            <artifactId>sote-commen</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <version>3.0.1</version>
         </dependency>
     </dependencies>
 

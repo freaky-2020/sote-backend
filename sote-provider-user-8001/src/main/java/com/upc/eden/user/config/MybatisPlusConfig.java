@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * @Description:
  */
 @Configuration
-@MapperScan("com.upc.eden.sote.mapper")
+@MapperScan("com.upc.eden.user.mapper")
 public class MybatisPlusConfig {
 
     /**

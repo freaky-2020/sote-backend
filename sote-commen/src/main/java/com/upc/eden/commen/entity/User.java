@@ -8,17 +8,19 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-@TableName(value ="user")
+/**
+ * 
+ * @TableName user
+ */
 @Data
+@TableName(value ="user")
 public class User implements Serializable {
 
-    @TableId(type = IdType.AUTO)
-
     private Integer id;
-    private Integer userId;
-    private String password;
     private String userName;
+    private String password;
     private Integer userStatus;
+    private String userRealName;
     private String userUniv;
     private String userUnit;
 
@@ -38,10 +40,10 @@ public class User implements Serializable {
         }
         User other = (User) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
-            && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()))
             && (this.getUserName() == null ? other.getUserName() == null : this.getUserName().equals(other.getUserName()))
+            && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()))
             && (this.getUserStatus() == null ? other.getUserStatus() == null : this.getUserStatus().equals(other.getUserStatus()))
+            && (this.getUserRealName() == null ? other.getUserRealName() == null : this.getUserRealName().equals(other.getUserRealName()))
             && (this.getUserUniv() == null ? other.getUserUniv() == null : this.getUserUniv().equals(other.getUserUniv()))
             && (this.getUserUnit() == null ? other.getUserUnit() == null : this.getUserUnit().equals(other.getUserUnit()));
     }
@@ -51,10 +53,10 @@ public class User implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
-        result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
         result = prime * result + ((getUserName() == null) ? 0 : getUserName().hashCode());
+        result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
         result = prime * result + ((getUserStatus() == null) ? 0 : getUserStatus().hashCode());
+        result = prime * result + ((getUserRealName() == null) ? 0 : getUserRealName().hashCode());
         result = prime * result + ((getUserUniv() == null) ? 0 : getUserUniv().hashCode());
         result = prime * result + ((getUserUnit() == null) ? 0 : getUserUnit().hashCode());
         return result;
@@ -67,10 +69,10 @@ public class User implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", userId=").append(userId);
-        sb.append(", password=").append(password);
         sb.append(", userName=").append(userName);
+        sb.append(", password=").append(password);
         sb.append(", userStatus=").append(userStatus);
+        sb.append(", userRealName=").append(userRealName);
         sb.append(", userUniv=").append(userUniv);
         sb.append(", userUnit=").append(userUnit);
         sb.append(", serialVersionUID=").append(serialVersionUID);
