@@ -1,40 +1,30 @@
 server:
   port: 10010
 spring:
+  profiles:
+    active: dev
   application:
-    name: gateway
-  cloud:
-    nacos:
-        server-addr: localhost:8848
-        discovery:
-          namespace: d8c82089-5cf2-4ae2-bcb6-2eb839ad4edb
-          ephemeral: false
-          cluster-name: sote-cluster1
-    gateway:
-      routes:
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/user/**
-      globalcors: # 全局的跨域处理
-        add-to-simple-url-handler-mapping: true # 解决options请求被拦截问题
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: # 允许哪些网站的跨域请求
-            allowedMethods: # 允许的跨域ajax的请求方式
-              - "GET"
-              - "POST"
-              - "DELETE"
-              - "PUT"
-              - "OPTIONS"
-            allowedHeaders: # 允许在请求中携带的头信息
-            allowCredentials: true # 是否允许携带cookie
-            maxAge: 360000 # 这次跨域检测的有效期
+    name: gateway-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: 'http://localhost:9401/rsa/publicKey' #配置RSA的公钥访问地址
+  redis:
+    database: 0
+    port: 6379
+    host: localhost
+    password:
+secure:
+  ignore:
+    urls: #配置白名单路径
+      - "/actuator/**"
+      - "/auth/oauth/token"
 ribbon:
   eager-load:
     enabled: true
     clients:
-      - user-service
-user-service:
+      - auth-service
+auth-service:
   ribbon:
     NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
