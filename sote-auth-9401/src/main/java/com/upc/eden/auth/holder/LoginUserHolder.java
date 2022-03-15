@@ -1,5 +1,6 @@
 package com.upc.eden.auth.holder;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.json.JSONObject;
 import com.upc.eden.auth.domain.SecurityUser;
@@ -26,7 +27,7 @@ public class LoginUserHolder {
         SecurityUser securityUser = new SecurityUser();
         securityUser.setUsername(userJsonObject.getStr("user_name"));
         securityUser.setId(Convert.toInt(userJsonObject.get("id")));
-        securityUser.setRole(String.valueOf(userJsonObject.get("authorities")));
+        securityUser.setRole(Convert.toList(String.class,userJsonObject.get("authorities")).get(0));
         return securityUser;
     }
 }
