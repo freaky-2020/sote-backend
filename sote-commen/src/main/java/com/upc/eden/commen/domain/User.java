@@ -1,10 +1,7 @@
-package com.upc.eden.commen.entity;
+package com.upc.eden.commen.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -13,18 +10,18 @@ import java.io.Serializable;
  * @TableName user
  */
 @Data
-@TableName(value ="user")
+@NoArgsConstructor
 public class User implements Serializable {
 
     private Integer id;
     private String userName;
     private String password;
+    private Integer roleId;
     private Integer userStatus;
-    private String userRealName;
+    private String realName;
     private String userUniv;
     private String userUnit;
 
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -42,8 +39,9 @@ public class User implements Serializable {
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getUserName() == null ? other.getUserName() == null : this.getUserName().equals(other.getUserName()))
             && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()))
+            && (this.getRoleId() == null ? other.getRoleId() == null : this.getRoleId().equals(other.getRoleId()))
             && (this.getUserStatus() == null ? other.getUserStatus() == null : this.getUserStatus().equals(other.getUserStatus()))
-            && (this.getUserRealName() == null ? other.getUserRealName() == null : this.getUserRealName().equals(other.getUserRealName()))
+            && (this.getRealName() == null ? other.getRealName() == null : this.getRealName().equals(other.getRealName()))
             && (this.getUserUniv() == null ? other.getUserUniv() == null : this.getUserUniv().equals(other.getUserUniv()))
             && (this.getUserUnit() == null ? other.getUserUnit() == null : this.getUserUnit().equals(other.getUserUnit()));
     }
@@ -55,8 +53,9 @@ public class User implements Serializable {
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getUserName() == null) ? 0 : getUserName().hashCode());
         result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
+        result = prime * result + ((getRoleId() == null) ? 0 : getRoleId().hashCode());
         result = prime * result + ((getUserStatus() == null) ? 0 : getUserStatus().hashCode());
-        result = prime * result + ((getUserRealName() == null) ? 0 : getUserRealName().hashCode());
+        result = prime * result + ((getRealName() == null) ? 0 : getRealName().hashCode());
         result = prime * result + ((getUserUniv() == null) ? 0 : getUserUniv().hashCode());
         result = prime * result + ((getUserUnit() == null) ? 0 : getUserUnit().hashCode());
         return result;
@@ -71,8 +70,9 @@ public class User implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", userName=").append(userName);
         sb.append(", password=").append(password);
+        sb.append(", userRole=").append(roleId);
         sb.append(", userStatus=").append(userStatus);
-        sb.append(", userRealName=").append(userRealName);
+        sb.append(", realName=").append(realName);
         sb.append(", userUniv=").append(userUniv);
         sb.append(", userUnit=").append(userUnit);
         sb.append(", serialVersionUID=").append(serialVersionUID);

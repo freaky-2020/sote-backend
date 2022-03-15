@@ -22,15 +22,16 @@ public class UserController {
     UserService userService;
 
     @GetMapping
-    public Page<User> list(@RequestParam(defaultValue = "1") long cp,
+    public String list(@RequestParam(defaultValue = "1") long cp,
                            @RequestParam(defaultValue = "2") long size) {
 
-        Page<User> page = new Page<>(cp, size);
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.orderBy(true, true, "user_status")
-                .orderBy(true, true, "id");
-        Page<User> userPage = userService.page(page, wrapper);
-        return userPage;
+//        Page<User> page = new Page<>(cp, size);
+//        QueryWrapper<User> wrapper = new QueryWrapper<>();
+//        wrapper.orderBy(true, true, "role_id")
+//                .orderBy(true, true, "id");
+//        Page<User> userPage = userService.page(page, wrapper);
+//        return userPage;
+        return "success";
     }
 
     @PostMapping("/add")
@@ -57,5 +58,11 @@ public class UserController {
         wrapper.eq("user_name", userName);
         boolean res = userService.remove(wrapper);
         return res;
+    }
+
+    @GetMapping("/{userName}")
+    public User findByUserName(@PathVariable String userName) {
+
+        return null;
     }
 }

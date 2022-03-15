@@ -11,8 +11,8 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
     username: root
-    password: 111111
-    url: jdbc:mysql://124.222.238.194:3306/sote01?characterEncoding=utf8&useSSL=false
+    password:
+    url: jdbc:mysql://localhost/sote?characterEncoding=utf8&useSSL=false
     # druid连接池配置
     druid:
       initial-size: 5

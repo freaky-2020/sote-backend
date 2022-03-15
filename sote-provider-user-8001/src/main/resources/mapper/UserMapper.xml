@@ -8,15 +8,15 @@
             <id property="id" column="id" jdbcType="INTEGER"/>
             <id property="userName" column="user_name" jdbcType="VARCHAR"/>
             <result property="password" column="password" jdbcType="VARCHAR"/>
-            <result property="userStatus" column="user_status" jdbcType="INTEGER"/>
-            <result property="userRealName" column="user_real_name" jdbcType="VARCHAR"/>
+            <result property="roleId" column="role_id" jdbcType="INTEGER"/>
+            <result property="realName" column="real_name" jdbcType="VARCHAR"/>
             <result property="userUniv" column="user_univ" jdbcType="VARCHAR"/>
             <result property="userUnit" column="user_unit" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,user_name,password,
-        user_status,user_real_name,user_univ,
+        role_id,real_name,user_univ,
         user_unit
     </sql>
 </mapper>

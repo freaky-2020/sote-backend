@@ -5,7 +5,7 @@
     var d3 = window.d3;
 
     /*
-     * Generate chart according to config
+     * Generate chart according to com.upc.eden.auth.config
      */
     c3.generate = function (config) {
 
@@ -43,7 +43,7 @@
             __onleave = getConfig(['onleave'], function () {});
 
         // data - data configuration
-        checkConfig('data', 'data is required in config');
+        checkConfig('data', 'data is required in com.upc.eden.auth.config');
 
         var __data_x = getConfig(['data', 'x'], undefined),
             __data_x_format = getConfig(['data', 'x_format'], '%Y-%m-%d'),
