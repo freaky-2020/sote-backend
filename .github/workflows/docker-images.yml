@@ -29,16 +29,19 @@ jobs:
          mvn install -DskipTests=true && mvn package -DskipTests=true
          
      - name: Build Server Images
-       run:
+       run: |
+   
         echo '======= 开始构建后端镜像 ======='
         echo '======= 开始构建sote-auth-9401 ======='
         cd sote-auth-9401
         mvn docker:build
         cd ..
+        
         echo '======= 开始构建sote-gateway-10010 ======='
         cd sote-gateway-10010
         mvn docker:build
         cd ..
+        
      - name: Login to DockerHub
        uses: docker/login-action@v1
        with:
