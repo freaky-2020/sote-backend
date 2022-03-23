@@ -55,10 +55,10 @@ jobs:
           echo '======= 开始上传镜像 ======='
           
           echo '======= 开始上传sote-auth ======='
-          docker push 17864230511/sote-auth
+          docker push 17864230511/sote-auth-9401
           
           echo '======= 开始上传sote-gateway ======='
-          docker push 17864230511/sote-gateway
+          docker push 17864230511/sote-gateway-10010
           
           
           echo '=====镜像上传结束====='
