@@ -7,7 +7,7 @@ spring:
   redis:
     database: 0
     port: 6379
-    host: localhost
+    host: 124.222.238.194
     password:
   # 数据库相关配置
   datasource:
