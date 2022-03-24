@@ -27,7 +27,7 @@ public class LoginUserHolder {
         SecurityUser securityUser = new SecurityUser();
         securityUser.setUsername(userJsonObject.getStr("user_name"));
         securityUser.setId(Convert.toInt(userJsonObject.get("id")));
-        securityUser.setRole(Convert.toList(String.class,userJsonObject.get("authorities")).get(0));
+        securityUser.setRole(Convert.toList(String.class, userJsonObject.get("authorities")).get(0));
         return securityUser;
     }
 }

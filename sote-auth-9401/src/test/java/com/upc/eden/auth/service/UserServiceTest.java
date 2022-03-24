@@ -1,7 +1,7 @@
 package com.upc.eden.auth.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.upc.eden.commen.domain.User;
+import com.upc.eden.commen.domain.auth.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

@@ -1,13 +1,9 @@
 package com.upc.eden.auth.domain;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.upc.eden.auth.mapper.RoleMapper;
-import com.upc.eden.commen.domain.Role;
-import com.upc.eden.commen.domain.User;
+import com.upc.eden.commen.domain.auth.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.annotation.Resource;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
