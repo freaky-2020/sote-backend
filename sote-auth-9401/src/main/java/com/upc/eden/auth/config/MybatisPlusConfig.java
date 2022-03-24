@@ -1,4 +1,4 @@
-package com.upc.eden.user.config;
+package com.upc.eden.auth.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
@@ -9,15 +9,16 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @Author: CS Dong
- * @Date: 2022/02/23/10:43
+ * @Date: 2022/03/24/17:07
  * @Description:
  */
 @Configuration
-@MapperScan("com.upc.eden.user.mapper")
+@MapperScan("com.upc.eden.auth.mapper")
 public class MybatisPlusConfig {
 
     /**
      * mybatis-plus分页插件
+     * @return
      */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
