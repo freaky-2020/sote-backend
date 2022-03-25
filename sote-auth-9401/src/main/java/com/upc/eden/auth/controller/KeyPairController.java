@@ -22,6 +22,11 @@ public class KeyPairController {
     @Resource
     private KeyPair keyPair;
 
+    /**
+     * 获取公钥
+     * /publicKey
+     * @return json格式公钥
+     */
     @GetMapping("/publicKey")
     public Map<String, Object> getKey() {
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();

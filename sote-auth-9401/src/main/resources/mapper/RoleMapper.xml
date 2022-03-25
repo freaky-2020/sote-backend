@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.upc.eden.auth.mapper.RoleMapper">
 
-    <resultMap id="BaseResultMap" type="com.upc.eden.commen.domain.Role">
+    <resultMap id="BaseResultMap" type="com.upc.eden.commen.domain.auth.Role">
             <id property="roleId" column="role_id" jdbcType="INTEGER"/>
             <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
     </resultMap>

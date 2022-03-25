@@ -3,18 +3,11 @@ package com.upc.eden.auth.domain;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.upc.eden.auth.mapper.RoleMapper;
 import com.upc.eden.auth.mapper.UserMapper;
-import com.upc.eden.commen.domain.Role;
-import com.upc.eden.commen.domain.User;
-import io.lettuce.core.ScriptOutputType;
+import com.upc.eden.commen.domain.auth.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-
-import java.lang.reflect.Type;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @Author: CS Dong

@@ -6,10 +6,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.upc.eden.auth.domain.SecurityUser;
 import com.upc.eden.auth.holder.LoginUserHolder;
 import com.upc.eden.auth.service.UserService;
-import com.upc.eden.commen.domain.User;
+import com.upc.eden.commen.domain.auth.User;
+import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Author: CS Dong
@@ -17,6 +19,7 @@ import javax.annotation.Resource;
  * @Description:
  */
 @RestController
+@Api(tags = { "User增删改查接口文档"} )
 @RequestMapping("/user")
 public class UserController {
 
@@ -26,23 +29,80 @@ public class UserController {
     @Resource
     LoginUserHolder loginUserHolder;
 
+    @ApiOperation("获取全部用户信息的列表，返回值按roleId、id依次降序")
     @GetMapping
-    public Page<User> list(@RequestParam(defaultValue = "1") long cp,
-                           @RequestParam(defaultValue = "2") long size) {
+    public List<User> list() {
+
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.orderBy(true, true, "role_id")
+                .orderBy(true, true, "id");
+        List<User> userList = userService.list(wrapper);
+        return userList;
+    }
+
+    @ApiOperation("获取全部用户信息的页封装体，返回值按roleId、id依次降序")
+    @GetMapping("/page")
+    public Page<User> page(@ApiParam(value = "当前页码") @RequestParam(defaultValue = "1") long cp,
+                           @ApiParam(value = "每页条数") @RequestParam(defaultValue = "10") long size) {
 
         Page<User> page = new Page<>(cp, size);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.orderBy(true, true, "id");
+        wrapper.orderBy(true, true, "role_id")
+                .orderBy(true, true, "id");
         Page<User> userPage = userService.page(page, wrapper);
         return userPage;
     }
 
+    @ApiOperation("获取全部管理员信息的页封装体，返回值按roleId、id依次降序")
+    @GetMapping("/page/admin")
+    public Page<User> adminPage(@ApiParam(value = "当前页码") @RequestParam(defaultValue = "1") long cp,
+                                @ApiParam(value = "每页条数") @RequestParam(defaultValue = "10") long size) {
+
+        Page<User> page = new Page<>(cp, size);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("role_id", 1)
+                .orderBy(true, true, "role_id")
+                .orderBy(true, true, "id");
+        Page<User> adminPage = userService.page(page, wrapper);
+        return adminPage;
+    }
+
+    @ApiOperation("获取全部教师信息的页封装体，返回值按roleId、id依次降序")
+    @GetMapping("/page/teacher")
+    public Page<User> teacherPage(@ApiParam(value = "当前页码") @RequestParam(defaultValue = "1") long cp,
+                                  @ApiParam(value = "每页条数") @RequestParam(defaultValue = "10") long size) {
+
+        Page<User> page = new Page<>(cp, size);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("role_id", 2)
+                .orderBy(true, true, "role_id")
+                .orderBy(true, true, "id");
+        Page<User> teacherPage = userService.page(page, wrapper);
+        return teacherPage;
+    }
+
+    @ApiOperation("获取全部学生信息的页封装体，返回值按roleId、id依次降序")
+    @GetMapping("/page/student")
+    public Page<User> studentPage(@ApiParam(value = "当前页码") @RequestParam(defaultValue = "1") long cp,
+                                  @ApiParam(value = "每页条数") @RequestParam(defaultValue = "10") long size) {
+
+        Page<User> page = new Page<>(cp, size);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("role_id", 3)
+                .orderBy(true, true, "role_id")
+                .orderBy(true, true, "id");
+        Page<User> studentPage = userService.page(page, wrapper);
+        return studentPage;
+    }
+
+    @ApiOperation("获取当前登录用户信息")
     @GetMapping("/current")
     public SecurityUser getCurrentUser() {
 
         return loginUserHolder.getCurrentUser();
     }
 
+    @ApiOperation("添加用户")
     @PostMapping("/add")
     public boolean add(User user) {
 
@@ -50,6 +110,7 @@ public class UserController {
         return res;
     }
 
+    @ApiOperation("更新用户")
     @PostMapping("/update")
     public boolean update(User user) {
 
@@ -60,7 +121,8 @@ public class UserController {
         return res;
     }
 
-    @GetMapping("/delete/{userName}")
+    @ApiOperation("删除用户")
+    @DeleteMapping("/delete/{userName}")
     public boolean delete(@PathVariable String userName) {
 
         QueryWrapper<User> wrapper = new QueryWrapper<>();

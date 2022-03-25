@@ -24,6 +24,7 @@ public class AuthController {
 
     /**
      * Oauth2登录认证
+     * /auth/oauth/token
      */
     @PostMapping("/token")
     public CommonResult<Oauth2TokenDto> postAccessToken(Principal principal, @RequestParam Map<String, String> parameters) throws HttpRequestMethodNotSupportedException {

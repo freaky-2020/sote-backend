@@ -1,7 +1,7 @@
 package com.upc.eden.auth.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.upc.eden.commen.domain.User;
+import com.upc.eden.commen.domain.auth.User;
 
 /**
  *
