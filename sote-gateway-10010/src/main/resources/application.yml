@@ -9,7 +9,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: 'http://localhost:10010/auth/rsa/publicKey' #配置RSA的公钥访问地址
+          jwk-set-uri: 'http://124.222.238.194:10010/auth/rsa/publicKey' #配置RSA的公钥访问地址
   redis:
     database: 0
     port: 6379
@@ -21,20 +21,12 @@ secure:
       - "/actuator/**"
       - "/auth/oauth/token"
       - "/auth/rsa/publicKey"
-#      - "/**"
+      - "/**"
 ribbon:
   eager-load:
     enabled: true
     clients:
       - auth-service
-      - bank-service
-      - exam-service
 auth-service:
-  ribbon:
-    NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
-bank-service:
-  ribbon:
-    NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
-exam-service:
   ribbon:
     NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
