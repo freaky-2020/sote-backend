@@ -1,6 +1,6 @@
 package com.upc.eden.commen.clients;
 
-import com.upc.eden.commen.domain.User;
+import com.upc.eden.commen.domain.auth.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
