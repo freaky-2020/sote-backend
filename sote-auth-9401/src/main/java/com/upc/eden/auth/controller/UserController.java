@@ -104,15 +104,15 @@ public class UserController {
 
     @ApiOperation("添加用户")
     @PostMapping("/add")
-    public boolean add(@RequestBody User user) {
+    public boolean add(User user) {
 
         boolean res = userService.save(user);
         return res;
     }
 
-    @ApiOperation("更新用户")
-    @PostMapping("/update")
-    public boolean update(@RequestBody User user) {
+    @ApiOperation("更新用户：以userName为索引标准，userName不可修改")
+    @PutMapping("/update")
+    public boolean update(User user) {
 
         String userName = user.getUserName();
         UpdateWrapper<User> wrapper = new UpdateWrapper<>();
@@ -121,8 +121,8 @@ public class UserController {
         return res;
     }
 
-    @ApiOperation("删除用户")
-    @GetMapping("/delete/{userName}")
+    @ApiOperation("删除用户，待删除用户的userName拼接在路径尾")
+    @DeleteMapping("/delete/{userName}")
     public boolean delete(@PathVariable String userName) {
 
         QueryWrapper<User> wrapper = new QueryWrapper<>();
@@ -131,9 +131,10 @@ public class UserController {
         return res;
     }
 
-    @ApiOperation("批量删除用户")
-    @PostMapping("/delete")
-    public int delete(@RequestBody String[] userNames) {
+    @ApiOperation("批量删除用户，以字符串数组封装所有待删除账号作为参数")
+    @ApiImplicitParam(name = "userNames", allowMultiple = true, dataTypeClass = List.class)
+    @DeleteMapping("/delete")
+    public int delete(String[] userNames) {
 
         int res = 0;
         for (String userName: userNames) {
