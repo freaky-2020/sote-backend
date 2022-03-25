@@ -11,7 +11,7 @@
         <module>sote-commen</module>
         <module>sote-gateway-10010</module>
         <module>sote-auth-9401</module>
-        <module>sote-bank-8070</module>
+<!--        <module>sote-bank-8070</module>-->
     </modules>
 
     <packaging>pom</packaging>
