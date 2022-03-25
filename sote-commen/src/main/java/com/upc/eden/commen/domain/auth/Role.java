@@ -1,4 +1,4 @@
-package com.upc.eden.commen.domain;
+package com.upc.eden.commen.domain.auth;
 
 import lombok.Data;
 
