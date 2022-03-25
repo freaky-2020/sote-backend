@@ -1,5 +1,7 @@
 package com.upc.eden.commen.domain.auth;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,17 +11,26 @@ import java.io.Serializable;
  * 
  * @TableName user
  */
+@ApiModel(description = "用户实体类")
 @Data
 @NoArgsConstructor
 public class User implements Serializable {
 
+    @ApiModelProperty(value = "数据库id", example = "1")
     private Integer id;
+    @ApiModelProperty(value = "账号", example = "1904011106")
     private String userName;
+    @ApiModelProperty(value = "密码", example = "123456")
     private String password;
+    @ApiModelProperty(value = "角色id { 1:管理员 2:教师 3:学生 }", example = "1")
     private Integer roleId;
+    @ApiModelProperty(value = "账号状态 { 1:正常 2:停用 }", example = "1")
     private Integer userStatus;
+    @ApiModelProperty(value = "用户名", example = "dcs")
     private String realName;
+    @ApiModelProperty(value = "学校", example = "中国石油大学(华东)")
     private String userUniv;
+    @ApiModelProperty(value = "单位/部门", example = "计算机科学与技术学院")
     private String userUnit;
 
     private static final long serialVersionUID = 1L;
