@@ -104,7 +104,7 @@ public class UserController {
 
     @ApiOperation("添加用户")
     @PostMapping("/add")
-    public boolean add(User user) {
+    public boolean add(@RequestBody User user) {
 
         boolean res = userService.save(user);
         return res;
@@ -112,7 +112,7 @@ public class UserController {
 
     @ApiOperation("更新用户")
     @PostMapping("/update")
-    public boolean update(User user) {
+    public boolean update(@RequestBody User user) {
 
         String userName = user.getUserName();
         UpdateWrapper<User> wrapper = new UpdateWrapper<>();
@@ -122,12 +122,25 @@ public class UserController {
     }
 
     @ApiOperation("删除用户")
-    @DeleteMapping("/delete/{userName}")
+    @GetMapping("/delete/{userName}")
     public boolean delete(@PathVariable String userName) {
 
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("user_name", userName);
         boolean res = userService.remove(wrapper);
+        return res;
+    }
+
+    @ApiOperation("批量删除用户")
+    @PostMapping("/delete")
+    public int delete(@RequestBody String[] userNames) {
+
+        int res = 0;
+        for (String userName: userNames) {
+            QueryWrapper<User> wrapper = new QueryWrapper<>();
+            wrapper.eq("user_name", userName);
+            if (userService.remove(wrapper)) ++res;
+        }
         return res;
     }
 }
