@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: bank-service
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+      discovery:
+        namespace: d8c82089-5cf2-4ae2-bcb6-2eb839ad4edb
+        ephemeral: false
+        cluster-name: sote-cluster1
