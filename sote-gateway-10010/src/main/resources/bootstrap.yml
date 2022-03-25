@@ -20,6 +20,18 @@ spring:
             - Path=/auth/**
           filters:
             - StripPrefix=1
+        - id: bank-service
+          uri: lb://bank-service
+          predicates:
+            - Path=/bank/**
+          filters:
+            - StripPrefix=1
+        - id: exam-service
+          uri: lb://exam-service
+          predicates:
+            - Path=/exam/**
+          filters:
+            - StripPrefix=1
       discovery:
         locator:
           enabled: true #开启从注册中心动态创建路由的功能
@@ -28,6 +40,8 @@ spring:
         add-to-simple-url-handler-mapping: true # 解决options请求被拦截问题
         corsConfigurations:
           '[/**]':
+            allowedOriginPatterns:
+              - "*"
             allowedOrigins: "*" # 允许哪些网站的跨域请求
             allowedMethods: # 允许的跨域ajax的请求方式
               - "GET"
