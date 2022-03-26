@@ -1,6 +1,8 @@
 package com.upc.eden.commen.domain.bank;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -9,71 +11,35 @@ import java.util.Date;
  * 
  * @TableName question
  */
+@ApiModel(description = "Question实体类")
 public class Question implements Serializable {
-    /**
-     * 
-     */
+
+    @ApiModelProperty("题目Id")
     private Integer id;
-
-    /**
-     * 
-     */
+    @ApiModelProperty("科目Id")
     private Integer subjectId;
-
-    /**
-     * 
-     */
+    @ApiModelProperty("题型Id")
     private Integer typeId;
-
-    /**
-     * 
-     */
+    @ApiModelProperty("难度Id")
     private Integer difficultyId;
-
-    /**
-     * 
-     */
+    @ApiModelProperty("题干：图片或文档连接以 ’$$‘ 拼接在后面")
     private String stem;
-
-    /**
-     * 
-     */
+    @ApiModelProperty("选项1")
     private String choice1;
-
-    /**
-     * 
-     */
+    @ApiModelProperty("选项2")
     private String choice2;
-
-    /**
-     * 
-     */
+    @ApiModelProperty("选项3")
     private String choice3;
-
-    /**
-     * 
-     */
+    @ApiModelProperty("选项4")
     private String choice4;
-
-    /**
-     * 
-     */
+    @ApiModelProperty("答案")
     private String answer;
-
-    /**
-     * 
-     */
+    @ApiModelProperty("解析：图片或文档链接以’$$‘拼接在后面")
     private String remark;
-
-    /**
-     * 
-     */
+    @ApiModelProperty("题目创建日期：格式为 yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date createTime;
-
-    /**
-     * 
-     */
+    @ApiModelProperty("题目更新日期：格式为 yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date updateTime;
 
