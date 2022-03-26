@@ -14,32 +14,32 @@ import java.util.Date;
 @ApiModel(description = "Question实体类")
 public class Question implements Serializable {
 
-    @ApiModelProperty("题目Id")
+    @ApiModelProperty(value = "题目Id", example = "1")
     private Integer id;
-    @ApiModelProperty("科目Id")
+    @ApiModelProperty(value = "科目Id", example = "1")
     private Integer subjectId;
-    @ApiModelProperty("题型Id")
+    @ApiModelProperty(value = "题型Id", example = "1")
     private Integer typeId;
-    @ApiModelProperty("难度Id")
+    @ApiModelProperty(value = "难度Id", example = "1")
     private Integer difficultyId;
-    @ApiModelProperty("题干：图片或文档连接以 ’$$‘ 拼接在后面")
+    @ApiModelProperty(value = "题干：图片或文档连接以 ’$$‘ 拼接在后面", example = "1+1=?$$http://baidu.com")
     private String stem;
-    @ApiModelProperty("选项1")
+    @ApiModelProperty("选项1（判断、填空与简答不需要）")
     private String choice1;
-    @ApiModelProperty("选项2")
+    @ApiModelProperty("选项2（判断、填空与简答不需要）")
     private String choice2;
-    @ApiModelProperty("选项3")
+    @ApiModelProperty("选项3（判断、填空与简答不需要）")
     private String choice3;
-    @ApiModelProperty("选项4")
+    @ApiModelProperty("选项4（判断、填空与简答不需要）")
     private String choice4;
-    @ApiModelProperty("答案")
+    @ApiModelProperty(value = "答案：选择题为选项、判断题为{1:true 2:false}、填空/简答为答案", example = "扁桃体")
     private String answer;
-    @ApiModelProperty("解析：图片或文档链接以’$$‘拼接在后面")
+    @ApiModelProperty(value = "解析：图片或文档链接以’$$‘拼接在后面", example = "发炎必是扁桃体$$http://baidu.com")
     private String remark;
-    @ApiModelProperty("题目创建日期：格式为 yyyy-MM-dd")
+    @ApiModelProperty(value = "题目创建日期：格式为 yyyy-MM-dd", example = "2022-03-30")
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date createTime;
-    @ApiModelProperty("题目更新日期：格式为 yyyy-MM-dd")
+    @ApiModelProperty(value = "题目更新日期：格式为 yyyy-MM-dd", example = "2022-05-29")
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date updateTime;
 

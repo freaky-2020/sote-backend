@@ -15,7 +15,7 @@ public class Type implements Serializable {
     @ApiModelProperty("题型Id")
     private Integer id;
 
-    @ApiModelProperty("科目名")
+    @ApiModelProperty(value = "题型", example = "单选题")
     private String typeName;
 
     private static final long serialVersionUID = 1L;
