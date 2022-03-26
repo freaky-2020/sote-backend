@@ -27,10 +27,10 @@ ribbon:
     enabled: true
     clients:
       - auth-service
-#      - bank-service
+      - bank-service
 auth-service:
   ribbon:
     NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
-#bank-service:
-#  ribbon:
-#    NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
+bank-service:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
