@@ -12,10 +12,10 @@ import java.io.Serializable;
 @ApiModel(description = "题目难度实体类")
 public class Difficulty implements Serializable {
 
-    @ApiModelProperty("难度级别Id: { 1:简单 2:适中 3:困难 4:压轴 }")
+    @ApiModelProperty(value = "难度级别Id: { 1:简单 2:适中 3:困难 4:压轴 }", example = "1")
     private Integer id;
 
-    @ApiModelProperty("难度级别")
+    @ApiModelProperty(value = "难度级别", example = "简单")
     private String difficultyComment;
 
     private static final long serialVersionUID = 1L;

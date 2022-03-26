@@ -12,10 +12,10 @@ import java.io.Serializable;
 @ApiModel("科目实体类")
 public class Subject implements Serializable {
 
-    @ApiModelProperty("科目Id")
+    @ApiModelProperty(value = "科目Id", example = "1")
     private Integer id;
 
-    @ApiModelProperty("科目名")
+    @ApiModelProperty(value = "科目名", example = "高等数学")
     private String subjectName;
 
     private static final long serialVersionUID = 1L;
