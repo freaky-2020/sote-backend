@@ -1,20 +1,21 @@
 package com.upc.eden.commen.domain.bank;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
  * 
  * @TableName difficulty
  */
+@ApiModel(description = "题目难度实体类")
 public class Difficulty implements Serializable {
-    /**
-     * 
-     */
+
+    @ApiModelProperty("难度级别Id: { 1:简单 2:适中 3:困难 4:压轴 }")
     private Integer id;
 
-    /**
-     * 
-     */
+    @ApiModelProperty("难度级别")
     private String difficultyComment;
 
     private static final long serialVersionUID = 1L;

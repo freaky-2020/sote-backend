@@ -16,7 +16,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class User implements Serializable {
 
-    @ApiModelProperty(value = "数据库id", example = "1")
+    @ApiModelProperty(value = "账户id", example = "1")
     private Integer id;
     @ApiModelProperty(value = "账号", example = "1904011106")
     private String userName;

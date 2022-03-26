@@ -1,20 +1,21 @@
 package com.upc.eden.commen.domain.bank;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
  * 
  * @TableName subject
  */
+@ApiModel("科目实体类")
 public class Subject implements Serializable {
-    /**
-     * 
-     */
+
+    @ApiModelProperty("科目Id")
     private Integer id;
 
-    /**
-     * 
-     */
+    @ApiModelProperty("科目名")
     private String subjectName;
 
     private static final long serialVersionUID = 1L;

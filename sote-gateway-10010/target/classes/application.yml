@@ -21,7 +21,7 @@ secure:
       - "/actuator/**"
       - "/auth/oauth/token"
       - "/auth/rsa/publicKey"
-#      - "/**"
+      - "/**"
 ribbon:
   eager-load:
     enabled: true
