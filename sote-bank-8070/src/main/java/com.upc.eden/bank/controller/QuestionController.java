@@ -93,7 +93,7 @@ public class QuestionController {
      * @return 对应的题目页，按科目、题型、难度依次降序
      */
     @GetMapping("/query")
-    @ApiOperation("按传入的检索条件检索题目：返回对应的题目页，按科目、题型、难度依次降序")
+    @ApiOperation("按传入的检索条件检索题目（支持题干模糊查询）：返回对应的题目页，按科目、题型、难度依次降序")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "startTime", value = "创建日期起始检索值", defaultValue = "1970-01-01"),
             @ApiImplicitParam(name = "endTime", value = "创建日期截止检索值", defaultValue = "2999-12-31"),
