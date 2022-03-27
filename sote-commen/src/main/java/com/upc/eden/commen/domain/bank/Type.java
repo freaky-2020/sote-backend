@@ -1,5 +1,7 @@
 package com.upc.eden.commen.domain.bank;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -12,6 +14,7 @@ import java.io.Serializable;
 @ApiModel("题型实体类")
 public class Type implements Serializable {
 
+    @TableId(value = "id",type = IdType.AUTO)
     @ApiModelProperty("题型Id")
     private Integer id;
 
