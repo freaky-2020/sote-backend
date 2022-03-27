@@ -1,5 +1,7 @@
 package com.upc.eden.commen.domain.auth;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,6 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class User implements Serializable {
 
+    @TableId(value = "id",type = IdType.AUTO)
     @ApiModelProperty(value = "账户id", example = "1")
     private Integer id;
     @ApiModelProperty(value = "账号", example = "1904011106")

@@ -1,5 +1,7 @@
 package com.upc.eden.commen.domain.bank;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,9 +13,10 @@ import java.util.Date;
  * 
  * @TableName question
  */
-@ApiModel(description = "Question实体类")
+@ApiModel(description = "题目实体类")
 public class Question implements Serializable {
 
+    @TableId(value = "id",type = IdType.AUTO)
     @ApiModelProperty(value = "题目Id", example = "1")
     private Integer id;
     @ApiModelProperty(value = "科目Id", example = "1")

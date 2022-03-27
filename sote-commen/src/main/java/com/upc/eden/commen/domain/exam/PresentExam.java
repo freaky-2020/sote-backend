@@ -1,5 +1,7 @@
 package com.upc.eden.commen.domain.exam;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -13,6 +15,7 @@ import java.util.Date;
 @Data
 public class PresentExam implements Serializable {
 
+    @TableId(value = "examineeId",type = IdType.AUTO)
     private Integer examineeId;
     private Integer examId;
     private Integer totalScore;

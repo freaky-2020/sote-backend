@@ -1,5 +1,7 @@
 package com.upc.eden.commen.domain.auth;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,6 +13,7 @@ import java.io.Serializable;
 @Data
 public class Role implements Serializable {
 
+    @TableId(value = "roleId",type = IdType.AUTO)
     private Integer roleId;
     private String roleName;
 
