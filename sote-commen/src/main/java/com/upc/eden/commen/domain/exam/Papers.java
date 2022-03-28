@@ -15,7 +15,7 @@ import java.util.Date;
 @Data
 public class Papers implements Serializable {
 
-    @TableId(value = "paperId",type = IdType.AUTO)
+    @TableId(value = "paper_id",type = IdType.AUTO)
     private Integer paperId;
     private Integer makerId;
     private Integer subjectId;
