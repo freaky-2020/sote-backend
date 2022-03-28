@@ -15,7 +15,7 @@ import java.util.Date;
 @Data
 public class PresentExam implements Serializable {
 
-    @TableId(value = "examineeId",type = IdType.AUTO)
+    @TableId(value = "examinee_id",type = IdType.AUTO)
     private Integer examineeId;
     private Integer examId;
     private Integer totalScore;
