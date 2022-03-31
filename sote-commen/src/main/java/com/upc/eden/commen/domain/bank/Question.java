@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -39,11 +40,13 @@ public class Question implements Serializable {
     private String answer;
     @ApiModelProperty(value = "解析：图片或文档链接以’$$‘拼接在后面", example = "发炎必是扁桃体$$http://baidu.com")
     private String remark;
-    @ApiModelProperty(value = "题目创建日期：格式为 yyyy-MM-dd", example = "2022-03-30")
+    @ApiModelProperty(value = "题目创建日期：格式为 yyyy-MM-dd", example = "2022-03-30", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
-    @ApiModelProperty(value = "题目更新日期：格式为 yyyy-MM-dd", example = "2022-05-29")
+    @ApiModelProperty(value = "题目更新日期：格式为 yyyy-MM-dd", example = "2022-05-29", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     private static final long serialVersionUID = 1L;
