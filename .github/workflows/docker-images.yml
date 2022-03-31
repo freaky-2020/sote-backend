@@ -47,6 +47,11 @@ jobs:
         mvn docker:build
         cd ..
         
+        echo '======= 开始构建sote-exam-8077 ======='
+        cd sote-exam-8077
+        mvn docker:build
+        cd ..
+        
      # 登录到 阿里云镜像服务，使用 GitHub secrets 传入账号密码，密码被加密存储在 GitHub 服务器
      - name: Login to Aliyun
        uses: docker/login-action@v1
@@ -70,6 +75,9 @@ jobs:
           
           echo '======= 开始上传sote-bank ======='
           docker push registry.cn-hangzhou.aliyuncs.com/sote/sote-bank-8070
+          
+          echo '======= 开始上传sote-exam ======='
+          docker push registry.cn-hangzhou.aliyuncs.com/sote/sote-exam-8077
           
           echo '=====镜像上传结束====='
           
