@@ -1,0 +1,17 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: exam-service
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+      discovery:
+        namespace: d8c82089-5cf2-4ae2-bcb6-2eb839ad4edb
+        ephemeral: false
+        cluster-name: sote-cluster1
+feign:
+  httpclient:
+    enabled: true
+    max-connections: 200
+    max-connections-per-route: 50
