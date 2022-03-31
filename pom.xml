@@ -12,6 +12,7 @@
         <module>sote-gateway-10010</module>
         <module>sote-auth-9401</module>
         <module>sote-bank-8070</module>
+        <module>sote-exam-8077</module>
     </modules>
 
     <packaging>pom</packaging>

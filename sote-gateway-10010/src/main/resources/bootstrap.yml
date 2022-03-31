@@ -26,12 +26,12 @@ spring:
             - Path=/bank/**
           filters:
             - StripPrefix=1
-#        - id: exam-service
-#          uri: lb://exam-service
-#          predicates:
-#            - Path=/exam/**
-#          filters:
-#            - StripPrefix=1
+        - id: exam-service
+          uri: lb://exam-service
+          predicates:
+            - Path=/exam/**
+          filters:
+            - StripPrefix=1
       discovery:
         locator:
           enabled: true #开启从注册中心动态创建路由的功能
