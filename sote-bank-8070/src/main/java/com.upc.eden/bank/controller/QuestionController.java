@@ -145,7 +145,7 @@ public class QuestionController {
     }
 
     /**
-     * 更新用户
+     * 更新试题库题目
      * /bank/question/update
      * @param question 需要更新的题目信息
      * @return 更新是否成功，true or false
@@ -169,6 +169,7 @@ public class QuestionController {
      * @return 删除是否成功，true or false
      */
     @DeleteMapping("/delete/{id}")
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "题目Id", paramType = "path")})
     @ApiOperation("删除试题库题目，待删除题目的id拼接在路径尾")
     public boolean delete(@PathVariable Integer id) {
 

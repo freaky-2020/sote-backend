@@ -3,7 +3,11 @@ package com.upc.eden.commen.domain.exam;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.google.gson.internal.$Gson$Preconditions;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,17 +16,26 @@ import java.util.Date;
  * 
  * @TableName papers
  */
+@ApiModel(description = "试卷实体类")
 @Data
 public class Papers implements Serializable {
 
+    @ApiModelProperty(value = "试卷Id", example = "1")
     @TableId(value = "paper_id",type = IdType.AUTO)
     private Integer paperId;
+    @ApiModelProperty(value = "创建人Id", example = "2")
     private Integer makerId;
+    @ApiModelProperty(value = "科目Id", example = "1")
     private Integer subjectId;
+    @ApiModelProperty(value = "题型Id", example = "2")
     private Integer typeId;
+    @ApiModelProperty(value = "题目Id", example = "5")
     private Integer questionId;
+    @ApiModelProperty(value = "试题分数", example = "10")
     private Integer score;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @ApiModelProperty(value = "试卷创建时间(格式为yyyy-MM-dd)", example = "2022-03-22")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createTime;
 
     private static final long serialVersionUID = 1L;

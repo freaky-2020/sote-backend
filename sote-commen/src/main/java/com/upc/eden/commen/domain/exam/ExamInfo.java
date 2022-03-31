@@ -3,7 +3,10 @@ package com.upc.eden.commen.domain.exam;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,24 +15,40 @@ import java.util.Date;
  * 
  * @TableName exam_info
  */
+@ApiModel(description = "考试信息实体类")
 @Data
 public class ExamInfo implements Serializable {
 
+    @ApiModelProperty(value = "考试信息Id", example = "1")
     @TableId(value = "exam_id",type = IdType.AUTO)
     private Integer examId;
+    @ApiModelProperty(value = "科目Id", example = "1")
     private Integer subjectId;
+    @ApiModelProperty(value = "试卷Id", example = "1", hidden = true)
     private Integer paperId;
+    @ApiModelProperty(value = "考试名", example = "高等数学期中测试")
     private String examName;
+    @ApiModelProperty(value = "考试须知", example = "本场考试允许作弊")
     private String examNote;
+    @ApiModelProperty(value = "监考人Id", example = "2")
     private Integer invigilatorId;
+    @ApiModelProperty(value = "考试持续时间(分钟为单位)", example = "120")
     private Integer durationTime;
+    @ApiModelProperty(value = "考试开放时间(格式为yyyy-MM-dd HH:mm:ss)", example = "2022-03-23 08:00:00")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
+    @ApiModelProperty(value = "考试截至时间(格式为yyyy-MM-dd HH:mm:ss)", example = "2022-03-24 23:00:00")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date deadline;
+    @ApiModelProperty(value = "每人允许参考次数", example = "2")
     private Integer allowableTime;
+    @ApiModelProperty(value = "参加考试方式:{1:链接+密钥口令 2:勾选}", example = "1")
     private Integer noticeWay;
+    @ApiModelProperty(value = "密钥口令", example = "Y@%@FMF$", hidden = true)
     private String word;
+    @ApiModelProperty(value = "允许最多切屏次数", example = "2")
     private Integer cuttingTimes;
 
     private static final long serialVersionUID = 1L;
