@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.upc.eden.exam.mapper.PresentExamMapper">
+<mapper namespace="com.upc.eden.exam.mapper.StuExamMapper">
 
-    <resultMap id="BaseResultMap" type="com.upc.eden.commen.domain.exam.PresentExam">
+    <resultMap id="BaseResultMap" type="com.upc.eden.commen.domain.exam.StuExam">
             <id property="examineeId" column="examinee_id" jdbcType="INTEGER"/>
             <id property="examId" column="exam_id" jdbcType="INTEGER"/>
             <result property="totalScore" column="total_score" jdbcType="INTEGER"/>
@@ -13,11 +13,12 @@
             <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
             <result property="submitTime" column="submit_time" jdbcType="TIMESTAMP"/>
             <result property="cuttingTime" column="cutting_time" jdbcType="INTEGER"/>
+            <result property="cheat" column="cheat" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         examinee_id,exam_id,total_score,
         score_details,present_time,start_time,
-        submit_time,cutting_time
+        submit_time,cutting_time,cheat
     </sql>
 </mapper>

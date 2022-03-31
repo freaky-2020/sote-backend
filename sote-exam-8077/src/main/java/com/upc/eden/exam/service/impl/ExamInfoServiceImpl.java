@@ -5,6 +5,7 @@ import com.upc.eden.commen.domain.exam.ExamInfo;
 import com.upc.eden.exam.service.ExamInfoService;
 import com.upc.eden.exam.mapper.ExamInfoMapper;
 import org.springframework.stereotype.Service;
+import javax.annotation.Resource;
 
 /**
  *
@@ -13,6 +14,13 @@ import org.springframework.stereotype.Service;
 public class ExamInfoServiceImpl extends ServiceImpl<ExamInfoMapper, ExamInfo>
     implements ExamInfoService{
 
+    @Resource
+    private ExamInfoMapper examInfoMapper;
+
+    @Override
+    public Integer findMaxPaperId() {
+        return examInfoMapper.findMaxPaperId();
+    }
 }
 
 

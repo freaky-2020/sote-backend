@@ -6,6 +6,9 @@ import com.upc.eden.exam.service.PapersService;
 import com.upc.eden.exam.mapper.PapersMapper;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.List;
+
 /**
  *
  */
@@ -13,6 +16,13 @@ import org.springframework.stereotype.Service;
 public class PapersServiceImpl extends ServiceImpl<PapersMapper, Papers>
     implements PapersService{
 
+    @Resource
+    private PapersMapper papersMapper;
+
+    @Override
+    public List<Integer> getQIdByPId(Integer paperId) {
+        return papersMapper.getAllQIdByPId(paperId);
+    }
 }
 
 
