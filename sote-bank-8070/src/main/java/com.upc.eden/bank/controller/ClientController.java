@@ -31,4 +31,11 @@ public class ClientController {
         }
         return questions;
     }
+
+    @GetMapping("/getQuesById")
+    public Question getQuesById(@RequestParam Integer qId) {
+
+        Question question = questionService.getById(qId);
+        return question;
+    }
 }

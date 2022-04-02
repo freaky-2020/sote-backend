@@ -1,30 +1,36 @@
-package com.upc.eden.commen.domain.bank;
+package com.upc.eden.commen.domain.exam;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.upc.eden.commen.domain.bank.Question;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 
- * @TableName question
+ * @TableName paper
  */
+@ApiModel(description = "试卷实体类")
+@NoArgsConstructor
 @Data
-@ApiModel(description = "题目实体类")
-public class Question implements Serializable {
+public class Paper implements Serializable {
 
-    @TableId(value = "id",type = IdType.AUTO)
-    @ApiModelProperty(value = "题目Id", example = "1")
-    private Integer id;
+    @ApiModelProperty(value = "数据库Id", example = "1")
+    @TableId(value = "paper_id",type = IdType.AUTO)
+    private Long id;
+    @ApiModelProperty(value = "试卷Id", example = "1")
+    private Integer paperId;
+    @ApiModelProperty(value = "题库Id", example = "3", hidden = true)
+    private Integer bankId;
+    @ApiModelProperty(value = "创建人Id", example = "2")
+    private Integer makerId;
     @ApiModelProperty(value = "科目Id", example = "1")
     private Integer subjectId;
-    @ApiModelProperty(value = "题型Id", example = "1")
+    @ApiModelProperty(value = "题型Id", example = "2")
     private Integer typeId;
     @ApiModelProperty(value = "难度Id", example = "1")
     private Integer difficultyId;
@@ -42,16 +48,25 @@ public class Question implements Serializable {
     private String answer;
     @ApiModelProperty(value = "解析：图片或文档链接以’$$‘拼接在后面", example = "发炎必是扁桃体$$http://baidu.com")
     private String remark;
-    @ApiModelProperty(value = "题目创建日期：格式为 yyyy-MM-dd", example = "2022-03-30", hidden = true)
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
-    @ApiModelProperty(value = "题目更新日期：格式为 yyyy-MM-dd", example = "2022-05-29", hidden = true)
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date updateTime;
+    @ApiModelProperty(value = "试题分数（默认为10）", example = "10")
+    private Integer score;
 
     private static final long serialVersionUID = 1L;
+
+    public Paper(Question question) {
+
+        this.typeId = question.getTypeId();
+        this.subjectId = question.getSubjectId();
+        this.bankId = question.getId();
+        this.difficultyId = question.getDifficultyId();
+        this.stem = question.getStem();
+        this.choice1 = question.getChoice1();
+        this.choice2 = question.getChoice2();
+        this.choice3 = question.getChoice3();
+        this.choice4 = question.getChoice4();
+        this.answer = question.getAnswer();
+        this.remark = question.getRemark();
+    }
 
     @Override
     public boolean equals(Object that) {
@@ -64,8 +79,11 @@ public class Question implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        Question other = (Question) that;
+        Paper other = (Paper) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
+            && (this.getPaperId() == null ? other.getPaperId() == null : this.getPaperId().equals(other.getPaperId()))
+            && (this.getBankId() == null ? other.getBankId() == null : this.getBankId().equals(other.getBankId()))
+            && (this.getMakerId() == null ? other.getMakerId() == null : this.getMakerId().equals(other.getMakerId()))
             && (this.getSubjectId() == null ? other.getSubjectId() == null : this.getSubjectId().equals(other.getSubjectId()))
             && (this.getTypeId() == null ? other.getTypeId() == null : this.getTypeId().equals(other.getTypeId()))
             && (this.getDifficultyId() == null ? other.getDifficultyId() == null : this.getDifficultyId().equals(other.getDifficultyId()))
@@ -76,8 +94,7 @@ public class Question implements Serializable {
             && (this.getChoice4() == null ? other.getChoice4() == null : this.getChoice4().equals(other.getChoice4()))
             && (this.getAnswer() == null ? other.getAnswer() == null : this.getAnswer().equals(other.getAnswer()))
             && (this.getRemark() == null ? other.getRemark() == null : this.getRemark().equals(other.getRemark()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
+            && (this.getScore() == null ? other.getScore() == null : this.getScore().equals(other.getScore()));
     }
 
     @Override
@@ -85,6 +102,9 @@ public class Question implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        result = prime * result + ((getPaperId() == null) ? 0 : getPaperId().hashCode());
+        result = prime * result + ((getBankId() == null) ? 0 : getBankId().hashCode());
+        result = prime * result + ((getMakerId() == null) ? 0 : getMakerId().hashCode());
         result = prime * result + ((getSubjectId() == null) ? 0 : getSubjectId().hashCode());
         result = prime * result + ((getTypeId() == null) ? 0 : getTypeId().hashCode());
         result = prime * result + ((getDifficultyId() == null) ? 0 : getDifficultyId().hashCode());
@@ -95,8 +115,7 @@ public class Question implements Serializable {
         result = prime * result + ((getChoice4() == null) ? 0 : getChoice4().hashCode());
         result = prime * result + ((getAnswer() == null) ? 0 : getAnswer().hashCode());
         result = prime * result + ((getRemark() == null) ? 0 : getRemark().hashCode());
-        result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
-        result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
+        result = prime * result + ((getScore() == null) ? 0 : getScore().hashCode());
         return result;
     }
 
@@ -107,6 +126,9 @@ public class Question implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
+        sb.append(", paperId=").append(paperId);
+        sb.append(", bankId=").append(bankId);
+        sb.append(", makerId=").append(makerId);
         sb.append(", subjectId=").append(subjectId);
         sb.append(", typeId=").append(typeId);
         sb.append(", difficultyId=").append(difficultyId);
@@ -117,8 +139,7 @@ public class Question implements Serializable {
         sb.append(", choice4=").append(choice4);
         sb.append(", answer=").append(answer);
         sb.append(", remark=").append(remark);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateTime=").append(updateTime);
+        sb.append(", score=").append(score);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
