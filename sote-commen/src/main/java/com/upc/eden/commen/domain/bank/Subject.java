@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * 
  * @TableName subject
  */
+@Data
 @ApiModel("科目实体类")
 public class Subject implements Serializable {
 
@@ -22,34 +24,6 @@ public class Subject implements Serializable {
     private String subjectName;
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 
-     */
-    public Integer getId() {
-        return id;
-    }
-
-    /**
-     * 
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    /**
-     * 
-     */
-    public String getSubjectName() {
-        return subjectName;
-    }
-
-    /**
-     * 
-     */
-    public void setSubjectName(String subjectName) {
-        this.subjectName = subjectName;
-    }
 
     @Override
     public boolean equals(Object that) {

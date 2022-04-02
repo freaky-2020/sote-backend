@@ -19,4 +19,7 @@ public interface BankClient {
 
     @GetMapping("/client/getQuesByIds")
     List<Question> getQuesByIds(@RequestParam List<Integer> qIds);
+
+    @GetMapping("/client/getQuesById")
+    Question getQuesById(@RequestParam Integer qId);
 }

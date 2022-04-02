@@ -34,7 +34,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Exam服务接口文档")
-                .version("1.0")
+                .version("1.1")
                 .build();
     }
 }
