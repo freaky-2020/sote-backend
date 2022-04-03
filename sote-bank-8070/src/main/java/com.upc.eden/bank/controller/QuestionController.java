@@ -105,10 +105,15 @@ public class QuestionController {
                                 @RequestParam(defaultValue = "1") long cp,
                                 @RequestParam(defaultValue = "10") long size) {
 
-        String stem = question.getStem();
-        question.setStem(null);
-        QueryWrapper<Question> questionQueryWrapper = new QueryWrapper<>(question);
-        questionQueryWrapper.like("stem", stem);
+        QueryWrapper<Question> questionQueryWrapper = null;
+
+        if(question.getStem() != null) {
+            String stem = question.getStem();
+            question.setStem(null);
+            questionQueryWrapper = new QueryWrapper<>(question);
+            questionQueryWrapper.like("stem", stem);
+        } else questionQueryWrapper = new QueryWrapper<>(question);
+
         if(startTime != null) {
             questionQueryWrapper.ge("create_time", startTime);
         }
@@ -118,7 +123,8 @@ public class QuestionController {
         questionQueryWrapper
                 .orderBy(true, true, "subject_id")
                 .orderBy(true, true, "type_id")
-                .orderBy(true, true, "difficulty_id");
+                .orderBy(true, true, "difficulty_id")
+                .orderBy(true, true, "create_time");
 
         Page<Question> page = new Page<>(cp, size);
         Page<Question> questionPage = questionService.page(page, questionQueryWrapper);
