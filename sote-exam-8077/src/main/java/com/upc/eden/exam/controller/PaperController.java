@@ -2,7 +2,6 @@ package com.upc.eden.exam.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.upc.eden.commen.clients.BankClient;
 import com.upc.eden.commen.domain.bank.Question;
 import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.exam.service.PaperService;
@@ -55,7 +54,7 @@ public class PaperController {
             @ApiImplicitParam(name = "paperId", value = "创建考试时返回的试卷Id", paramType = "path"),
             @ApiImplicitParam(name = "questions", value = "题目集合", allowMultiple = true, dataTypeClass = List.class)})
     @PostMapping("/{paperId}/addFromBank")
-    public int add(@PathVariable Integer paperId, List<Question> questions) {
+    public int add(@PathVariable Integer paperId, @RequestBody List<Question> questions) {
 
         int res = 0;
         for (Question question : questions) {
@@ -82,10 +81,10 @@ public class PaperController {
         return paperService.save(record);
     }
 
-    @ApiOperation("提交试卷/修改试卷，需要将试卷中所有的题目提交过来")
+    @ApiOperation("提交试卷/修改试卷，提交需要修改/提交的题目的集合(可单个、可批量)")
     @ApiImplicitParams({@ApiImplicitParam(name = "papers", value = "所有题目", allowMultiple = true, dataTypeClass = List.class)})
     @PutMapping("/update")
-    public int update(List<Paper> papers) {
+    public int update(@RequestBody List<Paper> papers) {
 
         int res = 0;
         for (Paper paper: papers) {
@@ -98,4 +97,18 @@ public class PaperController {
         return res;
     }
 
+    @ApiOperation("删除试卷中的题目，提交需要删除的题目的集合(可单个、可批量)")
+    @ApiImplicitParams({@ApiImplicitParam(name = "papers", value = "所有题目", allowMultiple = true, dataTypeClass = List.class)})
+    @DeleteMapping("/delete")
+    public int delete(@RequestBody List<Paper> papers) {
+
+        int res = 0;
+        for (Paper paper: papers) {
+            if(paper != null) {
+                QueryWrapper<Paper> wrapper = new QueryWrapper<>(paper);
+                if(paperService.remove(wrapper)) ++res;
+            }
+        }
+        return res;
+    }
 }
