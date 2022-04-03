@@ -1,7 +1,7 @@
 spring:
   cloud:
     nacos:
-      server-addr: 124.222.238.194:8848
+      server-addr: localhost:8848
       discovery:
         namespace: d8c82089-5cf2-4ae2-bcb6-2eb839ad4edb
         ephemeral: false
@@ -20,18 +20,18 @@ spring:
             - Path=/auth/**
           filters:
             - StripPrefix=1
-        - id: bank-service
-          uri: lb://bank-service
-          predicates:
-            - Path=/bank/**
-          filters:
-            - StripPrefix=1
-        - id: exam-service
-          uri: lb://exam-service
-          predicates:
-            - Path=/exam/**
-          filters:
-            - StripPrefix=1
+#        - id: bank-service
+#          uri: lb://bank-service
+#          predicates:
+#            - Path=/bank/**
+#          filters:
+#            - StripPrefix=1
+#        - id: exam-service
+#          uri: lb://exam-service
+#          predicates:
+#            - Path=/exam/**
+#          filters:
+#            - StripPrefix=1
       discovery:
         locator:
           enabled: true #开启从注册中心动态创建路由的功能

@@ -5,7 +5,7 @@ spring:
     name: auth-service
   cloud:
     nacos:
-      server-addr: 124.222.238.194:8848
+      server-addr: localhost:8848
       discovery:
         namespace: d8c82089-5cf2-4ae2-bcb6-2eb839ad4edb
         ephemeral: false
