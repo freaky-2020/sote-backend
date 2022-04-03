@@ -2,12 +2,9 @@ package com.upc.eden.exam.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.upc.eden.commen.clients.BankClient;
 import com.upc.eden.commen.domain.bank.Question;
 import com.upc.eden.commen.domain.exam.Paper;
-import com.upc.eden.commen.domain.exam.Papers;
 import com.upc.eden.exam.service.PaperService;
-import com.upc.eden.exam.service.PapersService;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
 
