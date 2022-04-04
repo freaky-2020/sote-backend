@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -29,6 +30,8 @@ public class ResourceServiceImpl {
 
     @PostConstruct
     public void initData() {
+
+        redisTemplate.delete("AUTH:RESOURCE_ROLES_MAP");
 
         resourceRolesMap = new TreeMap<>();
         List<Auth> allUrl = authMapper.selectList(null);

@@ -2,6 +2,8 @@ package com.upc.eden.exam.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.upc.eden.commen.clients.AuthClient;
+import com.upc.eden.commen.domain.auth.SecurityUser;
 import com.upc.eden.commen.domain.bank.Question;
 import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.exam.service.PaperService;
@@ -27,6 +29,8 @@ public class PaperController {
 
     @Resource
     private PaperService paperService;
+    @Resource
+    private AuthClient authClient;
 
     @ApiOperation("依据paperId拉取该试卷目前所有的题目：paperId拼接在路径中")
     @ApiImplicitParams({@ApiImplicitParam(name = "paperId", value = "创建考试时返回的试卷Id", paramType = "path")})
@@ -50,9 +54,7 @@ public class PaperController {
     }
 
     @ApiOperation("从题库中选择题目（可多个）加入试卷：paperId拼接在路径中，返回添加成功的条数")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "paperId", value = "创建考试时返回的试卷Id", paramType = "path"),
-            @ApiImplicitParam(name = "questions", value = "题目集合", allowMultiple = true, dataTypeClass = List.class)})
+    @ApiImplicitParams({@ApiImplicitParam(name = "paperId", value = "创建考试时返回的试卷Id", paramType = "path")})
     @PostMapping("/{paperId}/addFromBank")
     public int add(@PathVariable Integer paperId, @RequestBody List<Question> questions) {
 
@@ -62,6 +64,9 @@ public class PaperController {
                 Paper record = new Paper(question);
                 record.setPaperId(paperId);
                 record.setScore(10);
+//                SecurityUser currentUser = authClient.getCurrentUser();
+//                record.setMakerId(currentUser.getId());
+                record.setMakerId(3);
                 if (paperService.save(record)) ++res;
             }
         }
@@ -70,19 +75,20 @@ public class PaperController {
 
     @ApiOperation("自定义题目加入试卷：paperId拼接在路径中，返回是否成功（true or false）")
     @PostMapping("/{paperId}/addBySelf")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "paperId", value = "创建考试时返回的试卷Id", paramType = "path"),
-            @ApiImplicitParam(name = "question", value = "题目")})
-    public boolean add(@PathVariable Integer paperId, @ModelAttribute Question question) {
+    @ApiImplicitParams({@ApiImplicitParam(name = "paperId", value = "创建考试时返回的试卷Id", paramType = "path")})
+    public boolean add(@PathVariable Integer paperId, Question question) {
 
         Paper record = new Paper(question);
         record.setPaperId(paperId);
         record.setScore(10);
+
+//        SecurityUser currentUser = authClient.getCurrentUser();
+//        record.setMakerId(currentUser.getId());
+        record.setMakerId(3);
         return paperService.save(record);
     }
 
     @ApiOperation("提交试卷/修改试卷，提交需要修改/提交的题目的集合(可单个、可批量)")
-    @ApiImplicitParams({@ApiImplicitParam(name = "papers", value = "所有题目", allowMultiple = true, dataTypeClass = List.class)})
     @PutMapping("/update")
     public int update(@RequestBody List<Paper> papers) {
 
@@ -98,7 +104,6 @@ public class PaperController {
     }
 
     @ApiOperation("删除试卷中的题目，提交需要删除的题目的集合(可单个、可批量)")
-    @ApiImplicitParams({@ApiImplicitParam(name = "papers", value = "所有题目", allowMultiple = true, dataTypeClass = List.class)})
     @DeleteMapping("/delete")
     public int delete(@RequestBody List<Paper> papers) {
 

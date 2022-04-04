@@ -35,7 +35,7 @@ public class ExamInfoController {
 
     @PostMapping("/add")
     @ApiOperation("添加考试相关信息：返回本场考试唯一试卷Id与唯一密钥口令，详见Schemas")
-    public ExamInfoApi add(@ModelAttribute ExamInfo examInfo) {
+    public ExamInfoApi add(ExamInfo examInfo) {
 
         Integer maxPaperId = examInfoService.findMaxPaperId();
         Integer paperId;
@@ -55,7 +55,7 @@ public class ExamInfoController {
 
     @ApiOperation("修改考试相关信息：考试Id与参加考试方式不可修改")
     @PutMapping("/update")
-    public boolean update(@ModelAttribute ExamInfo examInfo) {
+    public boolean update(ExamInfo examInfo) {
 
         UpdateWrapper<ExamInfo> wrapper = new UpdateWrapper<>();
         examInfo.setNoticeWay(null);
