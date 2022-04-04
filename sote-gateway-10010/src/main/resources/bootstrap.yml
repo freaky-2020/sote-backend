@@ -20,12 +20,12 @@ spring:
             - Path=/auth/**
           filters:
             - StripPrefix=1
-#        - id: bank-service
-#          uri: lb://bank-service
-#          predicates:
-#            - Path=/bank/**
-#          filters:
-#            - StripPrefix=1
+        - id: bank-service
+          uri: lb://bank-service
+          predicates:
+            - Path=/bank/**
+          filters:
+            - StripPrefix=1
         - id: exam-service
           uri: lb://exam-service
           predicates:
