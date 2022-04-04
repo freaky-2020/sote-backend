@@ -7,6 +7,7 @@
     <resultMap id="BaseResultMap" type="com.upc.eden.commen.domain.exam.Paper">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="paperId" column="paper_id" jdbcType="INTEGER"/>
+            <result property="quesNo" column="ques_no" jdbcType="INTEGER"/>
             <result property="bankId" column="bank_id" jdbcType="INTEGER"/>
             <result property="makerId" column="maker_id" jdbcType="INTEGER"/>
             <result property="subjectId" column="subject_id" jdbcType="INTEGER"/>
@@ -23,7 +24,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,paper_id,bank_id,
+        id,paper_id,ques_no,bank_id,
         maker_id,subject_id,type_id,
         difficulty_id,stem,choice1,
         choice2,choice3,choice4,
