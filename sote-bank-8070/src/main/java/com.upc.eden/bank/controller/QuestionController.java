@@ -141,7 +141,7 @@ public class QuestionController {
 
     @PostMapping("/add")
     @ApiOperation("向试题库中添加题目")
-    public boolean add(@ModelAttribute Question question) throws ParseException {
+    public boolean add(Question question) throws ParseException {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         question.setCreateTime(df.parse(df.format(new Date())));
@@ -158,7 +158,7 @@ public class QuestionController {
      */
     @PutMapping("/update")
     @ApiOperation("更新试题库题目：以id为索引标准，即id不可修改")
-    public boolean update(@ModelAttribute Question question) throws ParseException {
+    public boolean update(Question question) throws ParseException {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         question.setUpdateTime(df.parse(df.format(new Date())));
