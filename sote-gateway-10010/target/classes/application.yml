@@ -21,6 +21,7 @@ secure:
       - "/actuator/**"
       - "/auth/oauth/token"
       - "/auth/rsa/publicKey"
+      - "/bank/**"
 #      - "/**"
 ribbon:
   eager-load:
@@ -28,9 +29,13 @@ ribbon:
     clients:
       - auth-service
       - bank-service
+      - exam-service
 auth-service:
   ribbon:
     NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
 bank-service:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
+exam-service:
   ribbon:
     NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
