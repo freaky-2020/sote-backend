@@ -3,6 +3,7 @@ package com.upc.eden.exam.controller;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.upc.eden.commen.clients.AuthClient;
 import com.upc.eden.commen.domain.exam.ExamInfo;
 import com.upc.eden.exam.api.ExamInfoApi;
 import com.upc.eden.exam.service.ExamInfoService;
@@ -31,6 +32,8 @@ public class ExamInfoController {
     @Resource
     private ExamInfoService examInfoService;
     @Resource
+    private AuthClient authClient;
+    @Resource
     private RandomSecret randomSecret;
 
     @PostMapping("/add")
@@ -48,6 +51,8 @@ public class ExamInfoController {
 
         examInfo.setPaperId(paperId);
         examInfo.setWord(secret);
+//        examInfo.setInvigilatorId(authClient.getCurrentUser().getId());
+        examInfo.setInvigilatorId(3);
 
         examInfoService.save(examInfo);
         return new ExamInfoApi(paperId, secret);

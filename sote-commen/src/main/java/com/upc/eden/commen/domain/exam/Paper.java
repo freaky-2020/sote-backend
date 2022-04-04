@@ -19,11 +19,13 @@ import java.io.Serializable;
 @Data
 public class Paper implements Serializable {
 
-    @ApiModelProperty(value = "数据库Id", example = "1")
+    @ApiModelProperty(value = "数据库Id", example = "1", hidden = true)
     @TableId(value = "paper_id",type = IdType.AUTO)
     private Long id;
     @ApiModelProperty(value = "试卷Id", example = "1")
     private Integer paperId;
+    @ApiModelProperty(value = "试卷题号", example = "1", hidden = true)
+    private Integer quesNo;
     @ApiModelProperty(value = "题库Id", example = "3", hidden = true)
     private Integer bankId;
     @ApiModelProperty(value = "创建人Id", example = "2")
@@ -82,6 +84,7 @@ public class Paper implements Serializable {
         Paper other = (Paper) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getPaperId() == null ? other.getPaperId() == null : this.getPaperId().equals(other.getPaperId()))
+            && (this.getQuesNo() == null ? other.getQuesNo() == null : this.getQuesNo().equals(other.getQuesNo()))
             && (this.getBankId() == null ? other.getBankId() == null : this.getBankId().equals(other.getBankId()))
             && (this.getMakerId() == null ? other.getMakerId() == null : this.getMakerId().equals(other.getMakerId()))
             && (this.getSubjectId() == null ? other.getSubjectId() == null : this.getSubjectId().equals(other.getSubjectId()))
@@ -103,6 +106,7 @@ public class Paper implements Serializable {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getPaperId() == null) ? 0 : getPaperId().hashCode());
+        result = prime * result + ((getQuesNo() == null) ? 0 : getQuesNo().hashCode());
         result = prime * result + ((getBankId() == null) ? 0 : getBankId().hashCode());
         result = prime * result + ((getMakerId() == null) ? 0 : getMakerId().hashCode());
         result = prime * result + ((getSubjectId() == null) ? 0 : getSubjectId().hashCode());
@@ -127,6 +131,7 @@ public class Paper implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", paperId=").append(paperId);
+        sb.append(", quesNo=").append(quesNo);
         sb.append(", bankId=").append(bankId);
         sb.append(", makerId=").append(makerId);
         sb.append(", subjectId=").append(subjectId);

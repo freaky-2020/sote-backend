@@ -64,9 +64,13 @@ public class PaperController {
                 Paper record = new Paper(question);
                 record.setPaperId(paperId);
                 record.setScore(10);
+                if (paperService.getMaxQuesNo(paperId)==null) record.setQuesNo(1);
+                else record.setQuesNo(paperService.getMaxQuesNo(paperId)+1);
+
 //                SecurityUser currentUser = authClient.getCurrentUser();
 //                record.setMakerId(currentUser.getId());
                 record.setMakerId(3);
+
                 if (paperService.save(record)) ++res;
             }
         }
@@ -81,10 +85,13 @@ public class PaperController {
         Paper record = new Paper(question);
         record.setPaperId(paperId);
         record.setScore(10);
+        if (paperService.getMaxQuesNo(paperId)==null) record.setQuesNo(1);
+        else record.setQuesNo(paperService.getMaxQuesNo(paperId)+1);
 
 //        SecurityUser currentUser = authClient.getCurrentUser();
 //        record.setMakerId(currentUser.getId());
         record.setMakerId(3);
+
         return paperService.save(record);
     }
 

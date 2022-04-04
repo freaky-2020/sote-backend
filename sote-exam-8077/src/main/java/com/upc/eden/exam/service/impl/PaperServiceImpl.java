@@ -6,6 +6,8 @@ import com.upc.eden.exam.service.PaperService;
 import com.upc.eden.exam.mapper.PaperMapper;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
  *
  */
@@ -13,6 +15,13 @@ import org.springframework.stereotype.Service;
 public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper>
     implements PaperService{
 
+    @Resource
+    private PaperMapper paperMapper;
+
+    @Override
+    public Integer getMaxQuesNo(Integer paperId) {
+        return paperMapper.findMaxQuesNo(paperId);
+    }
 }
 
 

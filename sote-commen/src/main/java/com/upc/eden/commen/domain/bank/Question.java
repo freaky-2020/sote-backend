@@ -20,7 +20,7 @@ import java.util.Date;
 public class Question implements Serializable {
 
     @TableId(value = "id",type = IdType.AUTO)
-    @ApiModelProperty(value = "题目Id", example = "1")
+    @ApiModelProperty(value = "题目Id", example = "1", hidden = true)
     private Integer id;
     @ApiModelProperty(value = "科目Id", example = "1")
     private Integer subjectId;
