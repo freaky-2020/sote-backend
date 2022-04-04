@@ -1,5 +1,6 @@
 package com.upc.eden.exam.controller;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.upc.eden.commen.domain.exam.ExamInfo;
@@ -13,6 +14,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @Author: CS Dong
@@ -32,7 +35,7 @@ public class ExamInfoController {
 
     @PostMapping("/add")
     @ApiOperation("添加考试相关信息：返回本场考试唯一试卷Id与唯一密钥口令，详见Schemas")
-    public ExamInfoApi add(ExamInfo examInfo) {
+    public ExamInfoApi add(@ModelAttribute ExamInfo examInfo) {
 
         Integer maxPaperId = examInfoService.findMaxPaperId();
         Integer paperId;
@@ -52,7 +55,7 @@ public class ExamInfoController {
 
     @ApiOperation("修改考试相关信息：考试Id与参加考试方式不可修改")
     @PutMapping("/update")
-    public boolean update(ExamInfo examInfo) {
+    public boolean update(@ModelAttribute ExamInfo examInfo) {
 
         UpdateWrapper<ExamInfo> wrapper = new UpdateWrapper<>();
         examInfo.setNoticeWay(null);
@@ -85,5 +88,30 @@ public class ExamInfoController {
             boolean res = examInfoService.update(examInfo, wrapper);
             return res;
         } return false;
+    }
+
+    @ApiOperation("按照传入的若干条件检索对应的考试信息，返回一个Map：" +
+            "{ 1:还未开始的考试的集合 2:进行中的考试的集合 3:已结束的考试的集合 }，均按科目、开始时间排序")
+    @GetMapping("/query")
+    public Map<Integer, List<ExamInfo>> query(ExamInfo examInfo) {
+
+        QueryWrapper<ExamInfo> wrapper = new QueryWrapper<>(examInfo);
+        wrapper.orderBy(true, true, "subject_id");
+        wrapper.orderBy(true, true, "start_time");
+        List<ExamInfo> examInfos = examInfoService.list(wrapper);
+
+        Map<Integer, List<ExamInfo>> map = new HashMap<>();
+        for(int i = 0; i < 3; i++) map.put(i + 1, new ArrayList<ExamInfo>());
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = df.format(new Date());
+        for(ExamInfo record: examInfos) {
+            if(record != null) {
+                if (date.compareTo(df.format(record.getStartTime()))<0) map.get(1).add(record);
+                else if(date.compareTo(df.format(record.getDeadline()))>0) map.get(3).add(record);
+                else map.get(2).add(record);
+            }
+        }
+        return map;
     }
 }

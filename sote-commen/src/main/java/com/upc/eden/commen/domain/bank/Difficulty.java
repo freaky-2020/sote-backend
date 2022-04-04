@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * 
  * @TableName difficulty
  */
+@Data
 @ApiModel(description = "题目难度实体类")
 public class Difficulty implements Serializable {
 
@@ -22,34 +24,6 @@ public class Difficulty implements Serializable {
     private String difficultyComment;
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 
-     */
-    public Integer getId() {
-        return id;
-    }
-
-    /**
-     * 
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    /**
-     * 
-     */
-    public String getDifficultyComment() {
-        return difficultyComment;
-    }
-
-    /**
-     * 
-     */
-    public void setDifficultyComment(String difficultyComment) {
-        this.difficultyComment = difficultyComment;
-    }
 
     @Override
     public boolean equals(Object that) {

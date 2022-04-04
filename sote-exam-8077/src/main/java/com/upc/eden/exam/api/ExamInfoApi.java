@@ -20,6 +20,6 @@ public class ExamInfoApi {
 
     @ApiModelProperty(value = "本场考试的唯一试卷Id", example = "1")
     private Integer paperId;
-    @ApiModelProperty(value = "本场考试的唯一密钥口令", example = "Y@%@FMF$")
+    @ApiModelProperty(value = "本场考试的唯一密钥口令", example = "FDNMSO#EF#AMBFX%")
     private String word;
 }
