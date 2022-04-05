@@ -3,6 +3,7 @@ package com.upc.eden.exam.controller;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.upc.eden.commen.clients.AuthClient;
 import com.upc.eden.commen.domain.exam.ExamInfo;
 import com.upc.eden.exam.api.ExamInfoApi;
 import com.upc.eden.exam.service.ExamInfoService;
@@ -31,11 +32,13 @@ public class ExamInfoController {
     @Resource
     private ExamInfoService examInfoService;
     @Resource
+    private AuthClient authClient;
+    @Resource
     private RandomSecret randomSecret;
 
     @PostMapping("/add")
     @ApiOperation("添加考试相关信息：返回本场考试唯一试卷Id与唯一密钥口令，详见Schemas")
-    public ExamInfoApi add(@ModelAttribute ExamInfo examInfo) {
+    public ExamInfoApi add(ExamInfo examInfo) {
 
         Integer maxPaperId = examInfoService.findMaxPaperId();
         Integer paperId;
@@ -48,6 +51,8 @@ public class ExamInfoController {
 
         examInfo.setPaperId(paperId);
         examInfo.setWord(secret);
+//        examInfo.setInvigilatorId(authClient.getCurrentUser().getId());
+        examInfo.setInvigilatorId(3);
 
         examInfoService.save(examInfo);
         return new ExamInfoApi(paperId, secret);
@@ -55,7 +60,7 @@ public class ExamInfoController {
 
     @ApiOperation("修改考试相关信息：考试Id与参加考试方式不可修改")
     @PutMapping("/update")
-    public boolean update(@ModelAttribute ExamInfo examInfo) {
+    public boolean update(ExamInfo examInfo) {
 
         UpdateWrapper<ExamInfo> wrapper = new UpdateWrapper<>();
         examInfo.setNoticeWay(null);

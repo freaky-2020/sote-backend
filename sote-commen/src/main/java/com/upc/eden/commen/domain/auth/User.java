@@ -19,7 +19,7 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     @TableId(value = "id",type = IdType.AUTO)
-    @ApiModelProperty(value = "账户id", example = "1")
+    @ApiModelProperty(value = "账户id", example = "1", hidden = true)
     private Integer id;
     @ApiModelProperty(value = "账号", example = "1904011106")
     private String userName;
