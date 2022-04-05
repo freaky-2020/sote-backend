@@ -19,7 +19,7 @@ import java.util.Date;
 @Data
 public class ExamInfo implements Serializable {
 
-    @ApiModelProperty(value = "考试信息Id", example = "1", hidden = true)
+    @ApiModelProperty(value = "考试信息Id", example = "1")
     @TableId(value = "exam_id",type = IdType.AUTO)
     private Integer examId;
     @ApiModelProperty(value = "科目Id", example = "1")
@@ -30,7 +30,7 @@ public class ExamInfo implements Serializable {
     private String examName;
     @ApiModelProperty(value = "考试须知", example = "本场考试允许作弊")
     private String examNote;
-    @ApiModelProperty(value = "监考人Id", example = "2", hidden = true)
+    @ApiModelProperty(value = "监考人Id", example = "2")
     private Integer invigilatorId;
     @ApiModelProperty(value = "考试持续时间(分钟为单位)", example = "120")
     private Integer durationTime;
@@ -46,7 +46,7 @@ public class ExamInfo implements Serializable {
     private Integer allowableTime;
     @ApiModelProperty(value = "参加考试方式:{1:链接+密钥口令 2:勾选}", example = "1")
     private Integer noticeWay;
-    @ApiModelProperty(value = "密钥口令", example = "NMQT&&K∑LDY#&Y$$", hidden = true)
+    @ApiModelProperty(value = "密钥口令", example = "Y@%@FMF$", hidden = true)
     private String word;
     @ApiModelProperty(value = "允许最多切屏次数", example = "2")
     private Integer cuttingTimes;

@@ -22,6 +22,11 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper>
     public Integer getMaxQuesNo(Integer paperId) {
         return paperMapper.findMaxQuesNo(paperId);
     }
+
+    @Override
+    public Integer reviseQuesNo(Integer paperId, Integer quesNo) {
+        return paperMapper.reviseQuesNo(paperId, quesNo);
+    }
 }
 
 

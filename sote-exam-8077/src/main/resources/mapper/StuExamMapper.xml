@@ -4,12 +4,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.upc.eden.exam.mapper.StuExamMapper">
 
-    <resultMap id="BaseResultMap" type="com.upc.eden.commen.domain.exam.StuExam">
+    <resultMap id="BaseResultMap" type="com.upc.eden.exam.domain.StuExam">
             <id property="examineeId" column="examinee_id" jdbcType="INTEGER"/>
             <id property="examId" column="exam_id" jdbcType="INTEGER"/>
+            <id property="details" column="details" jdbcType="INTEGER"/>
+            <id property="presentTime" column="present_time" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
             <result property="totalScore" column="total_score" jdbcType="INTEGER"/>
-            <result property="scoreDetails" column="score_details" jdbcType="VARCHAR"/>
-            <result property="presentTime" column="present_time" jdbcType="INTEGER"/>
             <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
             <result property="submitTime" column="submit_time" jdbcType="TIMESTAMP"/>
             <result property="cuttingTime" column="cutting_time" jdbcType="INTEGER"/>
@@ -17,8 +18,9 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        examinee_id,exam_id,total_score,
-        score_details,present_time,start_time,
-        submit_time,cutting_time,cheat
+        examinee_id,exam_id,details,
+        present_time,status,total_score,
+        start_time,submit_time,cutting_time,
+        cheat
     </sql>
 </mapper>
