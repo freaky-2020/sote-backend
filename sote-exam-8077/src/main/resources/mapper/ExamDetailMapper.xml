@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.upc.eden.exam.mapper.ExamDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.upc.eden.commen.domain.exam.ExamDetail">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="details" column="details" jdbcType="INTEGER"/>
+            <result property="paperId" column="paper_id" jdbcType="INTEGER"/>
+            <result property="quesNo" column="ques_no" jdbcType="INTEGER"/>
+            <result property="typeId" column="type_id" jdbcType="INTEGER"/>
+            <result property="answer" column="answer" jdbcType="VARCHAR"/>
+            <result property="realAnswer" column="real_answer" jdbcType="VARCHAR"/>
+            <result property="maxScore" column="max_score" jdbcType="INTEGER"/>
+            <result property="score" column="score" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,details,paper_id,
+        ques_no,type_id,answer,
+        real_answer,max_score,score
+    </sql>
+</mapper>

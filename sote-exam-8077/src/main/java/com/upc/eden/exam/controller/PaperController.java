@@ -1,5 +1,6 @@
 package com.upc.eden.exam.controller;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.upc.eden.commen.clients.AuthClient;
@@ -110,17 +111,23 @@ public class PaperController {
         return res;
     }
 
-    @ApiOperation("删除试卷中的题目，提交需要删除的题目的集合(可单个、可批量)")
+    @ApiOperation("删除试卷中的题目，提交需要删除的题目的集合(可单个、可批量) - 删除是以paper_id与ques_no为依据的")
     @DeleteMapping("/delete")
     public int delete(@RequestBody List<Paper> papers) {
 
         int res = 0;
         for (Paper paper: papers) {
             if(paper != null) {
-                QueryWrapper<Paper> wrapper = new QueryWrapper<>(paper);
+                QueryWrapper<Paper> wrapper = new QueryWrapper<>();
+                wrapper.eq("paper_id", paper.getPaperId());
+                wrapper.eq("ques_no", paper.getQuesNo());
                 if(paperService.remove(wrapper)) ++res;
             }
         }
+        // 更正题号(目前仅限单删)
+        Integer paperId = papers.get(0).getPaperId();
+        Integer quesNo = papers.get(0).getQuesNo();
+        paperService.reviseQuesNo(paperId, quesNo);
         return res;
     }
 }
