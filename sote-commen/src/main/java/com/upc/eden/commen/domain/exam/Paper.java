@@ -24,9 +24,9 @@ public class Paper implements Serializable {
     private Long id;
     @ApiModelProperty(value = "试卷Id", example = "1")
     private Integer paperId;
-    @ApiModelProperty(value = "试卷题号", example = "1", hidden = true)
+    @ApiModelProperty(value = "试卷题号", example = "1")
     private Integer quesNo;
-    @ApiModelProperty(value = "题库Id", example = "3", hidden = true)
+    @ApiModelProperty(value = "题库Id", example = "3")
     private Integer bankId;
     @ApiModelProperty(value = "创建人Id", example = "2")
     private Integer makerId;

@@ -6,6 +6,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 /**
  *
  */
-public interface PresentExamService extends IService<StuExam> {
+public interface StuExamService extends IService<StuExam> {
 
 }
