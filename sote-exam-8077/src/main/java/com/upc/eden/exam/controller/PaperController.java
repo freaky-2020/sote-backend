@@ -9,6 +9,7 @@ import com.upc.eden.commen.domain.bank.Question;
 import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.exam.service.PaperService;
 import io.swagger.annotations.*;
+import io.swagger.models.auth.In;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -65,8 +66,36 @@ public class PaperController {
                 Paper record = new Paper(question);
                 record.setPaperId(paperId);
                 record.setScore(10);
-                if (paperService.getMaxQuesNo(paperId)==null) record.setQuesNo(1);
-                else record.setQuesNo(paperService.getMaxQuesNo(paperId)+1);
+
+                // 插入题目算法：插入对应题型的尾部并修正全局题号
+                int typeId = question.getTypeId();
+                Integer maxQuesNoByType = paperService.getMaxQuesNoByType(paperId, typeId);
+                // 如果该题是当前题型的第一个题
+                if (maxQuesNoByType == null) {
+                    // 如果是第一题型则直接插入为第一题并修正后续题号
+                    if(typeId == 1) {
+                        paperService.reviseQuesNo(paperId, 1);
+                        record.setQuesNo(1);
+                    // 否则，从上一题型开始遍历，直至获取到某前面题型的题号尾
+                    } else {
+                        Integer lastMaxQuesNo = null;
+                        while (lastMaxQuesNo == null && typeId > 0) {
+                            lastMaxQuesNo = paperService.getMaxQuesNoByType(paperId, typeId-1);
+                        // 前面题型均无题
+                        } if(lastMaxQuesNo == null) {
+                            paperService.reviseQuesNo(paperId, 1);
+                            record.setQuesNo(1);
+                        // 前面题型有题，则置入后面
+                        } else {
+                            paperService.reviseQuesNo(paperId, lastMaxQuesNo+1);
+                            record.setQuesNo(lastMaxQuesNo+1);
+                        }
+                    }
+                // 如果不是当前题型的第一个题，则直接插在后面
+                } else {
+                    paperService.reviseQuesNo(paperId, maxQuesNoByType+1);
+                    record.setQuesNo(maxQuesNoByType+1);
+                }
 
 //                SecurityUser currentUser = authClient.getCurrentUser();
 //                record.setMakerId(currentUser.getId());
@@ -86,8 +115,38 @@ public class PaperController {
         Paper record = new Paper(question);
         record.setPaperId(paperId);
         record.setScore(10);
-        if (paperService.getMaxQuesNo(paperId)==null) record.setQuesNo(1);
-        else record.setQuesNo(paperService.getMaxQuesNo(paperId)+1);
+
+        // 插入题目算法：插入对应题型的尾部并修正全局题号
+        int typeId = question.getTypeId();
+        Integer maxQuesNoByType = paperService.getMaxQuesNoByType(paperId, typeId);
+        // 如果该题是当前题型的第一个题
+        if (maxQuesNoByType == null) {
+            // 如果是第一题型则直接插入为第一题并修正后续题号
+            if(typeId == 1) {
+                paperService.reviseQuesNoAdd(paperId, 1);
+                record.setQuesNo(1);
+                // 否则，从上一题型开始遍历，直至获取到某前面题型的题号尾
+            } else {
+                Integer lastMaxQuesNo = null;
+                Integer t = typeId;
+                while (lastMaxQuesNo == null && t > 0) {
+                    lastMaxQuesNo = paperService.getMaxQuesNoByType(paperId, t-1);
+                    --t;
+                // 前面题型均无题
+                } if(lastMaxQuesNo == null) {
+                    paperService.reviseQuesNoAdd(paperId, 1);
+                    record.setQuesNo(1);
+                    // 前面题型有题，则置入后面
+                } else {
+                    paperService.reviseQuesNoAdd(paperId, lastMaxQuesNo+1);
+                    record.setQuesNo(lastMaxQuesNo+1);
+                }
+            }
+            // 如果不是当前题型的第一个题，则直接插在后面
+        } else {
+            paperService.reviseQuesNoAdd(paperId, maxQuesNoByType+1);
+            record.setQuesNo(maxQuesNoByType+1);
+        }
 
 //        SecurityUser currentUser = authClient.getCurrentUser();
 //        record.setMakerId(currentUser.getId());

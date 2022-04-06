@@ -8,7 +8,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface PaperService extends IService<Paper> {
 
-    public Integer getMaxQuesNo(Integer paperId);
+    public Integer getMaxQuesNoByType(Integer paperId, Integer typeId);
 
     public Integer reviseQuesNo(Integer paperId, Integer quesNo);
+
+    public Integer reviseQuesNoAdd(Integer paperId, Integer quesNo);
 }
