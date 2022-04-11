@@ -46,7 +46,13 @@ public class ExamInfoController {
         else paperId = maxPaperId + 1;
 
         String secret;
-        if (examInfo.getNoticeWay()==1) secret = randomSecret.getRandomSecret(16);
+        if (examInfo.getNoticeWay()==1) {
+            QueryWrapper<ExamInfo> wrapper = new QueryWrapper<>();
+            do{
+                secret = randomSecret.getRandomSecret(16);
+                wrapper.eq("word", secret);
+            } while (examInfoService.getOne(wrapper) != null);
+        }
         else secret = null;
 
         examInfo.setPaperId(paperId);
@@ -89,10 +95,15 @@ public class ExamInfoController {
         wrapper.eq("exam_id", examId);
         ExamInfo examInfo = examInfoService.getOne(wrapper);
         if (examInfo != null && examInfo.getNoticeWay()==1) {
-            examInfo.setWord(randomSecret.getRandomSecret(16));
-            boolean res = examInfoService.update(examInfo, wrapper);
-            return res;
-        } return false;
+            String secret;
+            QueryWrapper<ExamInfo> wrapper2 = new QueryWrapper<>();
+            do{
+                secret = randomSecret.getRandomSecret(16);
+                wrapper2.eq("word", secret);
+            } while (examInfoService.getOne(wrapper2) != null);
+            examInfo.setWord(secret);
+            return examInfoService.update(examInfo, wrapper);
+        } else return false;
     }
 
     @ApiOperation("按照传入的若干条件检索对应的考试信息，返回一个Map：" +
@@ -106,7 +117,7 @@ public class ExamInfoController {
         List<ExamInfo> examInfos = examInfoService.list(wrapper);
 
         Map<Integer, List<ExamInfo>> map = new HashMap<>();
-        for(int i = 0; i < 3; i++) map.put(i + 1, new ArrayList<ExamInfo>());
+        for(int i = 0; i < 3; i++) map.put(i + 1, new ArrayList<>());
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = df.format(new Date());
