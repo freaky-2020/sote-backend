@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -16,6 +17,7 @@ import java.util.Date;
  * @TableName stu_exam
  */
 @Data
+@NoArgsConstructor
 @ApiModel(description = "学生-考试实体类")
 public class StuExam implements Serializable {
 
@@ -46,6 +48,13 @@ public class StuExam implements Serializable {
     private Integer cheat;
 
     private static final long serialVersionUID = 1L;
+
+    public StuExam(Integer examineeId, Integer examId, Integer details, Integer presentTime) {
+        this.examineeId = examineeId;
+        this.examId = examId;
+        this.details = details;
+        this.presentTime = presentTime;
+    }
 
     @Override
     public boolean equals(Object that) {

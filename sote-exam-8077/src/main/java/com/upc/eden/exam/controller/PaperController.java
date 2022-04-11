@@ -9,7 +9,6 @@ import com.upc.eden.commen.domain.bank.Question;
 import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.exam.service.PaperService;
 import io.swagger.annotations.*;
-import io.swagger.models.auth.In;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -41,6 +40,7 @@ public class PaperController {
 
         QueryWrapper<Paper> wrapper = new QueryWrapper<>();
         wrapper.eq("paper_id", paperId);
+        wrapper.orderBy(true, true, "ques_no");
         List<Paper> records = paperService.list(wrapper);
 
         Map<Integer, List<Paper>> res = new HashMap<>();
