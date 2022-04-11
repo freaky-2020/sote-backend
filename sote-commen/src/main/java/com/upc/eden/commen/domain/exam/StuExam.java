@@ -30,7 +30,7 @@ public class StuExam implements Serializable {
     private Integer details;
     @ApiModelProperty(value = "第几次参加该考试", example = "2")
     private Integer presentTime;
-    @ApiModelProperty(value = "学生参加考试状态:{1:还未参加 2:正在进行 3:作答完毕 -1:错过作答}", example = "1")
+    @ApiModelProperty(value = "学生参加考试状态:{0:尚未作答 1:正在作答 2:作答完毕}", example = "0")
     private Integer status;
     @ApiModelProperty(value = "考生总得分", example = "85")
     private Integer totalScore;
