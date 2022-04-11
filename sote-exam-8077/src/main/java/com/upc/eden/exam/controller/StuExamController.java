@@ -168,7 +168,7 @@ public class StuExamController {
             @ApiImplicitParam(name = "time", value = "考试次数", paramType = "path"),
     })
     @GetMapping("/start/{userName}/{examId}/{time}")
-    public Integer start(@PathVariable Integer userName, @PathVariable Integer examId,
+    public StuExam start(@PathVariable Integer userName, @PathVariable Integer examId,
                                   @PathVariable Integer time) {
 
         QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
@@ -202,7 +202,7 @@ public class StuExamController {
                 stuExamService.update(null, stuExamUpdateWrapper);
                 return null;
             }
-            else return item.getDetails();
+            else return item;
         }
 
         // 3、在details中注入答题卡
@@ -235,8 +235,6 @@ public class StuExamController {
         stuExamUpdateWrapper.set("start_time", now);
         stuExamService.update(null, stuExamUpdateWrapper);
 
-        return detailsId;
+        return item;
     }
-
-
 }
