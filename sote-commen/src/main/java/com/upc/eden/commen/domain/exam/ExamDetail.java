@@ -1,183 +1,54 @@
 package com.upc.eden.commen.domain.exam;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 
 /**
  * 
  * @TableName exam_detail
  */
+@ApiModel(description = "考生答题明细实体类")
+@Data
+@NoArgsConstructor
 public class ExamDetail implements Serializable {
-    /**
-     * 
-     */
+
+    @ApiModelProperty(value = "数据库Id", example = "1")
+    @TableId(value = "id",type = IdType.AUTO)
     private Long id;
-
-    /**
-     * 
-     */
+    @ApiModelProperty(value = "考生作答明细Id", example = "1")
     private Integer details;
-
-    /**
-     * 
-     */
+    @ApiModelProperty(value = "试卷Id", example = "1")
     private Integer paperId;
-
-    /**
-     * 
-     */
+    @ApiModelProperty(value = "卷内题号", example = "1")
     private Integer quesNo;
-
-    /**
-     * 
-     */
+    @ApiModelProperty(value = "题型", example = "2")
     private Integer typeId;
-
-    /**
-     * 
-     */
+    @ApiModelProperty(value = "考生答案", example = "2x")
     private String answer;
-
-    /**
-     * 
-     */
+    @ApiModelProperty(value = "标准答案", example = "3x")
     private String realAnswer;
-
-    /**
-     * 
-     */
+    @ApiModelProperty(value = "该题总分", example = "20")
     private Integer maxScore;
-
-    /**
-     * 
-     */
+    @ApiModelProperty(value = "考生得分", example = "0")
     private Integer score;
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * 
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * 
-     */
-    public Integer getDetails() {
-        return details;
-    }
-
-    /**
-     * 
-     */
-    public void setDetails(Integer details) {
+    public ExamDetail(Integer details, Integer paperId, Integer quesNo,
+                      Integer typeId, String realAnswer, Integer maxScore) {
         this.details = details;
-    }
-
-    /**
-     * 
-     */
-    public Integer getPaperId() {
-        return paperId;
-    }
-
-    /**
-     * 
-     */
-    public void setPaperId(Integer paperId) {
         this.paperId = paperId;
-    }
-
-    /**
-     * 
-     */
-    public Integer getQuesNo() {
-        return quesNo;
-    }
-
-    /**
-     * 
-     */
-    public void setQuesNo(Integer quesNo) {
         this.quesNo = quesNo;
-    }
-
-    /**
-     * 
-     */
-    public Integer getTypeId() {
-        return typeId;
-    }
-
-    /**
-     * 
-     */
-    public void setTypeId(Integer typeId) {
         this.typeId = typeId;
-    }
-
-    /**
-     * 
-     */
-    public String getAnswer() {
-        return answer;
-    }
-
-    /**
-     * 
-     */
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    /**
-     * 
-     */
-    public String getRealAnswer() {
-        return realAnswer;
-    }
-
-    /**
-     * 
-     */
-    public void setRealAnswer(String realAnswer) {
         this.realAnswer = realAnswer;
-    }
-
-    /**
-     * 
-     */
-    public Integer getMaxScore() {
-        return maxScore;
-    }
-
-    /**
-     * 
-     */
-    public void setMaxScore(Integer maxScore) {
         this.maxScore = maxScore;
-    }
-
-    /**
-     * 
-     */
-    public Integer getScore() {
-        return score;
-    }
-
-    /**
-     * 
-     */
-    public void setScore(Integer score) {
-        this.score = score;
     }
 
     @Override
