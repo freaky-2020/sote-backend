@@ -13,6 +13,7 @@ public class FindAllExamOfStuApi {
 
     private Integer examId;
     private Integer time;
+    private Integer details;
 
     private ExamInfo examInfo;
 }

@@ -1,5 +1,6 @@
 package com.upc.eden.exam.controller;
 
+import com.baomidou.mybatisplus.core.InjectorResolver;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.upc.eden.commen.clients.AuthClient;
@@ -16,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -166,8 +168,8 @@ public class StuExamController {
             @ApiImplicitParam(name = "time", value = "考试次数", paramType = "path"),
     })
     @GetMapping("/start/{userName}/{examId}/{time}")
-    public boolean start(@PathVariable Integer userName, @PathVariable Integer examId,
-                         @PathVariable Integer time) {
+    public Integer start(@PathVariable Integer userName, @PathVariable Integer examId,
+                                  @PathVariable Integer time) {
 
         QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
         stuExamQueryWrapper.eq("examinee_id", userName);
@@ -176,7 +178,7 @@ public class StuExamController {
 
         // 1、判断是否超过可考次数
         StuExam item = stuExamService.getOne(stuExamQueryWrapper);
-        if (item == null) return false;
+        if (item == null) return null;
 
         // 2、判断是否是已开启而待完成的轮次
         if (item.getStatus() == 1) {
@@ -198,12 +200,11 @@ public class StuExamController {
                         df.format(new Date(item.getStartTime().getTime() + durationTime*60*1000));
                 stuExamUpdateWrapper.set("submit_time", submitTime);
                 stuExamService.update(null, stuExamUpdateWrapper);
-                return false;
+                return null;
             }
-            else return true;
+            else return item.getDetails();
         }
 
-        boolean res = true;
         // 3、在details中注入答题卡
         Integer detailsId = item.getDetails();
         QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
@@ -218,7 +219,7 @@ public class StuExamController {
             if (paper != null) {
                 ExamDetail each = new ExamDetail(detailsId, paperId,
                         paper.getQuesNo(), paper.getTypeId(), paper.getAnswer(), paper.getScore());
-                res = examDetailService.save(each) && res;
+                examDetailService.save(each);
             }
         }
 
@@ -232,8 +233,10 @@ public class StuExamController {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String now = df.format(new Date());
         stuExamUpdateWrapper.set("start_time", now);
-        res = stuExamService.update(null, stuExamUpdateWrapper) && res;
+        stuExamService.update(null, stuExamUpdateWrapper);
 
-        return res;
+        return detailsId;
     }
+
+
 }
