@@ -9,7 +9,7 @@ import lombok.Data;
  * @Description:
  */
 @Data
-public class findAllExamOfStuApi {
+public class FindAllExamOfStuApi {
 
     private Integer examId;
     private Integer time;
