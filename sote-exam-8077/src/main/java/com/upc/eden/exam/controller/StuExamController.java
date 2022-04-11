@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.upc.eden.commen.clients.AuthClient;
 import com.upc.eden.commen.domain.exam.ExamInfo;
 import com.upc.eden.commen.domain.exam.StuExam;
+import com.upc.eden.exam.api.findAllExamOfStuApi;
 import com.upc.eden.exam.service.ExamInfoService;
 import com.upc.eden.exam.service.StuExamService;
 import io.swagger.annotations.Api;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,9 +28,9 @@ import java.util.List;
  * @Date: 2022/04/05/19:57
  * @Description:
  */
-@Api(tags = { "学生加入考试业务接口文档"} )
+@Api(tags = { "考生-考试业务接口文档"} )
 @RestController
-@RequestMapping("/exam")
+@RequestMapping("/stu")
 public class StuExamController {
 
     @Resource
@@ -81,5 +83,35 @@ public class StuExamController {
             else return "加入考试成功！考试已开放，请留意考试截止时间，切勿错过考试！";
         }
         return "加入考试失败，请稍后再试！";
+    }
+
+    @ApiOperation("考生查看自己所有考试：{0:未开始的 1:正在进行的 2:已经结束的}，返回所有考试的相关信息与已考次数")
+    @ApiImplicitParams({@ApiImplicitParam(name = "userName", value = "考生账号", paramType = "path")})
+    @GetMapping("/getExam/stu/{userName}")
+    public List<List<findAllExamOfStuApi>> getExamForStu(@PathVariable Integer userName) {
+
+        List<List<findAllExamOfStuApi>> res = new ArrayList<>();
+        for(int i=0; i<3; i++) res.add(new ArrayList<>());
+        List<findAllExamOfStuApi> allExamOfStu = stuExamService.findAllExamOfStu(userName);
+
+        for (findAllExamOfStuApi each: allExamOfStu) {
+            Integer examId = each.getExamId();
+            QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+            examInfoQueryWrapper.eq("exam_id", examId);
+            ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
+            each.setExamInfo(examInfo);
+            each.setExamId(null);
+
+            // 按时间分类
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String now = df.format(new Date());
+            String startTime = df.format(examInfo.getStartTime());
+            String deadLine = df.format(examInfo.getDeadline());
+
+            if(now.compareTo(startTime)<0) res.get(0).add(each);
+            else if(now.compareTo(deadLine)>0) res.get(2).add(each);
+            else res.get(1).add(each);
+        }
+        return res;
     }
 }
