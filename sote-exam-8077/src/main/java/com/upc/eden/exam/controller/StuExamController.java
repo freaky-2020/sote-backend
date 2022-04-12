@@ -1,6 +1,5 @@
 package com.upc.eden.exam.controller;
 
-import com.baomidou.mybatisplus.core.InjectorResolver;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.upc.eden.commen.clients.AuthClient;
@@ -8,6 +7,7 @@ import com.upc.eden.commen.domain.exam.ExamDetail;
 import com.upc.eden.commen.domain.exam.ExamInfo;
 import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.commen.domain.exam.StuExam;
+import com.upc.eden.exam.api.ExamAndStuApi;
 import com.upc.eden.exam.api.FindAllExamOfStuApi;
 import com.upc.eden.exam.service.ExamDetailService;
 import com.upc.eden.exam.service.ExamInfoService;
@@ -25,9 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author: CS Dong
@@ -161,32 +159,51 @@ public class StuExamController {
         return res;
     }
 
-    @ApiOperation("考生开始考试：考试次数传入他已考次数+1，返回true则支持跳转，false则代表他已无法参加考试")
+    @ApiOperation("考生开始考试：考试次数传入已考次数+1，返回一个Map<String, ExamAndStuApi>，String是提示信息，ExamAndStuApi是成功回传的对象")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userName", value = "考生账号", paramType = "path"),
             @ApiImplicitParam(name = "examId", value = "考试号", paramType = "path"),
             @ApiImplicitParam(name = "time", value = "考试次数", paramType = "path"),
     })
     @GetMapping("/start/{userName}/{examId}/{time}")
-    public StuExam start(@PathVariable Integer userName, @PathVariable Integer examId,
-                                  @PathVariable Integer time) {
+    public Map<String, ExamAndStuApi> start(@PathVariable Integer userName, @PathVariable Integer examId,
+                                            @PathVariable Integer time) {
 
+        HashMap<String, ExamAndStuApi> resMap = new HashMap<>();
+        ExamAndStuApi api = new ExamAndStuApi();
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        // 1、判断是否在考试时间内
+        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+        examInfoQueryWrapper.eq("exam_id", examId);
+        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
+        api.setExamInfo(examInfo);
+        String start = df.format(examInfo.getStartTime());
+        String dead = df.format(examInfo.getDeadline());
+        String now = df.format(new Date());
+        if (now.compareTo(start)<0) {
+            resMap.put("考试还未开放，请留意考试开放时间！", null);
+            return resMap;
+        } else if(now.compareTo(dead)>0) {
+            resMap.put("考试已经截止，无法进入考试！", null);
+            return resMap;
+        }
+
+        // 2、判断是否超过可考次数
         QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
         stuExamQueryWrapper.eq("examinee_id", userName);
         stuExamQueryWrapper.eq("exam_id", examId);
         stuExamQueryWrapper.eq("present_time", time);
-
-        // 1、判断是否超过可考次数
         StuExam item = stuExamService.getOne(stuExamQueryWrapper);
-        if (item == null) return null;
+        if (item == null) {
+            resMap.put("您的作答次数已达上限！", null);
+            return resMap;
+        }
 
-        // 2、判断是否是已开启而待完成的轮次
+        // 3、判断是否是已开启而待完成的轮次
         if (item.getStatus() == 1) {
-            QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
-            examInfoQueryWrapper.eq("exam_id", examId);
-            ExamInfo info = examInfoService.getOne(examInfoQueryWrapper);
-            Integer durationTime = info.getDurationTime();
-
+            Integer durationTime = examInfo.getDurationTime();
             Date startTime = item.getStartTime();
             Date compareTime = new Date(new Date().getTime() - durationTime*60*1000);
             if (compareTime.compareTo(startTime)>0) {
@@ -195,21 +212,21 @@ public class StuExamController {
                 stuExamUpdateWrapper.eq("exam_id", item.getExamId());
                 stuExamUpdateWrapper.eq("present_time", item.getPresentTime());
                 stuExamUpdateWrapper.set("status", 2);
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String submitTime =
                         df.format(new Date(item.getStartTime().getTime() + durationTime*60*1000));
                 stuExamUpdateWrapper.set("submit_time", submitTime);
                 stuExamService.update(null, stuExamUpdateWrapper);
-                return null;
+                resMap.put("检测到您上次考试异常退出且已超时，已为您强制交卷，请再次提交新一次考试请求！", null);
+                return resMap;
+            } else {
+                api.setStuExam(item);
+                resMap.put("success", api);
+                return resMap;
             }
-            else return item;
         }
 
-        // 3、在details中注入答题卡
+        // 4、在details中注入答题卡
         Integer detailsId = item.getDetails();
-        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
-        examInfoQueryWrapper.eq("exam_id", examId);
-        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
         Integer paperId = examInfo.getPaperId();
         QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
         paperQueryWrapper.eq("paper_id", paperId);
@@ -227,14 +244,15 @@ public class StuExamController {
         stuExamUpdateWrapper.eq("examinee_id", userName);
         stuExamUpdateWrapper.eq("exam_id", examId);
         stuExamUpdateWrapper.eq("present_time", time);
-        // 4、status置1，表示该次答题正在进行
+        // 5、status置1，表示该次答题正在进行
         stuExamUpdateWrapper.set("status", 1);
-        // 5、赋值startTime，开始计时
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String now = df.format(new Date());
-        stuExamUpdateWrapper.set("start_time", now);
-        stuExamService.update(null, stuExamUpdateWrapper);
 
-        return item;
+        // 6、赋值startTime，开始计时
+        String theNow = df.format(new Date());
+        stuExamUpdateWrapper.set("start_time", theNow);
+        stuExamService.update(null, stuExamUpdateWrapper);
+        api.setStuExam(item);
+        resMap.put("success", api);
+        return resMap;
     }
 }
