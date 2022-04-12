@@ -49,10 +49,9 @@ public class StuExam implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public StuExam(Integer examineeId, Integer examId, Integer details, Integer presentTime) {
+    public StuExam(Integer examineeId, Integer examId, Integer presentTime) {
         this.examineeId = examineeId;
-        this.examId = examId;
-        this.details = details;
+        this.examId = examId;;
         this.presentTime = presentTime;
     }
 
