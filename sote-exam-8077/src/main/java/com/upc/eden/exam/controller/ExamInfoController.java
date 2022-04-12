@@ -120,6 +120,7 @@ public class ExamInfoController {
         for(int i = 0; i < 3; i++) map.put(i + 1, new ArrayList<>());
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String date = df.format(new Date());
         for(ExamInfo record: examInfos) {
             if(record != null) {

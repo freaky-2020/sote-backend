@@ -17,7 +17,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,6 +69,7 @@ public class StuExamController {
         if (stuExamService.list(isInWrapper).size() != 0) return "您已加入过该考试，请在您的考试中心查看！";
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String now = df.format(new Date());
         String startTime = df.format(exam.getStartTime());
         String deadLine = df.format(exam.getDeadline());
@@ -78,9 +78,7 @@ public class StuExamController {
         boolean res = true;
         for (int presentTime = 1; presentTime <= exam.getAllowableTime(); presentTime++) {
 
-            Integer maxDetail = stuExamService.findMaxDetail();
-            Integer details = maxDetail == null ? 1 : maxDetail + 1;
-            StuExam stuExam = new StuExam(examineeId, examId, details, presentTime);
+            StuExam stuExam = new StuExam(examineeId, examId, presentTime);
             stuExam.setStatus(now.compareTo(deadLine) > 0 ? -1 : null);
             res = res && stuExamService.save(stuExam);
         }
@@ -112,6 +110,7 @@ public class StuExamController {
                     ExamInfo info = examInfoService.getOne(examInfoQueryWrapper);
                     Integer durationTime = info.getDurationTime();
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
                     String startTime = df.format(each.getStartTime());
                     String compareTime = df.format(new Date(new Date().getTime() - durationTime*60*1000));
                     if(compareTime.compareTo(startTime)>0) {
@@ -123,7 +122,7 @@ public class StuExamController {
                         String submitTime =
                                 df.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
                         stuExamUpdateWrapper.set("submit_time", submitTime);
-                        stuExamService.update(null, stuExamUpdateWrapper);
+                        stuExamService.update(stuExamUpdateWrapper);
                     }
                 }
             }
@@ -147,6 +146,7 @@ public class StuExamController {
 
                 // 按时间分类
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
                 String now = df.format(new Date());
                 String startTime = df.format(examInfo.getStartTime());
                 String deadLine = df.format(examInfo.getDeadline());
@@ -173,6 +173,7 @@ public class StuExamController {
         ExamAndStuApi api = new ExamAndStuApi();
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
 
         // 1、判断是否在考试时间内
         QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
@@ -215,7 +216,7 @@ public class StuExamController {
                 String submitTime =
                         df.format(new Date(item.getStartTime().getTime() + durationTime*60*1000));
                 stuExamUpdateWrapper.set("submit_time", submitTime);
-                stuExamService.update(null, stuExamUpdateWrapper);
+                stuExamService.update(stuExamUpdateWrapper);
                 resMap.put("检测到您上次考试异常退出且已超时，已为您强制交卷，请再次提交新一次考试请求！", null);
                 return resMap;
             } else {
@@ -225,8 +226,15 @@ public class StuExamController {
             }
         }
 
-        // 4、在details中注入答题卡
-        Integer detailsId = item.getDetails();
+        // 4、在details中注入答题卡并将status置1
+        Integer maxDetail = stuExamService.findMaxDetail();
+        Integer detailsId = maxDetail == null ? 1 : maxDetail + 1;
+        UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
+        stuExamUpdateWrapper.eq("examinee_id", item.getExamineeId());
+        stuExamUpdateWrapper.eq("exam_id", item.getExamId());
+        stuExamUpdateWrapper.eq("present_time", item.getPresentTime());
+        stuExamUpdateWrapper.set("details", detailsId);
+        stuExamUpdateWrapper.set("status", 1);
         Integer paperId = examInfo.getPaperId();
         QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
         paperQueryWrapper.eq("paper_id", paperId);
@@ -240,17 +248,10 @@ public class StuExamController {
             }
         }
 
-        UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
-        stuExamUpdateWrapper.eq("examinee_id", userName);
-        stuExamUpdateWrapper.eq("exam_id", examId);
-        stuExamUpdateWrapper.eq("present_time", time);
-        // 5、status置1，表示该次答题正在进行
-        stuExamUpdateWrapper.set("status", 1);
-
-        // 6、赋值startTime，开始计时
+        // 5、赋值startTime，开始计时
         String theNow = df.format(new Date());
         stuExamUpdateWrapper.set("start_time", theNow);
-        stuExamService.update(null, stuExamUpdateWrapper);
+        stuExamService.update(stuExamUpdateWrapper);
         api.setStuExam(item);
         resMap.put("success", api);
         return resMap;

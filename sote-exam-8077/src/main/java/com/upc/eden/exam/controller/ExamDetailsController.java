@@ -56,6 +56,4 @@ public class ExamDetailsController {
 
         return res;
     }
-
-
 }
