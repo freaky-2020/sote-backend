@@ -1,8 +1,10 @@
 package com.upc.eden.commen.clients;
 
 import com.upc.eden.commen.domain.auth.SecurityUser;
+import com.upc.eden.commen.domain.auth.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
@@ -11,12 +13,12 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @Description:
  */
 
-@FeignClient(value = "auth-service")
+@FeignClient(value = "gateway-service", contextId = "auth")
 public interface AuthClient {
 
-//    @GetMapping("/user/{userName}")
-//    User findByUserName(@PathVariable String userName);
+    @GetMapping("/auth/client/get")
+    User getInfoByUserName(@RequestParam String userName);
 
-    @GetMapping("/client/current")
+    @GetMapping("/auth/client/current")
     SecurityUser getCurrentUser();
 }

@@ -2,18 +2,21 @@ package com.upc.eden.exam.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.upc.eden.commen.clients.AuthClient;
+import com.upc.eden.commen.domain.auth.User;
 import com.upc.eden.commen.domain.exam.ExamDetail;
 import com.upc.eden.commen.domain.exam.ExamInfo;
+import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.commen.domain.exam.StuExam;
+import com.upc.eden.exam.api.UserAndDetailApi;
 import com.upc.eden.exam.service.ExamDetailService;
 import com.upc.eden.exam.service.ExamInfoService;
+import com.upc.eden.exam.service.PaperService;
 import com.upc.eden.exam.service.StuExamService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +43,10 @@ public class MarkingController {
     private StuExamService stuExamService;
     @Resource
     private ExamInfoService examInfoService;
+    @Resource
+    private PaperService paperService;
+    @Resource
+    private AuthClient authClient;
 
     @ApiOperation("选择题、判断题与填空题的自动判分，返回alert消息")
     @ApiImplicitParams({
@@ -180,5 +187,100 @@ public class MarkingController {
         Integer paperCount = stuExamService.findPaperCountByExamId(examId);
         return "选择题、判断题与填空题已自动批阅完成，" +
                 "共计" + examineeCount + "人"+paperCount + "份答卷！";
+    }
+
+    @ApiOperation("传入paperId，获取该试卷的所有简答题")
+    @ApiImplicitParams({@ApiImplicitParam(name = "paperId", value = "试卷Id", paramType = "path")})
+    @GetMapping("/allQues/{paperId}")
+    public List<Paper> handMark(@PathVariable Integer paperId) {
+
+        QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
+        paperQueryWrapper.eq("paper_id", paperId);
+        paperQueryWrapper.eq("type_id", 5);
+        List<Paper> questions = paperService.list(paperQueryWrapper);
+        return questions;
+    }
+
+    @ApiOperation("传入examId，检测该考试能否批卷")
+    @ApiImplicitParams({@ApiImplicitParam(name = "examId", value = "考试Id", paramType = "path")})
+    @GetMapping("isDead/{examId}")
+    public boolean isDead(@PathVariable Integer examId) {
+
+        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+        examInfoQueryWrapper.eq("exam_id", examId);
+        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
+
+        // 1、界定考试是否截止，未结束无法批卷
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        String deadline = df.format(examInfo.getDeadline());
+        if (df.format(new Date()).compareTo(deadline) < 0) {
+            return false;
+        }
+
+        // 2、若考生考试状态滞留为1，则将其考试状态强制置2
+        UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
+        stuExamUpdateWrapper.eq("exam_id",examId);
+        stuExamUpdateWrapper.eq("status", 1);
+        stuExamUpdateWrapper.set("status", 2);
+        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+        stuExamQueryWrapper.eq("exam_id", examId);
+        stuExamQueryWrapper.eq("status", 1);
+        List<StuExam> list = stuExamService.list(stuExamQueryWrapper);
+        Integer durationTime = examInfo.getDurationTime();
+        if(list.size() > 0) {
+            for (StuExam each: list) {
+                if(each != null) {
+                    String tTime = df.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
+                    String submitTime = tTime.compareTo(deadline) < 0 ? tTime : deadline;
+                    stuExamUpdateWrapper.set("submit_time", submitTime);
+                    stuExamService.update(stuExamUpdateWrapper);
+                }
+            }
+        }
+
+        // 3、若考生考试状态为0，则将其考试状态置-1
+        stuExamUpdateWrapper = new UpdateWrapper<>();
+        stuExamUpdateWrapper.eq("exam_id", examId);
+        stuExamUpdateWrapper.eq("status", 0);
+        stuExamUpdateWrapper.set("status", -1);
+        stuExamService.update(stuExamUpdateWrapper);
+
+        return true;
+    }
+
+    // -----paperId复用的话会不匹配，记录！！！！！------
+    @ApiOperation("获取某考试的某简答题答题情况")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "paperId", value = "试卷Id", paramType = "path"),
+            @ApiImplicitParam(name = "quesNo", value = "题号", paramType = "path")})
+    @GetMapping("/hand/{examId}/{quesNo}")
+    public List<UserAndDetailApi> handMark(@PathVariable Integer examId,
+                                           @PathVariable Integer quesNo) {
+
+        List<UserAndDetailApi> res = new ArrayList<>();
+
+        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+        examInfoQueryWrapper.eq("exam_id", examId);
+        ExamInfo exam = examInfoService.getOne(examInfoQueryWrapper);
+        Integer paperId = exam.getPaperId();
+
+        QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
+        examDetailQueryWrapper.eq("paper_id", paperId);
+        examDetailQueryWrapper.eq("ques_no", quesNo);
+        List<ExamDetail> list = examDetailService.list(examDetailQueryWrapper);
+        if(list.size()>0) {
+            for (ExamDetail examDetail: list) {
+                if(examDetail != null) {
+                    QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+                    stuExamQueryWrapper.eq("details", examDetail.getDetails());
+                    StuExam one = stuExamService.getOne(stuExamQueryWrapper);
+                    Integer userName = one.getExamineeId();
+                    User user = authClient.getInfoByUserName(userName.toString());
+                    res.add(new UserAndDetailApi(user, examDetail));
+                }
+            }
+        }
+        return res;
     }
 }
