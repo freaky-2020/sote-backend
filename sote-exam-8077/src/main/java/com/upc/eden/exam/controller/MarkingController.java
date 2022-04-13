@@ -68,7 +68,10 @@ public class MarkingController {
             return "考试未结束，无法批卷，请在 " + deadline + " 后提交请求！";
         }
 
-        // 2、若考生考试状态滞留为1，则将其考试状态强制置2
+        // 2、界定考试是否公布，公布无法批卷
+        if(examInfo.getIsPublic()==1) return "考试结果已公布，无法批阅！";
+
+        // 3、若考生考试状态滞留为1，则将其考试状态强制置2
         UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
         stuExamUpdateWrapper.eq("exam_id",examId);
         stuExamUpdateWrapper.eq("status", 1);
@@ -89,7 +92,7 @@ public class MarkingController {
             }
         }
 
-        // 3、若考生考试状态为0，则将其考试状态置-1
+        // 4、若考生考试状态为0，则将其考试状态置-1
         stuExamUpdateWrapper = new UpdateWrapper<>();
         stuExamUpdateWrapper.eq("exam_id", examId);
         stuExamUpdateWrapper.eq("status", 0);
@@ -252,7 +255,7 @@ public class MarkingController {
     // -----paperId复用的话会不匹配，记录！！！！！------
     @ApiOperation("获取某考试的某简答题答题情况")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "paperId", value = "试卷Id", paramType = "path"),
+            @ApiImplicitParam(name = "examId", value = "考试Id", paramType = "path"),
             @ApiImplicitParam(name = "quesNo", value = "题号", paramType = "path")})
     @GetMapping("/hand/{examId}/{quesNo}")
     public List<UserAndDetailApi> handMark(@PathVariable Integer examId,
@@ -283,4 +286,27 @@ public class MarkingController {
         }
         return res;
     }
+
+    @ApiOperation("简答题打分，返回message")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "某次作答记录Id", paramType = "path"),
+            @ApiImplicitParam(name = "score", value = "打分", paramType = "path")})
+    @GetMapping("/markScore/{id}")
+    public String markScore(@PathVariable Integer id, Integer score) {
+
+        QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
+        examDetailQueryWrapper.eq("id", id);
+        ExamDetail one = examDetailService.getOne(examDetailQueryWrapper);
+        if(score<0 || score>one.getMaxScore()) {
+        return "您的打分应在0~"+one.getMaxScore()+"之间！";
+        }
+
+        UpdateWrapper<ExamDetail> examDetailUpdateWrapper = new UpdateWrapper<>();
+        examDetailUpdateWrapper.eq("id", id);
+        examDetailUpdateWrapper.set("score", score);
+        boolean res = examDetailService.update(examDetailUpdateWrapper);
+        if (res) return "批阅成功";
+        else return "保存失败，请稍后再试";
+    }
+
 }

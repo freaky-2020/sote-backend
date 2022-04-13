@@ -35,11 +35,11 @@ public class StuExam implements Serializable {
     @ApiModelProperty(value = "考生总得分", example = "85")
     private Integer totalScore;
     @ApiModelProperty(value = "考生开始考试时间(格式为yyyy-MM-dd HH:mm:ss)", example = "2022-03-22 20:34:37")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
     @ApiModelProperty(value = "考生提交时间(格式为yyyy-MM-dd HH:mm:ss)", example = "2022-03-22 21:54:10")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date submitTime;
     @ApiModelProperty(value = "切屏次数", example = "0")

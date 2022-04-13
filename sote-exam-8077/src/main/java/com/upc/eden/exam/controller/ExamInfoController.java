@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -105,29 +106,35 @@ public class ExamInfoController {
         } else return false;
     }
 
-    @ApiOperation("按照传入的若干条件检索对应的考试信息，返回一个Map：" +
-            "{ 1:还未开始的考试的集合 2:进行中的考试的集合 3:已结束的考试的集合 }，均按科目、开始时间排序")
+    @ApiOperation("按照传入的若干条件检索对应的考试信息，返回一个list：" +
+            "{ 0:还未开放的考试 1:进行中的考试 2:已截止的考试 3:已公布的考试 }，均按科目、开始时间排序")
     @GetMapping("/query")
-    public Map<Integer, List<ExamInfo>> query(ExamInfo examInfo) {
+    public List<List<ExamInfo>> query(ExamInfo examInfo) {
 
         QueryWrapper<ExamInfo> wrapper = new QueryWrapper<>(examInfo);
         wrapper.orderBy(true, true, "subject_id");
         wrapper.orderBy(true, true, "start_time");
         List<ExamInfo> examInfos = examInfoService.list(wrapper);
 
-        Map<Integer, List<ExamInfo>> map = new HashMap<>();
-        for(int i = 0; i < 3; i++) map.put(i + 1, new ArrayList<>());
+        List<List<ExamInfo>> res = new ArrayList<>();
+        for(int i = 0; i < 4; i++) res.add(new ArrayList<>());
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String date = df.format(new Date());
         for(ExamInfo record: examInfos) {
             if(record != null) {
-                if (date.compareTo(df.format(record.getStartTime()))<0) map.get(1).add(record);
-                else if(date.compareTo(df.format(record.getDeadline()))>0) map.get(3).add(record);
-                else map.get(2).add(record);
+                System.out.println();
+                System.out.println();
+                System.out.println();
+                System.out.println(record.getStartTime());
+                System.out.println();
+                if (record.getIsPublic()==1) res.get(3).add(record);
+                else if (date.compareTo(df.format(record.getStartTime()))<0) res.get(0).add(record);
+                else if(date.compareTo(df.format(record.getDeadline()))>0) res.get(2).add(record);
+                else res.get(1).add(record);
             }
         }
-        return map;
+        return res;
     }
 }
