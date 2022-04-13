@@ -91,7 +91,7 @@ public class StuExamController {
         return "加入考试失败，请稍后再试！";
     }
 
-    @ApiOperation("考生查看自己所有考试：{0:未开放的 1:已开放的 2:已截止的}，返回所有考试的相关信息与已考次数")
+    @ApiOperation("考生查看自己所有考试：{0:未开放的 1:已开放的 2:已截止的 3:已发布的}，返回所有考试的相关信息与已考次数")
     @ApiImplicitParams({@ApiImplicitParam(name = "userName", value = "考生账号", paramType = "path")})
     @GetMapping("/getExam/stu/{userName}")
     public List<List<FindAllExamOfStuApi>> getExamForStu(@PathVariable Integer userName) {
@@ -131,7 +131,7 @@ public class StuExamController {
 
         // 初始化返回体
         List<List<FindAllExamOfStuApi>> res = new ArrayList<>();
-        for (int i = 0; i < 3; i++) res.add(new ArrayList<>());
+        for (int i = 0; i < 4; i++) res.add(new ArrayList<>());
         List<FindAllExamOfStuApi> allExamOfStu = stuExamService.findAllExamOfStu(userName);
 
         // 赋值返回体
@@ -152,7 +152,8 @@ public class StuExamController {
                 String startTime = df.format(examInfo.getStartTime());
                 String deadLine = df.format(examInfo.getDeadline());
 
-                if (now.compareTo(startTime) < 0) res.get(0).add(each);
+                if(examInfo.getIsPublic()==1) res.get(3).add(each);
+                else if (now.compareTo(startTime) < 0) res.get(0).add(each);
                 else if (now.compareTo(deadLine) > 0) res.get(2).add(each);
                 else res.get(1).add(each);
             }

@@ -43,11 +43,11 @@ public class Question implements Serializable {
     @ApiModelProperty(value = "解析：图片或文档链接以’$$‘拼接在后面", example = "发炎必是扁桃体$$http://baidu.com")
     private String remark;
     @ApiModelProperty(value = "题目创建日期：格式为 yyyy-MM-dd", example = "2022-03-30", hidden = true)
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+//    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     @ApiModelProperty(value = "题目更新日期：格式为 yyyy-MM-dd", example = "2022-05-29", hidden = true)
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+//    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
