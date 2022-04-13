@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -287,9 +288,18 @@ public class StuExamController {
         stuExamUpdateWrapper.eq("present_time", time);
         stuExamUpdateWrapper.set("status", 2);
 
+        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+        stuExamQueryWrapper.eq("exam_id", examId);
+        stuExamQueryWrapper.eq("examinee_id", userName);
+        stuExamQueryWrapper.eq("present_time", time);
+        StuExam stuExam = stuExamService.getOne(stuExamQueryWrapper);
+
         String now = ndf.format(new Date());
+        Integer durationTime = examInfo.getDurationTime();
         String deadLine = df.format(examInfo.getDeadline());
-        String submitTime = now.compareTo(deadLine) < 0 ? now : deadLine;
+        String compareTime = ndf.format(new Date(stuExam.getStartTime().getTime() + durationTime * 60 * 1000));
+        String submitTime = now.compareTo(compareTime) < 0 ? now : compareTime;
+        submitTime = submitTime.compareTo(deadLine) < 0 ? submitTime : deadLine;
         stuExamUpdateWrapper.set("submit_time", submitTime);
         stuExamService.update(stuExamUpdateWrapper);
 
