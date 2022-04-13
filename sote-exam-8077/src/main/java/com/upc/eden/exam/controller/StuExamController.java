@@ -119,8 +119,9 @@ public class StuExamController {
                         stuExamUpdateWrapper.eq("exam_id", each.getExamId());
                         stuExamUpdateWrapper.eq("present_time", each.getPresentTime());
                         stuExamUpdateWrapper.set("status", 2);
-                        String submitTime =
-                                df.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
+                        String tTime = df.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
+                        String dead = df.format(info.getDeadline());
+                        String submitTime = tTime.compareTo(dead) < 0 ? tTime : dead;
                         stuExamUpdateWrapper.set("submit_time", submitTime);
                         stuExamService.update(stuExamUpdateWrapper);
                     }
@@ -213,8 +214,8 @@ public class StuExamController {
                 stuExamUpdateWrapper.eq("exam_id", item.getExamId());
                 stuExamUpdateWrapper.eq("present_time", item.getPresentTime());
                 stuExamUpdateWrapper.set("status", 2);
-                String submitTime =
-                        df.format(new Date(item.getStartTime().getTime() + durationTime*60*1000));
+                String tTime = df.format(new Date(item.getStartTime().getTime() + durationTime * 60 * 1000));
+                String submitTime = tTime.compareTo(dead) < 0 ? tTime : dead;
                 stuExamUpdateWrapper.set("submit_time", submitTime);
                 stuExamService.update(stuExamUpdateWrapper);
                 resMap.put("检测到您上次考试异常退出且已超时，已为您强制交卷，请再次提交新一次考试请求！", null);
@@ -255,5 +256,37 @@ public class StuExamController {
         api.setStuExam(item);
         resMap.put("success", api);
         return resMap;
+    }
+
+    @ApiOperation("考生提交考试：返回alert消息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userName", value = "考生账号", paramType = "path"),
+            @ApiImplicitParam(name = "examId", value = "考试号", paramType = "path"),
+            @ApiImplicitParam(name = "time", value = "考试次数", paramType = "path"),
+    })
+    @GetMapping("/submit/{userName}/{examId}/{time}")
+    public String submit(@PathVariable Integer userName, @PathVariable Integer examId,
+                         @PathVariable Integer time) {
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+
+        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+        examInfoQueryWrapper.eq("exam_id", examId);
+        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
+
+        UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
+        stuExamUpdateWrapper.eq("examinee_id", userName);
+        stuExamUpdateWrapper.eq("exam_id", examId);
+        stuExamUpdateWrapper.eq("present_time", time);
+        stuExamUpdateWrapper.set("status", 2);
+
+        String now = df.format(new Date());
+        String deadLine = df.format(examInfo.getDeadline());
+        String submitTime = now.compareTo(deadLine) < 0 ? now : deadLine;
+        stuExamUpdateWrapper.set("submit_time", submitTime);
+        stuExamService.update(stuExamUpdateWrapper);
+
+        return "提交成功！";
     }
 }
