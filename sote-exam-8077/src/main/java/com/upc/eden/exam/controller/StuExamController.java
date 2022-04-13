@@ -69,7 +69,7 @@ public class StuExamController {
         if (stuExamService.list(isInWrapper).size() != 0) return "您已加入过该考试，请在您的考试中心查看！";
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String now = df.format(new Date());
         String startTime = df.format(exam.getStartTime());
         String deadLine = df.format(exam.getDeadline());
@@ -110,7 +110,7 @@ public class StuExamController {
                     ExamInfo info = examInfoService.getOne(examInfoQueryWrapper);
                     Integer durationTime = info.getDurationTime();
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+//                    df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
                     String startTime = df.format(each.getStartTime());
                     String compareTime = df.format(new Date(new Date().getTime() - durationTime*60*1000));
                     if(compareTime.compareTo(startTime)>0) {
@@ -147,7 +147,7 @@ public class StuExamController {
 
                 // 按时间分类
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+//                df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
                 String now = df.format(new Date());
                 String startTime = df.format(examInfo.getStartTime());
                 String deadLine = df.format(examInfo.getDeadline());
@@ -175,7 +175,7 @@ public class StuExamController {
         ExamAndStuApi api = new ExamAndStuApi();
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
 
         // 1、判断是否在考试时间内
         QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
@@ -270,7 +270,7 @@ public class StuExamController {
                          @PathVariable Integer time) {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
 
         QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
         examInfoQueryWrapper.eq("exam_id", examId);

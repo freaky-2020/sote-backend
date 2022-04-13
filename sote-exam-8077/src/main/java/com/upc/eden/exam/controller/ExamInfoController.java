@@ -58,7 +58,6 @@ public class ExamInfoController {
         examInfo.setPaperId(paperId);
         examInfo.setWord(secret);
 //        examInfo.setInvigilatorId(authClient.getCurrentUser().getId());
-        examInfo.setInvigilatorId(3);
 
         examInfoService.save(examInfo);
         return new ExamInfoApi(paperId, secret);
@@ -120,15 +119,12 @@ public class ExamInfoController {
         for(int i = 0; i < 4; i++) res.add(new ArrayList<>());
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String date = df.format(new Date());
         for(ExamInfo record: examInfos) {
             if(record != null) {
-                System.out.println();
-                System.out.println();
-                System.out.println();
                 System.out.println(record.getStartTime());
-                System.out.println();
+                if (record.getIsPublic()==1) res.get(3).add(record);
                 if (record.getIsPublic()==1) res.get(3).add(record);
                 else if (date.compareTo(df.format(record.getStartTime()))<0) res.get(0).add(record);
                 else if(date.compareTo(df.format(record.getDeadline()))>0) res.get(2).add(record);
