@@ -8,4 +8,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ExamDetailService extends IService<ExamDetail> {
 
+    public void autoMark1(Integer datails);
 }

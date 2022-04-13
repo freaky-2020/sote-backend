@@ -39,5 +39,17 @@ public class StuExamServiceImpl extends ServiceImpl<StuExamMapper, StuExam>
     public Integer findFinishedTime(Integer examineeId, Integer examId) {
         return stuExamMapper.findFinishedTime(examineeId, examId);
     }
+
+    @Override
+    public Integer findExamineeCountByExamId(Integer examId) {
+        return stuExamMapper.findExamineeCountByExamId(examId);
+    }
+
+    @Override
+    public Integer findPaperCountByExamId(Integer examId) {
+        return stuExamMapper.findPaperCountByExamId(examId);
+    }
+
+
 }
 

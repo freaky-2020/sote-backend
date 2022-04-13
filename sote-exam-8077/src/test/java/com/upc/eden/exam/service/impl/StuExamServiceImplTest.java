@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.annotation.Resource;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -36,14 +37,12 @@ class StuExamServiceImplTest {
 
     @Test
     void sasd() {
-        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
-        examInfoQueryWrapper.eq("exam_id", 1);
-        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
+        String aa = "1,2,3";
+        String b = "3,2";
+        List<String> ra = Arrays.asList(aa.split(","));
+        List<String> a = Arrays.asList(b.split(","));
 
-        // 1、界定考试是否截止，未结束无法批卷
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-        String deadline = df.format(new Date());
-        System.out.println(deadline);
+        System.out.println(ra.containsAll(a));
+        System.out.println(a.containsAll(ra));
     }
 }

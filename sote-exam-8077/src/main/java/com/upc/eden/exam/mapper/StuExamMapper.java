@@ -23,6 +23,16 @@ public interface StuExamMapper extends BaseMapper<StuExam> {
             "where examinee_id = #{examineeId} group by exam_id")
     List<FindAllExamOfStuApi> findAllExamOfStu(Integer examineeId);
 
+    // 查询共有多少考生参与了至少一次考试
+    @Select("select count(distinct examinee_id) from stu_exam " +
+            "where exam_id = #{examId} and status = 2")
+    Integer findExamineeCountByExamId(Integer examId);
+
+    // 查询某次考试提交了多少试卷
+    @Select("select count(*) from stu_exam " +
+            "where exam_id = #{examId} and status = 2")
+    Integer findPaperCountByExamId(Integer examId);
+
     @Select("select count(*) from stu_exam " +
             "where examinee_id = #{examineeId} " +
             "and exam_id = #{examId} and status = 2")
