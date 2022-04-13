@@ -62,9 +62,10 @@ public class MarkingController {
 
         // 1、界定考试是否截止，未结束无法批卷
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String deadline = df.format(examInfo.getDeadline());
-        if (df.format(new Date()).compareTo(deadline) < 0) {
+        if (ndf.format(new Date()).compareTo(deadline) < 0) {
             return "考试未结束，无法批卷，请在 " + deadline + " 后提交请求！";
         }
 
@@ -84,7 +85,7 @@ public class MarkingController {
         if(list.size() > 0) {
             for (StuExam each: list) {
                 if(each != null) {
-                    String tTime = df.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
+                    String tTime = ndf.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
                     String submitTime = tTime.compareTo(deadline) < 0 ? tTime : deadline;
                     stuExamUpdateWrapper.set("submit_time", submitTime);
                     stuExamService.update(stuExamUpdateWrapper);
@@ -215,9 +216,11 @@ public class MarkingController {
 
         // 1、界定考试是否截止，未结束无法批卷
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+
         String deadline = df.format(examInfo.getDeadline());
-        if (df.format(new Date()).compareTo(deadline) < 0) {
+        if (ndf.format(new Date()).compareTo(deadline) < 0) {
             return false;
         }
 
@@ -234,7 +237,7 @@ public class MarkingController {
         if(list.size() > 0) {
             for (StuExam each: list) {
                 if(each != null) {
-                    String tTime = df.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
+                    String tTime = ndf.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
                     String submitTime = tTime.compareTo(deadline) < 0 ? tTime : deadline;
                     stuExamUpdateWrapper.set("submit_time", submitTime);
                     stuExamService.update(stuExamUpdateWrapper);
