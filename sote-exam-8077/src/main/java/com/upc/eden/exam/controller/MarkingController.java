@@ -62,7 +62,7 @@ public class MarkingController {
 
         // 1、界定考试是否截止，未结束无法批卷
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String deadline = df.format(examInfo.getDeadline());
         if (df.format(new Date()).compareTo(deadline) < 0) {
             return "考试未结束，无法批卷，请在 " + deadline + " 后提交请求！";
@@ -215,7 +215,7 @@ public class MarkingController {
 
         // 1、界定考试是否截止，未结束无法批卷
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String deadline = df.format(examInfo.getDeadline());
         if (df.format(new Date()).compareTo(deadline) < 0) {
             return false;

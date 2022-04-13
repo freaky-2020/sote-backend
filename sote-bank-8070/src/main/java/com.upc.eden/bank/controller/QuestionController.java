@@ -145,7 +145,7 @@ public class QuestionController {
     public boolean add(Question question) throws ParseException {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         question.setCreateTime(df.parse(df.format(new Date())));
         question.setUpdateTime(df.parse(df.format(new Date())));
         boolean res = questionService.save(question);
@@ -163,7 +163,7 @@ public class QuestionController {
     public boolean update(Question question) throws ParseException {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         question.setUpdateTime(df.parse(df.format(new Date())));
         UpdateWrapper<Question> wrapper = new UpdateWrapper<>();
         wrapper.eq("id", question.getId());
