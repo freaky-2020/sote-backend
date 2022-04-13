@@ -119,8 +119,9 @@ public class ExamInfoController {
         for(int i = 0; i < 4; i++) res.add(new ArrayList<>());
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-        String date = df.format(new Date());
+        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        String date = ndf.format(new Date());
         for(ExamInfo record: examInfos) {
             if(record != null) {
                 System.out.println(record.getStartTime());

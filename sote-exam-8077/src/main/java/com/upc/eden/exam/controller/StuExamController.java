@@ -69,8 +69,9 @@ public class StuExamController {
         if (stuExamService.list(isInWrapper).size() != 0) return "您已加入过该考试，请在您的考试中心查看！";
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-        String now = df.format(new Date());
+        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        String now = ndf.format(new Date());
         String startTime = df.format(exam.getStartTime());
         String deadLine = df.format(exam.getDeadline());
 
@@ -110,16 +111,17 @@ public class StuExamController {
                     ExamInfo info = examInfoService.getOne(examInfoQueryWrapper);
                     Integer durationTime = info.getDurationTime();
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//                    df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+                    SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
                     String startTime = df.format(each.getStartTime());
-                    String compareTime = df.format(new Date(new Date().getTime() - durationTime*60*1000));
+                    String compareTime = ndf.format(new Date(new Date().getTime() - durationTime*60*1000));
                     if(compareTime.compareTo(startTime)>0) {
                         UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
                         stuExamUpdateWrapper.eq("examinee_id", each.getExamineeId());
                         stuExamUpdateWrapper.eq("exam_id", each.getExamId());
                         stuExamUpdateWrapper.eq("present_time", each.getPresentTime());
                         stuExamUpdateWrapper.set("status", 2);
-                        String tTime = df.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
+                        String tTime = ndf.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
                         String dead = df.format(info.getDeadline());
                         String submitTime = tTime.compareTo(dead) < 0 ? tTime : dead;
                         stuExamUpdateWrapper.set("submit_time", submitTime);
@@ -147,8 +149,9 @@ public class StuExamController {
 
                 // 按时间分类
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//                df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-                String now = df.format(new Date());
+                SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+                String now = ndf.format(new Date());
                 String startTime = df.format(examInfo.getStartTime());
                 String deadLine = df.format(examInfo.getDeadline());
 
@@ -175,7 +178,8 @@ public class StuExamController {
         ExamAndStuApi api = new ExamAndStuApi();
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
 
         // 1、判断是否在考试时间内
         QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
@@ -184,7 +188,7 @@ public class StuExamController {
         api.setExamInfo(examInfo);
         String start = df.format(examInfo.getStartTime());
         String dead = df.format(examInfo.getDeadline());
-        String now = df.format(new Date());
+        String now = ndf.format(new Date());
         if (now.compareTo(start)<0) {
             resMap.put("考试还未开放，请留意考试开放时间！", null);
             return resMap;
@@ -207,15 +211,15 @@ public class StuExamController {
         // 3、判断是否是已开启而待完成的轮次
         if (item.getStatus() == 1) {
             Integer durationTime = examInfo.getDurationTime();
-            Date startTime = item.getStartTime();
-            Date compareTime = new Date(new Date().getTime() - durationTime*60*1000);
+            String startTime = df.format(item.getStartTime());
+            String compareTime = ndf.format(new Date(new Date().getTime() - durationTime*60*1000));
             if (compareTime.compareTo(startTime)>0) {
                 UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
                 stuExamUpdateWrapper.eq("examinee_id", item.getExamineeId());
                 stuExamUpdateWrapper.eq("exam_id", item.getExamId());
                 stuExamUpdateWrapper.eq("present_time", item.getPresentTime());
                 stuExamUpdateWrapper.set("status", 2);
-                String tTime = df.format(new Date(item.getStartTime().getTime() + durationTime * 60 * 1000));
+                String tTime = ndf.format(new Date(item.getStartTime().getTime() + durationTime * 60 * 1000));
                 String submitTime = tTime.compareTo(dead) < 0 ? tTime : dead;
                 stuExamUpdateWrapper.set("submit_time", submitTime);
                 stuExamService.update(stuExamUpdateWrapper);
@@ -251,7 +255,7 @@ public class StuExamController {
         }
 
         // 5、赋值startTime，开始计时
-        String theNow = df.format(new Date());
+        String theNow = ndf.format(new Date());
         stuExamUpdateWrapper.set("start_time", theNow);
         stuExamService.update(stuExamUpdateWrapper);
         api.setStuExam(item);
@@ -270,7 +274,8 @@ public class StuExamController {
                          @PathVariable Integer time) {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        df.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
 
         QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
         examInfoQueryWrapper.eq("exam_id", examId);
@@ -282,7 +287,7 @@ public class StuExamController {
         stuExamUpdateWrapper.eq("present_time", time);
         stuExamUpdateWrapper.set("status", 2);
 
-        String now = df.format(new Date());
+        String now = ndf.format(new Date());
         String deadLine = df.format(examInfo.getDeadline());
         String submitTime = now.compareTo(deadLine) < 0 ? now : deadLine;
         stuExamUpdateWrapper.set("submit_time", submitTime);
