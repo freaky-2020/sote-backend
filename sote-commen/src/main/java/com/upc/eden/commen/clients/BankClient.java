@@ -14,12 +14,12 @@ import java.util.List;
  * @Date: 2022/03/31/19:00
  * @Description:
  */
-@FeignClient(value = "bank-service")
+@FeignClient(value = "gateway-service", contextId = "bank")
 public interface BankClient {
 
-    @GetMapping("/client/getQuesByIds")
+    @GetMapping("/bank/client/getQuesByIds")
     List<Question> getQuesByIds(@RequestParam List<Integer> qIds);
 
-    @GetMapping("/client/getQuesById")
+    @GetMapping("/bank/client/getQuesById")
     Question getQuesById(@RequestParam Integer qId);
 }
