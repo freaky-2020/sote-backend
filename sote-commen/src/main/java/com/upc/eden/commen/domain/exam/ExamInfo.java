@@ -36,7 +36,7 @@ public class ExamInfo implements Serializable {
     private Integer durationTime;
     @ApiModelProperty(value = "考试开放时间(格式为yyyy-MM-dd HH:mm:ss)", example = "2022-03-23 08:00:00")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern = "yy yy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
     @ApiModelProperty(value = "考试截至时间(格式为yyyy-MM-dd HH:mm:ss)", example = "2022-03-24 23:00:00")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -79,7 +79,8 @@ public class ExamInfo implements Serializable {
             && (this.getAllowableTime() == null ? other.getAllowableTime() == null : this.getAllowableTime().equals(other.getAllowableTime()))
             && (this.getNoticeWay() == null ? other.getNoticeWay() == null : this.getNoticeWay().equals(other.getNoticeWay()))
             && (this.getWord() == null ? other.getWord() == null : this.getWord().equals(other.getWord()))
-            && (this.getCuttingTimes() == null ? other.getCuttingTimes() == null : this.getCuttingTimes().equals(other.getCuttingTimes()));
+            && (this.getCuttingTimes() == null ? other.getCuttingTimes() == null : this.getCuttingTimes().equals(other.getCuttingTimes()))
+            && (this.getIsPublic() == null ? other.getIsPublic() == null : this.getIsPublic().equals(other.getIsPublic()));
     }
 
     @Override
@@ -99,6 +100,7 @@ public class ExamInfo implements Serializable {
         result = prime * result + ((getNoticeWay() == null) ? 0 : getNoticeWay().hashCode());
         result = prime * result + ((getWord() == null) ? 0 : getWord().hashCode());
         result = prime * result + ((getCuttingTimes() == null) ? 0 : getCuttingTimes().hashCode());
+        result = prime * result + ((getIsPublic() == null) ? 0 : getIsPublic().hashCode());
         return result;
     }
 
@@ -121,6 +123,7 @@ public class ExamInfo implements Serializable {
         sb.append(", noticeWay=").append(noticeWay);
         sb.append(", word=").append(word);
         sb.append(", cuttingTimes=").append(cuttingTimes);
+        sb.append(", isPublic=").append(isPublic);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
