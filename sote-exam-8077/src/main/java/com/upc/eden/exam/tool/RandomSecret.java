@@ -15,7 +15,7 @@ public class RandomSecret {
 
     public String getRandomSecret(int length) {
 
-        String all = "ABCDEFGHIJKLMNOPQRSTUVWXYZ@£#$%&∑@£#$%&∑";
+        String all = "@£$∑@£$ABCDEFGHIJKLMNOPQRSTUVWXYZ@£$∑@£$";
         StringBuffer secret = new StringBuffer();
 
         Random rd = new Random();

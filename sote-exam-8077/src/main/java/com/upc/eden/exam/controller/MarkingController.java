@@ -72,7 +72,12 @@ public class MarkingController {
         if(examInfo.getIsPublic()==1) return "考试结果已公布，无法继续批阅！";
 
         // 3、界定考试是否已自动批阅，若是则不再重复执行
-        if(examInfo.getIsPublic()==7) return "自动批阅已完成，";
+        if(examInfo.getIsPublic()==7) {
+            Integer examineeCount = stuExamService.findExamineeCountByExamId(examId);
+            Integer paperCount = stuExamService.findPaperCountByExamId(examId);
+            return "选择题、判断题与填空题已自动批阅完成，" +
+                    "共计" + examineeCount + "人"+paperCount + "份答卷！";
+        }
 
         // 4、若考生考试状态滞留为1，则将其考试状态强制置2
         UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
