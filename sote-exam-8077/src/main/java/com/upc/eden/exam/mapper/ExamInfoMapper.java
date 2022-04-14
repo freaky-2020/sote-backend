@@ -11,7 +11,6 @@ public interface ExamInfoMapper extends BaseMapper<ExamInfo> {
 
     @Select("select max(paper_id) from exam_info")
     public Integer findMaxPaperId();
-
 }
 
 

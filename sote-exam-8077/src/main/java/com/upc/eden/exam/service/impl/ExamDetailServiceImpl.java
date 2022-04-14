@@ -7,6 +7,7 @@ import com.upc.eden.exam.mapper.ExamDetailMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  *
@@ -21,6 +22,11 @@ public class ExamDetailServiceImpl extends ServiceImpl<ExamDetailMapper, ExamDet
     @Override
     public void autoMark1(Integer details) {
         examDetailMapper.autoMark1(details);
+    }
+
+    @Override
+    public List<Integer> findNonMarkPersonNum(Integer paperId) {
+        return examDetailMapper.findNonMarkPersonNum(paperId);
     }
 }
 

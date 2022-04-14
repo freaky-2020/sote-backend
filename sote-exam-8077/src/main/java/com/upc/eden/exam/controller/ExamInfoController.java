@@ -139,23 +139,50 @@ public class ExamInfoController {
         return res;
     }
 
-//    @ApiOperation("教师公布考试结果，返回message提示")
-//    @GetMapping("/publish/{examId}")
-//    public String publish(@PathVariable Integer examId) {
-//
-//        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
-//        examInfoQueryWrapper.eq("exam_id", examId);
-//        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
-//        Integer paperId = examInfo.getPaperId();
-//        Integer isPublic = examInfo.getIsPublic();
-//
-//        // 1、校验自动批阅是否完成
-//        if(isPublic == 0) return "请您至少在自动批阅后再尝试公布考试结果！";
-//
-//        // 2、校验是否全部批阅完成
-//        QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
-//        examDetailQueryWrapper.eq("paper_id", paperId);
-//        examDetailQueryWrapper.eq("is_mark", 0);
-//        List<ExamDetail> examDetails = examDetailService.list(examDetailQueryWrapper);
-//    }
+    @ApiOperation("教师尝试公布考试结果，返回message")
+    @GetMapping("/try/publish/{examId}")
+    @ApiImplicitParams({@ApiImplicitParam(name = "examId", value = "考试信息Id", paramType = "path")})
+    public String tryPublish(@PathVariable Integer examId) {
+
+        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+        examInfoQueryWrapper.eq("exam_id", examId);
+        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
+        Integer paperId = examInfo.getPaperId();
+        Integer isPublic = examInfo.getIsPublic();
+
+        // 1、校验自动批阅是否完成
+        if(isPublic == 0) return "请您至少在自动批阅后再尝试公布考试结果！";
+
+        // 2、校验是否全部批阅完成
+        QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
+        examDetailQueryWrapper.eq("paper_id", paperId);
+        examDetailQueryWrapper.eq("is_mark", 0);
+        List<ExamDetail> examDetails = examDetailService.list(examDetailQueryWrapper);
+        List<Integer> nonMarkPersonNum = examDetailService.findNonMarkPersonNum(paperId);
+        if (nonMarkPersonNum.size() > 0) {
+            return "仍有"+nonMarkPersonNum.size()+
+                    "名考生的简答题还未全部批阅，您确定要公布结果吗？公布后无法再次批阅与修改成绩！";
+        }
+
+        // 3、无误，执行批阅
+        UpdateWrapper<ExamInfo> examInfoUpdateWrapper = new UpdateWrapper<>();
+        examInfoUpdateWrapper.eq("exam_id", examId);
+        examInfoUpdateWrapper.set("is_public", 1);
+        examInfoService.update(examInfoUpdateWrapper);
+
+        return "成绩与答案已公开，请通知考生及时查看！";
+    }
+
+    @ApiOperation("教师公布考试结果，返回message提示")
+    @GetMapping("/publish/{examId}")
+    @ApiImplicitParams({@ApiImplicitParam(name = "examId", value = "考试信息Id", paramType = "path")})
+    public String publish(@PathVariable Integer examId) {
+
+        UpdateWrapper<ExamInfo> examInfoUpdateWrapper = new UpdateWrapper<>();
+        examInfoUpdateWrapper.eq("exam_id", examId);
+        examInfoUpdateWrapper.set("is_public", 1);
+        examInfoService.update(examInfoUpdateWrapper);
+
+        return "成绩与答案已公开，请通知考生及时查看！";
+    }
 }
