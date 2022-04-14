@@ -1,5 +1,6 @@
 package com.upc.eden.commen.clients;
 
+import com.upc.eden.commen.config.FeignRequestConfig;
 import com.upc.eden.commen.domain.bank.Question;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,7 @@ import java.util.List;
  * @Date: 2022/03/31/19:00
  * @Description:
  */
-@FeignClient(value = "gateway-service", contextId = "bank")
+@FeignClient(value = "gateway-service", contextId = "bank", configuration = FeignRequestConfig.class)
 public interface BankClient {
 
     @GetMapping("/bank/client/getQuesByIds")

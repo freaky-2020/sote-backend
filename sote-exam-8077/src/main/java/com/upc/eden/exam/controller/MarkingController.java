@@ -51,8 +51,7 @@ public class MarkingController {
     @ApiOperation("选择题、判断题与填空题的自动判分，返回alert消息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "examId", value = "考试Id", paramType = "path"),
-            @ApiImplicitParam(name = "rule", value = "多选题赋分规则:{1:选不全得0分 2:选不全得半分}"),
-            })
+            @ApiImplicitParam(name = "rule", value = "多选题赋分规则:{1:选不全得0分 2:选不全得半分}")})
     @GetMapping("/auto/{examId}")
     public String autoMark(@PathVariable Integer examId, Integer rule) {
 
@@ -66,13 +65,16 @@ public class MarkingController {
         ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String deadline = df.format(examInfo.getDeadline());
         if (ndf.format(new Date()).compareTo(deadline) < 0) {
-            return "考试未结束，无法批卷，请在 " + deadline + " 后提交请求！";
+            return "考试未结束，无法批阅，请在 " + deadline + " 后提交请求！";
         }
 
         // 2、界定考试是否公布，公布无法批卷
-        if(examInfo.getIsPublic()==1) return "考试结果已公布，无法批阅！";
+        if(examInfo.getIsPublic()==1) return "考试结果已公布，无法继续批阅！";
 
-        // 3、若考生考试状态滞留为1，则将其考试状态强制置2
+        // 3、界定考试是否已自动批阅，若是则不再重复执行
+        if(examInfo.getIsPublic()==7) return "自动批阅已完成，";
+
+        // 4、若考生考试状态滞留为1，则将其考试状态强制置2
         UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
         stuExamUpdateWrapper.eq("exam_id",examId);
         stuExamUpdateWrapper.eq("status", 1);
@@ -93,14 +95,14 @@ public class MarkingController {
             }
         }
 
-        // 4、若考生考试状态为0，则将其考试状态置-1
+        // 5、若考生考试状态为0，则将其考试状态置-1
         stuExamUpdateWrapper = new UpdateWrapper<>();
         stuExamUpdateWrapper.eq("exam_id", examId);
         stuExamUpdateWrapper.eq("status", 0);
         stuExamUpdateWrapper.set("status", -1);
         stuExamService.update(stuExamUpdateWrapper);
 
-        // 4、确认无误，执行自动批卷操作
+        // 6、确认无误，执行自动批卷操作
         stuExamQueryWrapper = new QueryWrapper<>();
         stuExamQueryWrapper.eq("exam_id", examId);
         stuExamQueryWrapper.eq("status", 2);
@@ -118,6 +120,7 @@ public class MarkingController {
                 for (ExamDetail examDetail: l1) {
                     if(examDetail != null) {
                         UpdateWrapper<ExamDetail> examDetailUpdateWrapper = new UpdateWrapper<>();
+                        examDetailUpdateWrapper.set("is_mark", 1);
                         examDetailUpdateWrapper.eq("id", examDetail.getId());
                         String answer = examDetail.getAnswer();
                         // 答案为空情况
@@ -157,6 +160,7 @@ public class MarkingController {
                 for (ExamDetail examDetail : l2) {
                     if (examDetail != null) {
                         UpdateWrapper<ExamDetail> examDetailUpdateWrapper = new UpdateWrapper<>();
+                        examDetailUpdateWrapper.set("is_mark", 1);
                         examDetailUpdateWrapper.eq("id", examDetail.getId());
                         String answer = examDetail.getAnswer();
                         // 答案为空情况
@@ -186,6 +190,13 @@ public class MarkingController {
                 }
             }
         }
+
+        // 7、isPublic置7表示自动批阅完成
+        UpdateWrapper<ExamInfo> examInfoUpdateWrapper = new UpdateWrapper<>();
+        examInfoUpdateWrapper.eq("exam_id", examId);
+        examInfoUpdateWrapper.set("is_public", 7);
+        examInfoService.update(examInfoUpdateWrapper);
+
         // 多少人、多少份
         Integer examineeCount = stuExamService.findExamineeCountByExamId(examId);
         Integer paperCount = stuExamService.findPaperCountByExamId(examId);
@@ -307,6 +318,7 @@ public class MarkingController {
         UpdateWrapper<ExamDetail> examDetailUpdateWrapper = new UpdateWrapper<>();
         examDetailUpdateWrapper.eq("id", id);
         examDetailUpdateWrapper.set("score", score);
+        examDetailUpdateWrapper.set("is_mark", 1);
         boolean res = examDetailService.update(examDetailUpdateWrapper);
         if (res) return "批阅成功";
         else return "保存失败，请稍后再试";

@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface ExamDetailMapper extends BaseMapper<ExamDetail> {
 
-    @Select("update exam_detail set score = if(answer = real_answer, max_score, 0) " +
+    @Select("update exam_detail set score = if(answer = real_answer, max_score, 0), is_mark = 1 " +
             "where details = #{details} and (type_id = 1 or type_id = 3)")
     void autoMark1(Integer details);
 }

@@ -24,6 +24,9 @@ secure:
       - "/auth/swagger-ui/**"
       - "/bank/swagger-ui/**"
       - "/exam/swagger-ui/**"
+      - "/auth/client/**"
+      - "/bank/client/**"
+      - "/exam/client/**"
 #      - "/**"
 ribbon:
   eager-load:

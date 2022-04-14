@@ -14,11 +14,12 @@
             <result property="realAnswer" column="real_answer" jdbcType="VARCHAR"/>
             <result property="maxScore" column="max_score" jdbcType="INTEGER"/>
             <result property="score" column="score" jdbcType="INTEGER"/>
+            <result property="isMark" column="is_mark" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,details,paper_id,
         ques_no,type_id,answer,
-        real_answer,max_score,score
+        real_answer,max_score,score,is_mark
     </sql>
 </mapper>

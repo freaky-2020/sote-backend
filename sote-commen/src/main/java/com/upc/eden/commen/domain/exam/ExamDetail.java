@@ -38,6 +38,8 @@ public class ExamDetail implements Serializable {
     private Integer maxScore;
     @ApiModelProperty(value = "考生得分", example = "0")
     private Integer score;
+    @ApiModelProperty(value = "是否批阅", example = "0")
+    private Integer isMark;
 
     private static final long serialVersionUID = 1L;
 
@@ -71,7 +73,8 @@ public class ExamDetail implements Serializable {
             && (this.getAnswer() == null ? other.getAnswer() == null : this.getAnswer().equals(other.getAnswer()))
             && (this.getRealAnswer() == null ? other.getRealAnswer() == null : this.getRealAnswer().equals(other.getRealAnswer()))
             && (this.getMaxScore() == null ? other.getMaxScore() == null : this.getMaxScore().equals(other.getMaxScore()))
-            && (this.getScore() == null ? other.getScore() == null : this.getScore().equals(other.getScore()));
+            && (this.getScore() == null ? other.getScore() == null : this.getScore().equals(other.getScore()))
+            && (this.getIsMark() == null ? other.getIsMark() == null : this.getIsMark().equals(other.getIsMark()));
     }
 
     @Override
@@ -87,6 +90,7 @@ public class ExamDetail implements Serializable {
         result = prime * result + ((getRealAnswer() == null) ? 0 : getRealAnswer().hashCode());
         result = prime * result + ((getMaxScore() == null) ? 0 : getMaxScore().hashCode());
         result = prime * result + ((getScore() == null) ? 0 : getScore().hashCode());
+        result = prime * result + ((getIsMark() == null) ? 0 : getIsMark().hashCode());
         return result;
     }
 
@@ -105,6 +109,7 @@ public class ExamDetail implements Serializable {
         sb.append(", realAnswer=").append(realAnswer);
         sb.append(", maxScore=").append(maxScore);
         sb.append(", score=").append(score);
+        sb.append(", isMark=").append(isMark);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
