@@ -21,6 +21,12 @@ secure:
       - "/actuator/**"
       - "/auth/oauth/token"
       - "/auth/rsa/publicKey"
+      - "/auth/swagger-ui/**"
+      - "/bank/swagger-ui/**"
+      - "/exam/swagger-ui/**"
+      - "/auth/client/**"
+      - "/exam/client/**"
+      - "/exam/client/**"
       - "/**"
 ribbon:
   eager-load:

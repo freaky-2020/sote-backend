@@ -3,8 +3,10 @@ package com.upc.eden.exam.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.upc.eden.commen.clients.AuthClient;
+import com.upc.eden.commen.domain.exam.ExamDetail;
 import com.upc.eden.commen.domain.exam.ExamInfo;
 import com.upc.eden.exam.api.ExamInfoApi;
+import com.upc.eden.exam.service.ExamDetailService;
 import com.upc.eden.exam.service.ExamInfoService;
 import com.upc.eden.exam.tool.RandomSecret;
 import io.swagger.annotations.Api;
@@ -31,6 +33,8 @@ public class ExamInfoController {
 
     @Resource
     private ExamInfoService examInfoService;
+    @Resource
+    private ExamDetailService examDetailService;
     @Resource
     private AuthClient authClient;
     @Resource
@@ -134,4 +138,24 @@ public class ExamInfoController {
         }
         return res;
     }
+
+//    @ApiOperation("教师公布考试结果，返回message提示")
+//    @GetMapping("/publish/{examId}")
+//    public String publish(@PathVariable Integer examId) {
+//
+//        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+//        examInfoQueryWrapper.eq("exam_id", examId);
+//        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
+//        Integer paperId = examInfo.getPaperId();
+//        Integer isPublic = examInfo.getIsPublic();
+//
+//        // 1、校验自动批阅是否完成
+//        if(isPublic == 0) return "请您至少在自动批阅后再尝试公布考试结果！";
+//
+//        // 2、校验是否全部批阅完成
+//        QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
+//        examDetailQueryWrapper.eq("paper_id", paperId);
+//        examDetailQueryWrapper.eq("is_mark", 0);
+//        List<ExamDetail> examDetails = examDetailService.list(examDetailQueryWrapper);
+//    }
 }

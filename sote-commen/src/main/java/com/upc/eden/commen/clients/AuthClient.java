@@ -1,5 +1,6 @@
 package com.upc.eden.commen.clients;
 
+import com.upc.eden.commen.config.FeignRequestConfig;
 import com.upc.eden.commen.domain.auth.SecurityUser;
 import com.upc.eden.commen.domain.auth.User;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @Description:
  */
 
-@FeignClient(value = "gateway-service", contextId = "auth")
+@FeignClient(value = "gateway-service", contextId = "auth", configuration = FeignRequestConfig.class)
 public interface AuthClient {
 
     @GetMapping("/auth/client/get")
