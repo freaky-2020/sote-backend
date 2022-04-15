@@ -21,7 +21,6 @@ secure:
       - "/actuator/**"
       - "/auth/oauth/token"
       - "/auth/rsa/publicKey"
-      - "/auth/**"
       - "/bank/**"
       - "/exam/**"
       - "/auth/client/**"
