@@ -32,4 +32,6 @@ public class ExamResultsApi {
     private Integer totalScore;
     @ApiModelProperty(value = "试卷满分", example = "80")
     private Integer maxScore;
+    @ApiModelProperty(value = "排名", example = "1")
+    private Integer rank;
 }

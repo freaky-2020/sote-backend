@@ -259,6 +259,7 @@ public class ExamInfoController {
             res.add(now);
         }
         Collections.sort(res, (r1, r2) -> (r2.getMaxScore()-r1.getMaxScore()));
+        for (int i=0; i<res.size(); i++) res.get(i).setRank(i+1);
         return res;
     }
 }

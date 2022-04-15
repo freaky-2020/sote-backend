@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,6 +16,8 @@ import java.util.Date;
  * @TableName bank_require
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @ApiModel(description = "题目变动申请实体类")
 public class BankRequire implements Serializable {
 
@@ -49,6 +53,20 @@ public class BankRequire implements Serializable {
     private Date requireTime;
 
     private static final long serialVersionUID = 1L;
+
+    public BankRequire(Question question) {
+        this.quesId = question.getId();
+        this.subjectId = question.getSubjectId();
+        this.typeId = question.getTypeId();
+        this.difficultyId = question.getDifficultyId();
+        this.stem = question.getStem();
+        this.choice1 = question.getChoice1();
+        this.choice2 = question.getChoice2();
+        this.choice3 = question.getChoice3();
+        this.choice4 = question.getChoice4();
+        this.answer = question.getAnswer();
+        this.remark = question.getRemark();
+    }
 
     @Override
     public boolean equals(Object that) {
