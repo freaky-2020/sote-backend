@@ -92,7 +92,7 @@ public class MarkingController {
         if(list.size() > 0) {
             for (StuExam each: list) {
                 if(each != null) {
-                    String tTime = ndf.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
+                    String tTime = df.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
                     String submitTime = tTime.compareTo(deadline) < 0 ? tTime : deadline;
                     stuExamUpdateWrapper.set("submit_time", submitTime);
                     stuExamService.update(stuExamUpdateWrapper);
@@ -253,7 +253,7 @@ public class MarkingController {
         if(list.size() > 0) {
             for (StuExam each: list) {
                 if(each != null) {
-                    String tTime = ndf.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
+                    String tTime = df.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
                     String submitTime = tTime.compareTo(deadline) < 0 ? tTime : deadline;
                     stuExamUpdateWrapper.set("submit_time", submitTime);
                     stuExamService.update(stuExamUpdateWrapper);
@@ -309,7 +309,7 @@ public class MarkingController {
     @ApiOperation("简答题打分，返回message")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "某次作答记录Id", paramType = "path"),
-            @ApiImplicitParam(name = "score", value = "打分", paramType = "path")})
+            @ApiImplicitParam(name = "score", value = "打分")})
     @GetMapping("/markScore/{id}")
     public String markScore(@PathVariable Integer id, Integer score) {
 
