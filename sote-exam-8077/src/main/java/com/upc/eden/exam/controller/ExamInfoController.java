@@ -3,11 +3,17 @@ package com.upc.eden.exam.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.upc.eden.commen.clients.AuthClient;
+import com.upc.eden.commen.domain.auth.User;
 import com.upc.eden.commen.domain.exam.ExamDetail;
 import com.upc.eden.commen.domain.exam.ExamInfo;
+import com.upc.eden.commen.domain.exam.Paper;
+import com.upc.eden.commen.domain.exam.StuExam;
 import com.upc.eden.exam.api.ExamInfoApi;
+import com.upc.eden.exam.api.ExamResultsApi;
 import com.upc.eden.exam.service.ExamDetailService;
 import com.upc.eden.exam.service.ExamInfoService;
+import com.upc.eden.exam.service.PaperService;
+import com.upc.eden.exam.service.StuExamService;
 import com.upc.eden.exam.tool.RandomSecret;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -35,6 +41,10 @@ public class ExamInfoController {
     private ExamInfoService examInfoService;
     @Resource
     private ExamDetailService examDetailService;
+    @Resource
+    private StuExamService stuExamService;
+    @Resource
+    private PaperService paperService;
     @Resource
     private AuthClient authClient;
     @Resource
@@ -130,7 +140,6 @@ public class ExamInfoController {
             if(record != null) {
                 System.out.println(record.getStartTime());
                 if (record.getIsPublic()==1) res.get(3).add(record);
-                if (record.getIsPublic()==1) res.get(3).add(record);
                 else if (date.compareTo(df.format(record.getStartTime()))<0) res.get(0).add(record);
                 else if(date.compareTo(df.format(record.getDeadline()))>0) res.get(2).add(record);
                 else res.get(1).add(record);
@@ -140,8 +149,8 @@ public class ExamInfoController {
     }
 
     @ApiOperation("教师尝试公布考试结果，返回message")
-    @GetMapping("/try/publish/{examId}")
     @ApiImplicitParams({@ApiImplicitParam(name = "examId", value = "考试信息Id", paramType = "path")})
+    @GetMapping("/try/publish/{examId}")
     public String tryPublish(@PathVariable Integer examId) {
 
         QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
@@ -154,10 +163,6 @@ public class ExamInfoController {
         if(isPublic == 0) return "请您至少在自动批阅后再尝试公布考试结果！";
 
         // 2、校验是否全部批阅完成
-        QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
-        examDetailQueryWrapper.eq("paper_id", paperId);
-        examDetailQueryWrapper.eq("is_mark", 0);
-        List<ExamDetail> examDetails = examDetailService.list(examDetailQueryWrapper);
         List<Integer> nonMarkPersonNum = examDetailService.findNonMarkPersonNum(paperId);
         if (nonMarkPersonNum.size() > 0) {
             return "仍有"+nonMarkPersonNum.size()+
@@ -184,5 +189,76 @@ public class ExamInfoController {
         examInfoService.update(examInfoUpdateWrapper);
 
         return "成绩与答案已公开，请通知考生及时查看！";
+    }
+
+    @ApiOperation("教师获取某考试各考生得分情况，返回message")
+    @ApiImplicitParams({@ApiImplicitParam(name = "examId", value = "考试信息Id", paramType = "path")})
+    @GetMapping("/result/{examId}")
+    public List<ExamResultsApi> getResults(@PathVariable Integer examId) {
+
+        List<ExamResultsApi> res = new ArrayList<>();
+
+        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+        examInfoQueryWrapper.eq("exam_id", examId);
+        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
+        Integer paperId = examInfo.getPaperId();
+        QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
+        paperQueryWrapper.eq("paper_id", paperId);
+        List<Paper> papers = paperService.list(paperQueryWrapper);
+        Integer maxScore = 0;
+        Integer maxNonSynScore = 0;
+        Integer maxSynScore = 0;
+        for (Paper paper: papers) {
+            if(paper.getTypeId()!=5) maxNonSynScore += paper.getScore();
+            else maxSynScore += paper.getScore();
+        }
+        maxScore = maxNonSynScore + maxSynScore;
+
+        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+        stuExamQueryWrapper.eq("exam_id", examId);
+        // 只返第一次，记录
+        stuExamQueryWrapper.eq("present_time", 1);
+        List<StuExam> stuExams = stuExamService.list(stuExamQueryWrapper);
+        for (StuExam stuExam: stuExams) {
+            if(stuExam == null) continue;
+            Integer examineeId = stuExam.getExamineeId();
+            User user = authClient.getInfoByUserName(examineeId.toString());
+            ExamResultsApi now = new ExamResultsApi();
+            now.setUser(user);
+            now.setMaxNonSynScore(maxNonSynScore);
+            now.setMaxSynScore(maxSynScore);
+            now.setMaxScore(maxScore);
+            // 缺考
+            if (stuExam.getStatus() != 2) {
+                now.setStatus(0);
+                now.setNonSynScore(-1);
+                now.setSynScore(-1);
+                now.setTotalScore(-1);
+                res.add(now);
+                continue;
+            }
+            // 已考
+            Integer details = stuExam.getDetails();
+            QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
+            examDetailQueryWrapper.eq("details", details);
+            List<ExamDetail> detail = examDetailService.list(examDetailQueryWrapper);
+            Integer nonSynScore = 0;
+            Integer synScore = 0;
+            Integer totalScore = 0;
+            for (ExamDetail examDetail: detail) {
+                if (examDetail == null) continue;
+                Integer typeId = examDetail.getTypeId();
+                if(typeId==5) synScore += examDetail.getScore();
+                else nonSynScore += examDetail.getScore();
+            }
+            totalScore = nonSynScore + synScore;
+            now.setStatus(1);
+            now.setSynScore(synScore);
+            now.setNonSynScore(nonSynScore);
+            now.setTotalScore(totalScore);
+            res.add(now);
+        }
+        Collections.sort(res, (r1, r2) -> (r2.getMaxScore()-r1.getMaxScore()));
+        return res;
     }
 }

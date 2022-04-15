@@ -8,6 +8,7 @@ import com.upc.eden.commen.domain.exam.ExamInfo;
 import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.commen.domain.exam.StuExam;
 import com.upc.eden.exam.api.ExamAndStuApi;
+import com.upc.eden.exam.api.ExamResultApi;
 import com.upc.eden.exam.api.FindAllExamOfStuApi;
 import com.upc.eden.exam.service.ExamDetailService;
 import com.upc.eden.exam.service.ExamInfoService;
@@ -122,7 +123,7 @@ public class StuExamController {
                         stuExamUpdateWrapper.eq("exam_id", each.getExamId());
                         stuExamUpdateWrapper.eq("present_time", each.getPresentTime());
                         stuExamUpdateWrapper.set("status", 2);
-                        String tTime = ndf.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
+                        String tTime = df.format(new Date(each.getStartTime().getTime() + durationTime*60*1000));
                         String dead = df.format(info.getDeadline());
                         String submitTime = tTime.compareTo(dead) < 0 ? tTime : dead;
                         stuExamUpdateWrapper.set("submit_time", submitTime);
@@ -220,7 +221,7 @@ public class StuExamController {
                 stuExamUpdateWrapper.eq("exam_id", item.getExamId());
                 stuExamUpdateWrapper.eq("present_time", item.getPresentTime());
                 stuExamUpdateWrapper.set("status", 2);
-                String tTime = ndf.format(new Date(item.getStartTime().getTime() + durationTime * 60 * 1000));
+                String tTime = df.format(new Date(item.getStartTime().getTime() + durationTime * 60 * 1000));
                 String submitTime = tTime.compareTo(dead) < 0 ? tTime : dead;
                 stuExamUpdateWrapper.set("submit_time", submitTime);
                 stuExamService.update(stuExamUpdateWrapper);
@@ -297,12 +298,89 @@ public class StuExamController {
         String now = ndf.format(new Date());
         Integer durationTime = examInfo.getDurationTime();
         String deadLine = df.format(examInfo.getDeadline());
-        String compareTime = ndf.format(new Date(stuExam.getStartTime().getTime() + durationTime * 60 * 1000));
+        String compareTime = df.format(new Date(stuExam.getStartTime().getTime() + durationTime * 60 * 1000));
         String submitTime = now.compareTo(compareTime) < 0 ? now : compareTime;
         submitTime = submitTime.compareTo(deadLine) < 0 ? submitTime : deadLine;
         stuExamUpdateWrapper.set("submit_time", submitTime);
         stuExamService.update(stuExamUpdateWrapper);
 
-        return "提交成功！";
+        return "提交成功！您可在教师公布考试结果后查看您的作答情况！";
     }
+
+    @ApiOperation("考生查看自己的考试成绩：返回他作答情况的一个数组")
+    @GetMapping("/getRes/{userName}/{examId}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userName", value = "考生账号", paramType = "path"),
+            @ApiImplicitParam(name = "examId", value = "考试号", paramType = "path"),
+    })
+    public List<ExamResultApi> getMyExamRes(@PathVariable Integer userName,
+                                            @PathVariable Integer examId) {
+
+        List<ExamResultApi> res = new ArrayList<>();
+
+        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+        examInfoQueryWrapper.eq("exam_id", examId);
+        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
+        Integer paperId = examInfo.getPaperId();
+        QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
+        paperQueryWrapper.eq("paper_id", paperId);
+        List<Paper> papers = paperService.list(paperQueryWrapper);
+        Integer maxScore = 0;
+        Integer maxNonSynScore = 0;
+        Integer maxSynScore = 0;
+        for (Paper paper: papers) {
+            if(paper.getTypeId()!=5) maxNonSynScore += paper.getScore();
+            else maxSynScore += paper.getScore();
+        }
+        maxScore = maxNonSynScore + maxSynScore;
+        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+        stuExamQueryWrapper.eq("examinee_id", userName);
+        stuExamQueryWrapper.eq("exam_id", examId);
+        stuExamQueryWrapper.orderBy(true, true, "present_time");
+
+        List<StuExam> times = stuExamService.list(stuExamQueryWrapper);
+        if(times.size() != 0) {
+            for (StuExam time: times) {
+                if(time != null) {
+                    if (time.getStatus() != 2) {
+                        ExamResultApi examResultApi = new ExamResultApi();
+                        examResultApi.setPapers(papers);
+                        examResultApi.setStatus(0);
+                        examResultApi.setExamDetails(null);
+                        examResultApi.setMaxNonSynScore(maxNonSynScore);
+                        examResultApi.setMaxSynScore(maxSynScore);
+                        examResultApi.setMaxScore(maxScore);
+                        examResultApi.setNonSynScore(0);
+                        examResultApi.setSynScore(0);
+                        examResultApi.setTotalScore(0);
+                        continue;
+                    }
+                    Integer details = time.getDetails();
+                    QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
+                    examDetailQueryWrapper.eq("details", details);
+                    List<ExamDetail> examDetails = examDetailService.list(examDetailQueryWrapper);
+                    Integer nonSynScore = 0;
+                    Integer synScore = 0;
+                    for (ExamDetail examDetail: examDetails) {
+                        if (examDetail.getTypeId() != 5) nonSynScore += examDetail.getScore();
+                        else synScore += examDetail.getScore();
+                    }
+                    ExamResultApi examResultApi = new ExamResultApi();
+                    examResultApi.setPapers(papers);
+                    examResultApi.setExamDetails(examDetails);
+                    examResultApi.setMaxNonSynScore(maxNonSynScore);
+                    examResultApi.setMaxSynScore(maxSynScore);
+                    examResultApi.setMaxScore(maxScore);
+                    examResultApi.setNonSynScore(nonSynScore);
+                    examResultApi.setSynScore(synScore);
+                    examResultApi.setTotalScore(nonSynScore+synScore);
+
+                    res.add(examResultApi);
+                }
+            }
+        }
+        return res;
+    }
+
+
 }
