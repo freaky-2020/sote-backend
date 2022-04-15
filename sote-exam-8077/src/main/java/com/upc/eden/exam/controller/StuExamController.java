@@ -228,6 +228,7 @@ public class StuExamController {
                 resMap.put("检测到您上次考试异常退出且已超时，已为您强制交卷，请再次提交新一次考试请求！", null);
                 return resMap;
             } else {
+                item = stuExamService.getOne(stuExamQueryWrapper);
                 api.setStuExam(item);
                 resMap.put("success", api);
                 return resMap;
@@ -260,6 +261,8 @@ public class StuExamController {
         String theNow = ndf.format(new Date());
         stuExamUpdateWrapper.set("start_time", theNow);
         stuExamService.update(stuExamUpdateWrapper);
+
+        item = stuExamService.getOne(stuExamQueryWrapper);
         api.setStuExam(item);
         resMap.put("success", api);
         return resMap;
