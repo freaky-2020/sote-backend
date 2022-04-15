@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -16,11 +17,12 @@ import java.util.Date;
  * @TableName question
  */
 @Data
+@NoArgsConstructor
 @ApiModel(description = "题目实体类")
 public class Question implements Serializable {
 
     @TableId(value = "id",type = IdType.AUTO)
-    @ApiModelProperty(value = "题目Id", example = "1", hidden = true)
+    @ApiModelProperty(value = "题目Id", example = "1")
     private Integer id;
     @ApiModelProperty(value = "科目Id", example = "1")
     private Integer subjectId;
@@ -44,14 +46,26 @@ public class Question implements Serializable {
     private String remark;
     @ApiModelProperty(value = "题目创建日期：格式为 yyyy-MM-dd", example = "2022-03-30", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createTime;
     @ApiModelProperty(value = "题目更新日期：格式为 yyyy-MM-dd", example = "2022-05-29", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date updateTime;
 
     private static final long serialVersionUID = 1L;
+
+    public Question(BankRequire bankRequire) {
+        this.subjectId = bankRequire.getSubjectId();
+        this.typeId = bankRequire.getTypeId();
+        this.difficultyId = bankRequire.getDifficultyId();
+        this.stem = bankRequire.getStem();
+        this.choice1 = bankRequire.getChoice1();
+        this.choice2 = bankRequire.getChoice2();
+        this.choice3 = bankRequire.getChoice3();
+        this.choice4 = bankRequire.getChoice4();
+        this.remark = bankRequire.getRemark();
+    }
 
     @Override
     public boolean equals(Object that) {

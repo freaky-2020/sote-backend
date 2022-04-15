@@ -1,15 +1,30 @@
 package com.upc.eden.bank.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.upc.eden.bank.api.UpdateApi;
 import com.upc.eden.bank.service.BankRequireService;
+import com.upc.eden.bank.service.QuestionService;
 import com.upc.eden.commen.domain.bank.BankRequire;
 import com.upc.eden.commen.domain.bank.Question;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
+import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
 /**
  * @Author: CS Dong
@@ -23,13 +38,115 @@ public class RequiredController {
 
     @Resource
     private BankRequireService bankRequireService;
+    @Resource
+    private QuestionService questionService;
 
-//    @GetMapping("/{userName}/add")
-//    public String add(@PathVariable Integer userName, Question question) {
+    @ApiOperation("向试题库中添加题目的申请，返回message")
+    @ApiImplicitParams({@ApiImplicitParam(name = "userName", value = "账号", paramType = "path")})
+    @GetMapping("/{userName}/add")
+    public String add(@PathVariable Integer userName, Question question) throws ParseException {
+
+        BankRequire bankRequire = new BankRequire(question);
+        bankRequire.setDoWay(1);
+        bankRequire.setRequestUserName(userName);
+        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        Date requireTime = ndf.parse(ndf.format(new Date()));
+        bankRequire.setRequireTime(requireTime);
+        bankRequireService.save(bankRequire);
+        return "添加题目申请成功，请留意个人中心的消息通知！";
+    }
+
+    @ApiOperation("修改试题库中题目的申请，返回message")
+    @ApiImplicitParams({@ApiImplicitParam(name = "userName", value = "账号", paramType = "path")})
+    @GetMapping("/{userName}/update")
+    public String update(@PathVariable Integer userName, Question question) throws ParseException {
+
+        BankRequire bankRequire = new BankRequire(question);
+        bankRequire.setDoWay(2);
+        bankRequire.setRequestUserName(userName);
+        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        Date requireTime = ndf.parse(ndf.format(new Date()));
+        bankRequire.setRequireTime(requireTime);
+        bankRequireService.save(bankRequire);
+        return "修改题目申请成功，请留意个人中心的消息通知！";
+    }
+
+    @ApiOperation("删除试题库中题目的申请，返回message")
+    @ApiImplicitParams({@ApiImplicitParam(name = "userName", value = "账号", paramType = "path")})
+    @GetMapping("/{userName}/delete")
+    public String delete(@PathVariable Integer userName, Question question) throws ParseException {
+
+        BankRequire bankRequire = new BankRequire(question);
+        bankRequire.setDoWay(3);
+        bankRequire.setRequestUserName(userName);
+        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        Date requireTime = ndf.parse(ndf.format(new Date()));
+        bankRequire.setRequireTime(requireTime);
+        bankRequireService.save(bankRequire);
+        return "删除题目申请成功，请留意个人中心的消息通知！";
+    }
+
+    @ApiOperation("获取添加题目的所有申请实体")
+    @GetMapping("/getRequire/add")
+    public List<BankRequire> getAdd() {
+
+        QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
+        bankRequireQueryWrapper.eq("do_way", 1);
+        List<BankRequire> res = bankRequireService.list(bankRequireQueryWrapper);
+        return res;
+    }
+
+    @ApiOperation("获取修改题目的所有申请实体：{ before:原题目 after:拟修改题目 }")
+    @GetMapping("/getRequire/update")
+    public List<UpdateApi> getUpdate() {
+
+        List<UpdateApi> res = new ArrayList<>();
+
+        QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
+        bankRequireQueryWrapper.eq("do_way", 1);
+        List<BankRequire> list = bankRequireService.list(bankRequireQueryWrapper);
+        for(BankRequire b: list) {
+            if (b==null) continue;
+            Integer quesId = b.getQuesId();
+            QueryWrapper<Question> questionQueryWrapper = new QueryWrapper<>();
+            questionQueryWrapper.eq("id", quesId);
+            Question ques = questionService.getOne(questionQueryWrapper);
+            UpdateApi updateApi = new UpdateApi();
+            updateApi.setBefore(ques);
+            updateApi.setAfter(b);
+            res.add(updateApi);
+        }
+        return res;
+    }
+
+    @ApiOperation("获取删除题目的所有申请实体")
+    @GetMapping("/getRequire/delete")
+    public List<BankRequire> getDelete() {
+
+        QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
+        bankRequireQueryWrapper.eq("do_way", 3);
+        List<BankRequire> res = bankRequireService.list(bankRequireQueryWrapper);
+        return res;
+    }
+
+//    @ApiOperation("裁决增加题目的申请，返回message")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "bankRequire", value = "回传体"),
+//            @ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
+//    @GetMapping("/judge/add")
+//    public String judgeAdd(BankRequire bankRequire, Integer decision) {
 //
-//        BankRequire bankRequire = new BankRequire(question);
-//        bankRequire.setDoWay(1);
-//        bankRequire.setRequestUserName(userName);
-//        bankRequire.
+//        Integer id = bankRequire.getId();
+//        UpdateWrapper<BankRequire> bankRequireUpdateWrapper = new UpdateWrapper<>();
+//        bankRequireUpdateWrapper.eq("id", id);
+//        bankRequireUpdateWrapper.set("do_way", -1);
+//        bankRequireService.update(bankRequireUpdateWrapper);
+//
+//        if (decision == 0) return "已驳回！";
+//
+//        Question question = new Question(bankRequire);
 //    }
 }

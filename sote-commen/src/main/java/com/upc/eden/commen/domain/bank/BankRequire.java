@@ -2,11 +2,13 @@ package com.upc.eden.commen.domain.bank;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -50,6 +52,8 @@ public class BankRequire implements Serializable {
     @ApiModelProperty(value = "答案解析", example = "牛角是钝角")
     private String remark;
     @ApiModelProperty(value = "申请时间", hidden = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date requireTime;
 
     private static final long serialVersionUID = 1L;
