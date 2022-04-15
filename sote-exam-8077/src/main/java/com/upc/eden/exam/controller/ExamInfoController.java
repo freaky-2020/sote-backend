@@ -252,7 +252,7 @@ public class ExamInfoController {
                 else nonSynScore += examDetail.getScore();
             }
             totalScore = nonSynScore + synScore;
-            now.setStatus(1);
+            now.setStatus(stuExam.getCheat() == 1 ? -1 : 1);
             now.setSynScore(synScore);
             now.setNonSynScore(nonSynScore);
             now.setTotalScore(totalScore);

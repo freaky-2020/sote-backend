@@ -163,6 +163,9 @@ public class StuExamController {
                 else res.get(1).add(each);
             }
         }
+        for (List<FindAllExamOfStuApi> e: res) Collections.sort
+                (e, (r1, r2) -> r1.getExamInfo().getStartTime().
+                        compareTo(r1.getExamInfo().getStartTime()));
         return res;
     }
 

@@ -217,6 +217,7 @@ public class MarkingController {
         QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
         paperQueryWrapper.eq("paper_id", paperId);
         paperQueryWrapper.eq("type_id", 5);
+        paperQueryWrapper.orderBy(true, true, "ques_no");
         List<Paper> questions = paperService.list(paperQueryWrapper);
         return questions;
     }
