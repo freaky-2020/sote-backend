@@ -34,7 +34,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Bank服务接口文档")
-                .version("1.3")
+                .version("1.5")
                 .build();
     }
 }
