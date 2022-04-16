@@ -165,8 +165,10 @@ public class RequiredController {
 
     @ApiOperation("裁决修改题目的申请，返回message")
     @ApiImplicitParams({@ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
-    @PostMapping("/judge/update")
-    public String judgeUpdate(@RequestBody BankRequire bankRequire, Integer decision) {
+    @PostMapping("/judge/update/{decision}")
+    public String judgeUpdate(@RequestBody List<BankRequire> bankRequires, @PathVariable Integer decision) {
+
+        BankRequire bankRequire = bankRequires.get(0);
 
         // 判断是否已经被处理
         QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
