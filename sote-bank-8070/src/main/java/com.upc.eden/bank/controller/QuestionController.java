@@ -4,16 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.upc.eden.bank.service.QuestionService;
-import com.upc.eden.commen.domain.auth.User;
 import com.upc.eden.commen.domain.bank.Question;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * @Author: CS Dong
@@ -137,17 +133,14 @@ public class QuestionController {
      * /bank/question/add
      * @param question 需要添加的试题信息
      * @return 添加是否很成功，true or false
-     * @throws ParseException 时间转换异常
      */
 
     @PostMapping("/add")
     @ApiOperation("向试题库中添加题目")
-    public boolean add(Question question) throws ParseException {
+    public boolean add(Question question) {
 
-        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd");
-        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-        question.setCreateTime(ndf.parse(ndf.format(new Date())));
-        question.setUpdateTime(ndf.parse(ndf.format(new Date())));
+        question.setCreateTime(new Date(new Date().getTime() + 8 * 60 * 60 * 1000));
+        question.setUpdateTime(new Date(new Date().getTime() + 8 * 60 * 60 * 1000));
         boolean res = questionService.save(question);
         return res;
     }
@@ -160,11 +153,9 @@ public class QuestionController {
      */
     @PutMapping("/update")
     @ApiOperation("更新试题库题目：以id为索引标准，即id不可修改")
-    public boolean update(Question question) throws ParseException {
+    public boolean update(Question question) {
 
-        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd");
-        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-        question.setUpdateTime(ndf.parse(ndf.format(new Date())));
+        question.setUpdateTime(new Date(new Date().getTime() + 8 * 60 * 60 * 1000));
         UpdateWrapper<Question> wrapper = new UpdateWrapper<>();
         wrapper.eq("id", question.getId());
         boolean res = questionService.update(question, wrapper);
