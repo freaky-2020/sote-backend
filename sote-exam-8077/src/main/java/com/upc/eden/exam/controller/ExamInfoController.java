@@ -10,6 +10,7 @@ import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.commen.domain.exam.StuExam;
 import com.upc.eden.exam.api.ExamInfoApi;
 import com.upc.eden.exam.api.ExamResultsApi;
+import com.upc.eden.exam.api.UserApi;
 import com.upc.eden.exam.service.ExamDetailService;
 import com.upc.eden.exam.service.ExamInfoService;
 import com.upc.eden.exam.service.PaperService;
@@ -145,6 +146,29 @@ public class ExamInfoController {
                 else res.get(1).add(record);
             }
         }
+        return res;
+    }
+
+    @ApiOperation("获取某场考试全部参考学生的信息，alreadyTime是已考次数")
+    @ApiImplicitParams({@ApiImplicitParam(name = "examId", value = "考试信息Id", paramType = "path")})
+    @GetMapping("/stu/{examId}")
+    public List<UserApi> gerAllStuInfo(@PathVariable Integer examId) {
+
+        List<UserApi> res = new ArrayList<>();
+
+        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+        stuExamQueryWrapper.eq("exam_id", examId);
+        List<StuExam> list = stuExamService.list(stuExamQueryWrapper);
+        for (StuExam stuExam: list) {
+            if (stuExam != null) {
+                Integer examineeId = stuExam.getExamineeId();
+                User user = authClient.getInfoByUserName(examineeId.toString());
+                Integer finishedTime = stuExamService.findFinishedTime(examineeId, examId);
+                UserApi userApi = new UserApi(user, finishedTime);
+                res.add(userApi);
+            }
+        }
+        Collections.sort(res, (r1, r2) -> (r2.getAlreadyTime()-r1.getAlreadyTime()));
         return res;
     }
 

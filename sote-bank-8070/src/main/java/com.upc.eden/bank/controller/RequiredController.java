@@ -143,9 +143,7 @@ public class RequiredController {
     }
 
     @ApiOperation("裁决增加题目的申请，返回message")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "bankRequire", value = "回传体"),
-            @ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
     @GetMapping("/judge/add")
     public String judgeAdd(BankRequire bankRequire, Integer decision) {
 
@@ -165,9 +163,7 @@ public class RequiredController {
     }
 
     @ApiOperation("裁决修改题目的申请，返回message")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "bankRequire", value = "after回传体"),
-            @ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
     @GetMapping("/judge/update")
     public String judgeUpdate(BankRequire bankRequire, Integer decision) {
 
@@ -189,9 +185,7 @@ public class RequiredController {
     }
 
     @ApiOperation("裁决删除题目的申请，返回message")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "bankRequire", value = "回传体"),
-            @ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
     @GetMapping("/judge/delete")
     public String judgeDelete(BankRequire bankRequire, Integer decision) {
 
