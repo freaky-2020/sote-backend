@@ -64,6 +64,7 @@ public class Question implements Serializable {
         this.choice2 = bankRequire.getChoice2();
         this.choice3 = bankRequire.getChoice3();
         this.choice4 = bankRequire.getChoice4();
+        this.answer = bankRequire.getAnswer();
         this.remark = bankRequire.getRemark();
     }
 

@@ -11,10 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.xml.crypto.Data;
@@ -118,6 +115,7 @@ public class RequiredController {
             QueryWrapper<Question> questionQueryWrapper = new QueryWrapper<>();
             questionQueryWrapper.eq("id", quesId);
             Question ques = questionService.getOne(questionQueryWrapper);
+            if (ques == null) continue;
             UpdateApi updateApi = new UpdateApi();
             updateApi.setBefore(ques);
             updateApi.setAfter(b);
@@ -141,6 +139,12 @@ public class RequiredController {
     @GetMapping("/judge/add")
     public String judgeAdd(BankRequire bankRequire, Integer decision) {
 
+        // 判断是否已经被处理
+        QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
+        bankRequireQueryWrapper.eq("id", bankRequire.getId());
+        BankRequire one = bankRequireService.getOne(bankRequireQueryWrapper);
+        if (one.getDoWay() == -1) return "该申请已被其他管理员处理！";
+
         Integer id = bankRequire.getId();
         UpdateWrapper<BankRequire> bankRequireUpdateWrapper = new UpdateWrapper<>();
         bankRequireUpdateWrapper.eq("id", id);
@@ -161,8 +165,14 @@ public class RequiredController {
 
     @ApiOperation("裁决修改题目的申请，返回message")
     @ApiImplicitParams({@ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
-    @GetMapping("/judge/update")
-    public String judgeUpdate(BankRequire bankRequire, Integer decision) {
+    @PostMapping("/judge/update")
+    public String judgeUpdate(@RequestBody BankRequire bankRequire, Integer decision) {
+
+        // 判断是否已经被处理
+        QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
+        bankRequireQueryWrapper.eq("id", bankRequire.getId());
+        BankRequire one = bankRequireService.getOne(bankRequireQueryWrapper);
+        if (one.getDoWay() == -1) return "该申请已被其他管理员处理！";
 
         Integer id = bankRequire.getId();
         UpdateWrapper<BankRequire> bankRequireUpdateWrapper = new UpdateWrapper<>();
@@ -173,8 +183,8 @@ public class RequiredController {
 
         QueryWrapper<Question> questionQueryWrapper = new QueryWrapper<>();
         questionQueryWrapper.eq("id", bankRequire.getQuesId());
-        Question one = questionService.getOne(questionQueryWrapper);
-        if (one == null) return "该题目已在试题库中删除！";
+        Question ques = questionService.getOne(questionQueryWrapper);
+        if (ques == null) return "该题目已在试题库中删除！";
 
         if (decision == 0) return "已驳回！";
 
@@ -193,6 +203,12 @@ public class RequiredController {
     @ApiImplicitParams({@ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
     @GetMapping("/judge/delete")
     public String judgeDelete(BankRequire bankRequire, Integer decision) {
+
+        // 判断是否已经被处理
+        QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
+        bankRequireQueryWrapper.eq("id", bankRequire.getId());
+        BankRequire one = bankRequireService.getOne(bankRequireQueryWrapper);
+        if (one.getDoWay() == -1) return "该申请已被其他管理员处理！";
 
         Integer id = bankRequire.getId();
         UpdateWrapper<BankRequire> bankRequireUpdateWrapper = new UpdateWrapper<>();
