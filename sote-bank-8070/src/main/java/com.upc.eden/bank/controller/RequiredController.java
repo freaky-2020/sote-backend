@@ -44,14 +44,12 @@ public class RequiredController {
     @ApiOperation("向试题库中添加题目的申请，返回message")
     @ApiImplicitParams({@ApiImplicitParam(name = "userName", value = "账号", paramType = "path")})
     @GetMapping("/{userName}/add")
-    public String add(@PathVariable Integer userName, Question question) throws ParseException {
+    public String add(@PathVariable Integer userName, Question question) {
 
         BankRequire bankRequire = new BankRequire(question);
         bankRequire.setDoWay(1);
         bankRequire.setRequestUserName(userName);
-        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-        Date requireTime = ndf.parse(ndf.format(new Date()));
+        Date requireTime = new Date(new Date().getTime() + 8 * 60 * 60 * 1000);
         bankRequire.setRequireTime(requireTime);
         bankRequireService.save(bankRequire);
         return "添加题目申请成功，请留意个人中心的消息通知！";
@@ -60,14 +58,12 @@ public class RequiredController {
     @ApiOperation("修改试题库中题目的申请，返回message")
     @ApiImplicitParams({@ApiImplicitParam(name = "userName", value = "账号", paramType = "path")})
     @GetMapping("/{userName}/update")
-    public String update(@PathVariable Integer userName, Question question) throws ParseException {
+    public String update(@PathVariable Integer userName, Question question) {
 
         BankRequire bankRequire = new BankRequire(question);
         bankRequire.setDoWay(2);
         bankRequire.setRequestUserName(userName);
-        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-        Date requireTime = ndf.parse(ndf.format(new Date()));
+        Date requireTime = new Date(new Date().getTime() + 8 * 60 * 60 * 1000);
         bankRequire.setRequireTime(requireTime);
         bankRequireService.save(bankRequire);
         return "修改题目申请成功，请留意个人中心的消息通知！";
@@ -78,7 +74,7 @@ public class RequiredController {
             @ApiImplicitParam(name = "userName", value = "账号", paramType = "path"),
             @ApiImplicitParam(name = "ids", allowMultiple = true, dataTypeClass = List.class)})
     @GetMapping("/{userName}/delete")
-    public String delete(@PathVariable Integer userName, Integer[] ids) throws ParseException {
+    public String delete(@PathVariable Integer userName, Integer[] ids) {
 
         for (Integer id: ids) {
             if (id != null) {
@@ -88,9 +84,7 @@ public class RequiredController {
                 BankRequire bankRequire = new BankRequire(ques);
                 bankRequire.setDoWay(3);
                 bankRequire.setRequestUserName(userName);
-                SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-                Date requireTime = ndf.parse(ndf.format(new Date()));
+                Date requireTime = new Date(new Date().getTime() + 8 * 60 * 60 * 1000);
                 bankRequire.setRequireTime(requireTime);
                 bankRequireService.save(bankRequire);
             }
@@ -157,6 +151,9 @@ public class RequiredController {
         if (decision == 0) return "已驳回！";
 
         Question question = new Question(bankRequire);
+        Date now = new Date(new Date().getTime() + 8 * 60 * 60 * 1000);
+        question.setCreateTime(now);
+        question.setUpdateTime(now);
         boolean res = questionService.save(question);
         if (res) return "审批成功！题目已添加至题库！";
         else return "审批异常，请稍后再试！";
@@ -174,10 +171,18 @@ public class RequiredController {
         bankRequireUpdateWrapper.set("do_way", -1);
         bankRequireService.update(bankRequireUpdateWrapper);
 
+        QueryWrapper<Question> questionQueryWrapper = new QueryWrapper<>();
+        questionQueryWrapper.eq("id", bankRequire.getQuesId());
+        Question one = questionService.getOne(questionQueryWrapper);
+        if (one == null) return "该题目已在试题库中删除！";
+
         if (decision == 0) return "已驳回！";
 
         Question question = new Question(bankRequire);
         UpdateWrapper<Question> questionUpdateWrapper = new UpdateWrapper<>();
+        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        questionUpdateWrapper.set("update_time", ndf.format(new Date()));
         questionUpdateWrapper.eq("id", bankRequire.getQuesId());
         boolean res = questionService.update(question, questionUpdateWrapper);
         if (res) return "审批成功！题目已更新！";
