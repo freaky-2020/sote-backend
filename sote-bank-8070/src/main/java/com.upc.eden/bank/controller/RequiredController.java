@@ -73,19 +73,29 @@ public class RequiredController {
         return "修改题目申请成功，请留意个人中心的消息通知！";
     }
 
-    @ApiOperation("删除试题库中题目的申请，返回message")
-    @ApiImplicitParams({@ApiImplicitParam(name = "userName", value = "账号", paramType = "path")})
+    @ApiOperation("删除试题库中题目的申请（可批量），返回message")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userName", value = "账号", paramType = "path"),
+            @ApiImplicitParam(name = "ids", allowMultiple = true, dataTypeClass = List.class)})
     @GetMapping("/{userName}/delete")
-    public String delete(@PathVariable Integer userName, Question question) throws ParseException {
+    public String delete(@PathVariable Integer userName, Integer[] ids) throws ParseException {
 
-        BankRequire bankRequire = new BankRequire(question);
-        bankRequire.setDoWay(3);
-        bankRequire.setRequestUserName(userName);
-        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-        Date requireTime = ndf.parse(ndf.format(new Date()));
-        bankRequire.setRequireTime(requireTime);
-        bankRequireService.save(bankRequire);
+        for (Integer id: ids) {
+            if (id != null) {
+                QueryWrapper<Question> questionQueryWrapper = new QueryWrapper<>();
+                questionQueryWrapper.eq("id", id);
+                Question ques = questionService.getOne(questionQueryWrapper);
+                BankRequire bankRequire = new BankRequire(ques);
+                bankRequire.setDoWay(3);
+                bankRequire.setRequestUserName(userName);
+                SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+                Date requireTime = ndf.parse(ndf.format(new Date()));
+                bankRequire.setRequireTime(requireTime);
+                bankRequireService.save(bankRequire);
+            }
+        }
+
         return "删除题目申请成功，请留意个人中心的消息通知！";
     }
 
@@ -106,7 +116,7 @@ public class RequiredController {
         List<UpdateApi> res = new ArrayList<>();
 
         QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
-        bankRequireQueryWrapper.eq("do_way", 1);
+        bankRequireQueryWrapper.eq("do_way", 2);
         List<BankRequire> list = bankRequireService.list(bankRequireQueryWrapper);
         for(BankRequire b: list) {
             if (b==null) continue;
@@ -132,21 +142,73 @@ public class RequiredController {
         return res;
     }
 
-//    @ApiOperation("裁决增加题目的申请，返回message")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "bankRequire", value = "回传体"),
-//            @ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
-//    @GetMapping("/judge/add")
-//    public String judgeAdd(BankRequire bankRequire, Integer decision) {
-//
-//        Integer id = bankRequire.getId();
-//        UpdateWrapper<BankRequire> bankRequireUpdateWrapper = new UpdateWrapper<>();
-//        bankRequireUpdateWrapper.eq("id", id);
-//        bankRequireUpdateWrapper.set("do_way", -1);
-//        bankRequireService.update(bankRequireUpdateWrapper);
-//
-//        if (decision == 0) return "已驳回！";
-//
-//        Question question = new Question(bankRequire);
-//    }
+    @ApiOperation("裁决增加题目的申请，返回message")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "bankRequire", value = "回传体"),
+            @ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
+    @GetMapping("/judge/add")
+    public String judgeAdd(BankRequire bankRequire, Integer decision) {
+
+        Integer id = bankRequire.getId();
+        UpdateWrapper<BankRequire> bankRequireUpdateWrapper = new UpdateWrapper<>();
+        bankRequireUpdateWrapper.eq("id", id);
+        // 置-1留档
+        bankRequireUpdateWrapper.set("do_way", -1);
+        bankRequireService.update(bankRequireUpdateWrapper);
+
+        if (decision == 0) return "已驳回！";
+
+        Question question = new Question(bankRequire);
+        boolean res = questionService.save(question);
+        if (res) return "审批成功！题目已添加至题库！";
+        else return "审批异常，请稍后再试！";
+    }
+
+    @ApiOperation("裁决修改题目的申请，返回message")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "bankRequire", value = "after回传体"),
+            @ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
+    @GetMapping("/judge/update")
+    public String judgeUpdate(BankRequire bankRequire, Integer decision) {
+
+        Integer id = bankRequire.getId();
+        UpdateWrapper<BankRequire> bankRequireUpdateWrapper = new UpdateWrapper<>();
+        bankRequireUpdateWrapper.eq("id", id);
+        // 置-1留档
+        bankRequireUpdateWrapper.set("do_way", -1);
+        bankRequireService.update(bankRequireUpdateWrapper);
+
+        if (decision == 0) return "已驳回！";
+
+        Question question = new Question(bankRequire);
+        UpdateWrapper<Question> questionUpdateWrapper = new UpdateWrapper<>();
+        questionUpdateWrapper.eq("id", bankRequire.getQuesId());
+        boolean res = questionService.update(question, questionUpdateWrapper);
+        if (res) return "审批成功！题目已更新！";
+        else return "审批异常，请稍后再试！";
+    }
+
+    @ApiOperation("裁决删除题目的申请，返回message")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "bankRequire", value = "回传体"),
+            @ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
+    @GetMapping("/judge/delete")
+    public String judgeDelete(BankRequire bankRequire, Integer decision) {
+
+        Integer id = bankRequire.getId();
+        UpdateWrapper<BankRequire> bankRequireUpdateWrapper = new UpdateWrapper<>();
+        bankRequireUpdateWrapper.eq("id", id);
+        // 置-1留档
+        bankRequireUpdateWrapper.set("do_way", -1);
+        bankRequireService.update(bankRequireUpdateWrapper);
+
+        if (decision == 0) return "已驳回！";
+
+        Integer quesId = bankRequire.getQuesId();
+        QueryWrapper<Question> questionQueryWrapper = new QueryWrapper<>();
+        questionQueryWrapper.eq("id", quesId);
+        boolean res = questionService.remove(questionQueryWrapper);
+        if (res) return "审批成功！题目已删除！";
+        else return "审批异常，请稍后再试！";
+    }
 }
