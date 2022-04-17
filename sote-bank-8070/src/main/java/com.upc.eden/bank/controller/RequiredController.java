@@ -60,6 +60,7 @@ public class RequiredController {
 
         QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
         bankRequireQueryWrapper.eq("ques_id", question.getId());
+        bankRequireQueryWrapper.ne("do_way", -1);
         BankRequire one = bankRequireService.getOne(bankRequireQueryWrapper);
         if (one != null) return "该题目仍有未处理的变更申请，请等待审批完成后重新提交变更申请！";
 
@@ -84,6 +85,7 @@ public class RequiredController {
             if (id != null) {
                 QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
                 bankRequireQueryWrapper.eq("ques_id", id);
+                bankRequireQueryWrapper.ne("do_way", -1);
                 BankRequire one = bankRequireService.getOne(bankRequireQueryWrapper);
                 if (one != null) {
                     ++count;

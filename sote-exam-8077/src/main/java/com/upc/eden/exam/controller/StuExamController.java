@@ -330,6 +330,7 @@ public class StuExamController {
         Integer paperId = examInfo.getPaperId();
         QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
         paperQueryWrapper.eq("paper_id", paperId);
+        paperQueryWrapper.orderBy(true, true, "ques_no");
         List<Paper> papers = paperService.list(paperQueryWrapper);
         Integer maxScore = 0;
         Integer maxNonSynScore = 0;
