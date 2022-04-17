@@ -2,6 +2,7 @@ package com.upc.eden.bank.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.upc.eden.bank.api.RequireInfoApi;
 import com.upc.eden.bank.api.UpdateApi;
 import com.upc.eden.bank.service.BankRequireService;
 import com.upc.eden.bank.service.QuestionService;
@@ -227,5 +228,21 @@ public class RequiredController {
         boolean res = questionService.remove(questionQueryWrapper);
         if (res) return "审批成功！题目已删除！";
         else return "审批异常，请稍后再试！";
+    }
+
+    @ApiOperation("管理员获取题目变更申请，返回值：{ date:最新的申请提交时间 infoNum:待处理的申请条数 }")
+    @GetMapping("/info")
+    public RequireInfoApi getInfo() {
+
+        QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
+        bankRequireQueryWrapper.ne("do_way", -1);
+        bankRequireQueryWrapper.orderBy(true, false, "require_time");
+        List<BankRequire> list = bankRequireService.list(bankRequireQueryWrapper);
+
+        Integer infoNum = list.size();
+        String now = null;
+        if (infoNum > 0) now = list.get(0).getRequireTime().toString();
+        RequireInfoApi res = new RequireInfoApi(now, infoNum);
+        return res;
     }
 }
