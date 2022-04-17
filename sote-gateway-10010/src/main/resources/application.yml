@@ -27,6 +27,7 @@ secure:
       - "/bank/client/**"
       - "/exam/client/**"
       - "/auth/user/add"
+      - "/auth/user/referee"
 #      - "/**"
 ribbon:
   eager-load:
