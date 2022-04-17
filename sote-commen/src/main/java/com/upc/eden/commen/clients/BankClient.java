@@ -2,6 +2,7 @@ package com.upc.eden.commen.clients;
 
 import com.upc.eden.commen.config.FeignRequestConfig;
 import com.upc.eden.commen.domain.bank.Question;
+import io.swagger.models.auth.In;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,4 +24,7 @@ public interface BankClient {
 
     @GetMapping("/bank/client/getQuesById")
     Question getQuesById(@RequestParam Integer qId);
+
+    @GetMapping("/bank/client/getQuesByType")
+    List<Question> getQuesByType(@RequestParam Integer typeId, @RequestParam Integer subjectId);
 }

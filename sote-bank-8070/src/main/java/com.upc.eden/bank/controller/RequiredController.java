@@ -58,6 +58,11 @@ public class RequiredController {
     @GetMapping("/{userName}/update")
     public String update(@PathVariable Integer userName, Question question) {
 
+        QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
+        bankRequireQueryWrapper.eq("ques_id", question.getId());
+        BankRequire one = bankRequireService.getOne(bankRequireQueryWrapper);
+        if (one != null) return "该题目仍有未处理的变更申请，请等待审批完成后重新提交变更申请！";
+
         BankRequire bankRequire = new BankRequire(question);
         bankRequire.setDoWay(2);
         bankRequire.setRequestUserName(userName);
@@ -74,8 +79,16 @@ public class RequiredController {
     @GetMapping("/{userName}/delete")
     public String delete(@PathVariable Integer userName, Integer[] ids) {
 
+        int count = 0;
         for (Integer id: ids) {
             if (id != null) {
+                QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
+                bankRequireQueryWrapper.eq("ques_id", id);
+                BankRequire one = bankRequireService.getOne(bankRequireQueryWrapper);
+                if (one != null) {
+                    ++count;
+                    continue;
+                }
                 QueryWrapper<Question> questionQueryWrapper = new QueryWrapper<>();
                 questionQueryWrapper.eq("id", id);
                 Question ques = questionService.getOne(questionQueryWrapper);
@@ -88,7 +101,8 @@ public class RequiredController {
             }
         }
 
-        return "删除题目申请成功，请留意个人中心的消息通知！";
+        if (count == 0) return "删除题目申请成功，请留意个人中心的消息通知！";
+        else return "有"+count+"道题目正处于审核中，无法提交删除申请，其余题目已送审，请留意个人中心的消息通知！";
     }
 
     @ApiOperation("获取添加题目的所有申请实体")
@@ -137,8 +151,8 @@ public class RequiredController {
 
     @ApiOperation("裁决增加题目的申请，返回message")
     @ApiImplicitParams({@ApiImplicitParam(name = "decision", value = "{ 1:同意 0:驳回 }")})
-    @GetMapping("/judge/add")
-    public String judgeAdd(BankRequire bankRequire, Integer decision) {
+    @PostMapping("/judge/add/{decision}")
+    public String judgeAdd(BankRequire bankRequire, @PathVariable Integer decision) {
 
         // 判断是否已经被处理
         QueryWrapper<BankRequire> bankRequireQueryWrapper = new QueryWrapper<>();
@@ -240,9 +254,10 @@ public class RequiredController {
         List<BankRequire> list = bankRequireService.list(bankRequireQueryWrapper);
 
         Integer infoNum = list.size();
-        String now = null;
-        if (infoNum > 0) now = list.get(0).getRequireTime().toString();
-        RequireInfoApi res = new RequireInfoApi(now, infoNum);
+        String time = null;
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (infoNum > 0) time = df.format(list.get(0).getRequireTime());
+        RequireInfoApi res = new RequireInfoApi(time, infoNum);
         return res;
     }
 }

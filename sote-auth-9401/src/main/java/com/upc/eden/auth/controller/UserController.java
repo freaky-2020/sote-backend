@@ -143,12 +143,18 @@ public class UserController {
     /**
      * 添加用户
      * /auth/user/add
-     * @param user 要添加的用户信息会被自动封装在此对象中：要求必须含有 userName、password、roleId
+     * @param user 要添加的用户信息会被自动封装在此对象中：要求必须含有 userName、password、roleId、status
      * @return 添加是否成功，true or false
      */
     @ApiOperation("添加用户")
     @PostMapping("/add")
     public boolean add(User user) {
+
+        String userName = user.getUserName();
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq("user_name", userName);
+        List<User> list = userService.list(userQueryWrapper);
+        if (list.size() > 0) return false;
 
         boolean res = userService.save(user);
         return res;
@@ -205,5 +211,19 @@ public class UserController {
             if (userService.remove(wrapper)) ++res;
         }
         return res;
+    }
+
+    @ApiOperation("校验用户名与密码是否正确")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userName", value = "账号"),
+            @ApiImplicitParam(name = "password", value = "密码")})
+    @GetMapping("/referee")
+    public boolean referee(String userName, String password) {
+
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq("userName", userName);
+        User user = userService.getOne(userQueryWrapper);
+        if (user == null || user.getPassword() != password) return false;
+        return true;
     }
 }

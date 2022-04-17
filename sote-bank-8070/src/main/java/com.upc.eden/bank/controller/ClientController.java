@@ -1,6 +1,8 @@
 package com.upc.eden.bank.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.upc.eden.bank.service.QuestionService;
+import com.upc.eden.commen.domain.bank.Difficulty;
 import com.upc.eden.commen.domain.bank.Question;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,5 +39,15 @@ public class ClientController {
 
         Question question = questionService.getById(qId);
         return question;
+    }
+
+    @GetMapping("/getQuesByType")
+    List<Question> getQuesByType(@RequestParam Integer typeId, @RequestParam Integer subjectId) {
+
+        QueryWrapper<Question> questionQueryWrapper = new QueryWrapper<>();
+        questionQueryWrapper.eq("type_id", typeId);
+        questionQueryWrapper.eq("subject_id", subjectId);
+        List<Question> list = questionService.list(questionQueryWrapper);
+        return list;
     }
 }
