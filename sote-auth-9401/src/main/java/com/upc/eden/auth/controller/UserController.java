@@ -221,7 +221,7 @@ public class UserController {
     public boolean referee(String userName, String password) {
 
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-        userQueryWrapper.eq("userName", userName);
+        userQueryWrapper.eq("user_name", userName);
         User user = userService.getOne(userQueryWrapper);
         if (user == null || user.getPassword() != password) return false;
         return true;
