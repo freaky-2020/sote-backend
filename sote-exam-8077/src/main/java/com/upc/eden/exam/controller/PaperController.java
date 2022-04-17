@@ -4,18 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.upc.eden.commen.clients.AuthClient;
+import com.upc.eden.commen.clients.BankClient;
 import com.upc.eden.commen.domain.auth.SecurityUser;
+import com.upc.eden.commen.domain.bank.BankRequire;
 import com.upc.eden.commen.domain.bank.Question;
 import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.exam.service.PaperService;
 import io.swagger.annotations.*;
+import io.swagger.models.auth.In;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author: CS Dong
@@ -30,6 +30,8 @@ public class PaperController {
 
     @Resource
     private PaperService paperService;
+    @Resource
+    private BankClient bankClient;
     @Resource
     private AuthClient authClient;
 
@@ -190,5 +192,81 @@ public class PaperController {
         Integer quesNo = papers.get(0).getQuesNo();
         paperService.reviseQuesNo(paperId, quesNo);
         return res;
+    }
+
+    @ApiOperation("智能组卷，返回message")
+    @GetMapping("/auto/{paperId}")
+    public String autoAdd(@PathVariable Integer paperId, Integer diff, Integer subjectId,
+                          Integer q1, Integer q2, Integer q3, Integer q4, Integer q5,
+                          Integer c1, Integer c2, Integer c3, Integer c4, Integer c5) {
+
+        // 1、删除试卷中原有题目
+        QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
+        paperQueryWrapper.eq("paper_id", paperId);
+        paperService.remove(paperQueryWrapper);
+
+        // 2、边际判断
+        List<Question> ques1 = bankClient.getQuesByType(1, subjectId);
+        if (ques1.size() < q1) return "题库中该科目单选题数目不足！";
+        List<Question> ques2 = bankClient.getQuesByType(2, subjectId);
+        if (ques2.size() < q2) return "题库中该科目多选题数目不足！";
+        List<Question> ques3 = bankClient.getQuesByType(3, subjectId);
+        if (ques3.size() < q3) return "题库中该科目判断题数目不足！";
+        List<Question> ques4 = bankClient.getQuesByType(4, subjectId);
+        if (ques4.size() < q4) return "题库中该科目填空题数目不足！";
+        List<Question> ques5 = bankClient.getQuesByType(5, subjectId);
+        if (ques5.size() < q5) return "题库中该科目简答题数目不足！";
+
+        // 3、智能组卷
+        Integer count = 0;
+        Random random = new Random(diff);
+
+        Collections.shuffle(ques1, random);
+        for (int i=0; i<q1; i++) {
+            Question question = ques1.get(i);
+            Paper paper = new Paper(question);
+            paper.setPaperId(paperId);
+            paper.setScore(c1);
+            paper.setQuesNo(++count);
+            paperService.save(paper);
+        }
+        Collections.shuffle(ques2, random);
+        for (int i=0; i<q2; i++) {
+            Question question = ques2.get(i);
+            Paper paper = new Paper(question);
+            paper.setPaperId(paperId);
+            paper.setScore(c2);
+            paper.setQuesNo(++count);
+            paperService.save(paper);
+        }
+        Collections.shuffle(ques3, random);
+        for (int i=0; i<q3; i++) {
+            Question question = ques3.get(i);
+            Paper paper = new Paper(question);
+            paper.setPaperId(paperId);
+            paper.setScore(c3);
+            paper.setQuesNo(++count);
+            paperService.save(paper);
+        }
+        Collections.shuffle(ques4, random);
+        for (int i=0; i<q4; i++) {
+            Question question = ques4.get(i);
+            Paper paper = new Paper(question);
+            paper.setPaperId(paperId);
+            paper.setScore(c4);
+            paper.setQuesNo(++count);
+            paperService.save(paper);
+        }
+        Collections.shuffle(ques5, random);
+        for (int i=0; i<q5; i++) {
+            Question question = ques5.get(i);
+            Paper paper = new Paper(question);
+            paper.setPaperId(paperId);
+            paper.setScore(c5);
+            paper.setQuesNo(++count);
+            paperService.save(paper);
+        }
+
+        return "智能组卷成功！";
     }
 }
