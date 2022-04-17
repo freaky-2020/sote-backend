@@ -223,7 +223,7 @@ public class UserController {
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
         userQueryWrapper.eq("user_name", userName);
         User user = userService.getOne(userQueryWrapper);
-        if (user == null || user.getPassword() != password) return false;
+        if (user == null || !password.equals(user.getPassword())) return false;
         return true;
     }
 }
