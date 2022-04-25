@@ -4,6 +4,8 @@ import com.upc.eden.commen.domain.exam.ExamInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * @Entity com.upc.eden.commen.domain.exam.ExamInfo
  */

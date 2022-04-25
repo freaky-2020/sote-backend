@@ -15,12 +15,15 @@
             <result property="submitTime" column="submit_time" jdbcType="TIMESTAMP"/>
             <result property="cuttingTime" column="cutting_time" jdbcType="INTEGER"/>
             <result property="cheat" column="cheat" jdbcType="INTEGER"/>
+            <result property="totalCuttingTime" column="total_cutting_time" jdbcType="INTEGER"/>
+            <result property="undetectedTime" column="undetected_time" jdbcType="INTEGER"/>
+            <result property="leaveTimes" column="leave_times" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         examinee_id,exam_id,details,
         present_time,status,total_score,
         start_time,submit_time,cutting_time,
-        cheat
+        cheat,total_cutting_time, undetected_time,leave_times
     </sql>
 </mapper>

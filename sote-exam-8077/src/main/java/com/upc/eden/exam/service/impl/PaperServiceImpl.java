@@ -7,6 +7,7 @@ import com.upc.eden.exam.mapper.PaperMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  *
@@ -31,6 +32,11 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper>
     @Override
     public Integer reviseQuesNoAdd(Integer paperId, Integer quesNo) {
         return paperMapper.reviseQuesNoAdd(paperId, quesNo);
+    }
+
+    @Override
+    public List<Integer> getAllPaperId() {
+        return paperMapper.getAllPaperId();
     }
 }
 

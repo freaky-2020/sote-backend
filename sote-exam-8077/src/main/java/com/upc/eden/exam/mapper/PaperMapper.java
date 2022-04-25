@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+
 /**
  * @Entity com.upc.eden.commen.domain.exam.Paper
  */
@@ -21,6 +23,9 @@ public interface PaperMapper extends BaseMapper<Paper> {
     @Update("update paper set ques_no = ques_no+1 " +
             "where paper_id = #{paperId} and ques_no >= #{quesNo}")
     Integer reviseQuesNoAdd(Integer paperId, Integer quesNo);
+
+    @Select("select distinct paper_id from paper")
+    List<Integer> getAllPaperId();
 }
 
 

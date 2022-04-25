@@ -46,6 +46,12 @@ public class StuExam implements Serializable {
     private Integer cuttingTime;
     @ApiModelProperty(value = "是否判定作弊:{ 1:是 2:否 }", example = "0")
     private Integer cheat;
+    @ApiModelProperty(value = "总切出时间，单位为秒", example = "5")
+    private Integer totalCuttingTime;
+    @ApiModelProperty(value = "未检测到人脸的次数", example = "1")
+    private Integer undetectedTime;
+    @ApiModelProperty(value = "离开总时间，单位为秒", example = "5")
+    private Integer leaveTimes;
 
     private static final long serialVersionUID = 1L;
 
@@ -76,7 +82,10 @@ public class StuExam implements Serializable {
             && (this.getStartTime() == null ? other.getStartTime() == null : this.getStartTime().equals(other.getStartTime()))
             && (this.getSubmitTime() == null ? other.getSubmitTime() == null : this.getSubmitTime().equals(other.getSubmitTime()))
             && (this.getCuttingTime() == null ? other.getCuttingTime() == null : this.getCuttingTime().equals(other.getCuttingTime()))
-            && (this.getCheat() == null ? other.getCheat() == null : this.getCheat().equals(other.getCheat()));
+            && (this.getCheat() == null ? other.getCheat() == null : this.getCheat().equals(other.getCheat()))
+            && (this.getTotalCuttingTime() == null ? other.getTotalCuttingTime() == null : this.getTotalCuttingTime().equals(other.getTotalCuttingTime()))
+            && (this.getUndetectedTime() == null ? other.getUndetectedTime() == null : this.getUndetectedTime().equals(other.getUndetectedTime()))
+            && (this.getLeaveTimes() == null ? other.getLeaveTimes() == null : this.getLeaveTimes().equals(other.getLeaveTimes()));
     }
 
     @Override
@@ -93,6 +102,9 @@ public class StuExam implements Serializable {
         result = prime * result + ((getSubmitTime() == null) ? 0 : getSubmitTime().hashCode());
         result = prime * result + ((getCuttingTime() == null) ? 0 : getCuttingTime().hashCode());
         result = prime * result + ((getCheat() == null) ? 0 : getCheat().hashCode());
+        result = prime * result + ((getTotalCuttingTime() == null) ? 0 : getTotalCuttingTime().hashCode());
+        result = prime * result + ((getUndetectedTime() == null) ? 0 : getUndetectedTime().hashCode());
+        result = prime * result + ((getLeaveTimes() == null) ? 0 : getLeaveTimes().hashCode());
         return result;
     }
 
@@ -112,6 +124,9 @@ public class StuExam implements Serializable {
         sb.append(", submitTime=").append(submitTime);
         sb.append(", cuttingTime=").append(cuttingTime);
         sb.append(", cheat=").append(cheat);
+        sb.append(", totalCuttingTime=").append(totalCuttingTime);
+        sb.append(", undetectedTime=").append(undetectedTime);
+        sb.append(", leaveTimes=").append(leaveTimes);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -52,6 +52,8 @@ public class ExamInfo implements Serializable {
     private Integer cuttingTimes;
     @ApiModelProperty(value = "考试结果是否公布：{0:不公布 1:已公布}", example = "0")
     private Integer isPublic;
+    @ApiModelProperty(value = "是否为套用卷：{0:否 1:是}", example = "0")
+    private Integer isCopy;
 
     private static final long serialVersionUID = 1L;
 
@@ -80,7 +82,8 @@ public class ExamInfo implements Serializable {
             && (this.getNoticeWay() == null ? other.getNoticeWay() == null : this.getNoticeWay().equals(other.getNoticeWay()))
             && (this.getWord() == null ? other.getWord() == null : this.getWord().equals(other.getWord()))
             && (this.getCuttingTimes() == null ? other.getCuttingTimes() == null : this.getCuttingTimes().equals(other.getCuttingTimes()))
-            && (this.getIsPublic() == null ? other.getIsPublic() == null : this.getIsPublic().equals(other.getIsPublic()));
+            && (this.getIsPublic() == null ? other.getIsPublic() == null : this.getIsPublic().equals(other.getIsPublic()))
+            && (this.getIsCopy() == null ? other.getIsCopy() == null : this.getIsCopy().equals(other.getIsCopy()));
     }
 
     @Override
@@ -101,6 +104,7 @@ public class ExamInfo implements Serializable {
         result = prime * result + ((getWord() == null) ? 0 : getWord().hashCode());
         result = prime * result + ((getCuttingTimes() == null) ? 0 : getCuttingTimes().hashCode());
         result = prime * result + ((getIsPublic() == null) ? 0 : getIsPublic().hashCode());
+        result = prime * result + ((getIsCopy() == null) ? 0 : getIsCopy().hashCode());
         return result;
     }
 
@@ -124,6 +128,7 @@ public class ExamInfo implements Serializable {
         sb.append(", word=").append(word);
         sb.append(", cuttingTimes=").append(cuttingTimes);
         sb.append(", isPublic=").append(isPublic);
+        sb.append(", isCopy=").append(isCopy);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
