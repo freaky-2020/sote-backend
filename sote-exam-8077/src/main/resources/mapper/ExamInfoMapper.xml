@@ -20,6 +20,7 @@
             <result property="cuttingTimes" column="cutting_times" jdbcType="INTEGER"/>
             <result property="isPublic" column="is_public" jdbcType="INTEGER"/>
             <result property="isCopy" column="is_copy" jdbcType="INTEGER"/>
+            <result property="copiedTime" column="copied_time" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -27,6 +28,6 @@
         exam_name,exam_note,invigilator_id,
         duration_time,start_time,deadline,
         allowable_time,notice_way,word,
-        cutting_times,is_public,is_copy
+        cutting_times,is_public,is_copy,copied_time
     </sql>
 </mapper>

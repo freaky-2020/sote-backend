@@ -54,6 +54,8 @@ public class ExamInfo implements Serializable {
     private Integer isPublic;
     @ApiModelProperty(value = "是否为套用卷：{0:否 1:是}", example = "0")
     private Integer isCopy;
+    @ApiModelProperty(value = "被套用次数", example = "20")
+    private Integer copiedTime;
 
     private static final long serialVersionUID = 1L;
 
@@ -83,7 +85,8 @@ public class ExamInfo implements Serializable {
             && (this.getWord() == null ? other.getWord() == null : this.getWord().equals(other.getWord()))
             && (this.getCuttingTimes() == null ? other.getCuttingTimes() == null : this.getCuttingTimes().equals(other.getCuttingTimes()))
             && (this.getIsPublic() == null ? other.getIsPublic() == null : this.getIsPublic().equals(other.getIsPublic()))
-            && (this.getIsCopy() == null ? other.getIsCopy() == null : this.getIsCopy().equals(other.getIsCopy()));
+            && (this.getIsCopy() == null ? other.getIsCopy() == null : this.getIsCopy().equals(other.getIsCopy()))
+            && (this.getCopiedTime() == null ? other.getCopiedTime() == null : this.getCopiedTime().equals(other.getCopiedTime()));
     }
 
     @Override
@@ -105,6 +108,7 @@ public class ExamInfo implements Serializable {
         result = prime * result + ((getCuttingTimes() == null) ? 0 : getCuttingTimes().hashCode());
         result = prime * result + ((getIsPublic() == null) ? 0 : getIsPublic().hashCode());
         result = prime * result + ((getIsCopy() == null) ? 0 : getIsCopy().hashCode());
+        result = prime * result + ((getCopiedTime() == null) ? 0 : getCopiedTime().hashCode());
         return result;
     }
 
@@ -129,6 +133,7 @@ public class ExamInfo implements Serializable {
         sb.append(", cuttingTimes=").append(cuttingTimes);
         sb.append(", isPublic=").append(isPublic);
         sb.append(", isCopy=").append(isCopy);
+        sb.append(", copiedTime=").append(copiedTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
