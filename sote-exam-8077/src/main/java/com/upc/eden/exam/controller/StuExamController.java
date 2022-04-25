@@ -317,8 +317,7 @@ public class StuExamController {
     @GetMapping("/getRes/{userName}/{examId}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userName", value = "考生账号", paramType = "path"),
-            @ApiImplicitParam(name = "examId", value = "考试号", paramType = "path"),
-    })
+            @ApiImplicitParam(name = "examId", value = "考试号", paramType = "path"),})
     public List<ExamResultApi> getMyExamRes(@PathVariable Integer userName,
                                             @PathVariable Integer examId) {
 
