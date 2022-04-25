@@ -68,6 +68,10 @@ public class PaperController {
     @PostMapping("/{paperId}/addFromBank")
     public int add(@PathVariable Integer paperId, @RequestBody List<Question> questions) {
 
+        UpdateWrapper<ExamInfo> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("paper_id", paperId).set("is_copy", 0);
+        examInfoService.update(null, updateWrapper);
+
         int res = 0;
         for (Question question : questions) {
             if (question != null) {
@@ -121,6 +125,10 @@ public class PaperController {
     @PostMapping("/{paperId}/addBySelf")
     @ApiImplicitParams({@ApiImplicitParam(name = "paperId", value = "创建考试时返回的试卷Id", paramType = "path")})
     public boolean add(@PathVariable Integer paperId, Question question) {
+
+        UpdateWrapper<ExamInfo> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("paper_id", paperId).set("is_copy", 0);
+        examInfoService.update(null, updateWrapper);
 
         Paper record = new Paper(question);
         record.setPaperId(paperId);
@@ -184,6 +192,10 @@ public class PaperController {
     @DeleteMapping("/delete")
     public int delete(@RequestBody List<Paper> papers) {
 
+        UpdateWrapper<ExamInfo> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("paper_id", papers.get(0).getPaperId()).set("is_copy", 0);
+        examInfoService.update(null, updateWrapper);
+
         int res = 0;
         for (Paper paper: papers) {
             if(paper != null) {
@@ -205,6 +217,10 @@ public class PaperController {
     public String autoAdd(@PathVariable Integer paperId, Integer diff, Integer subjectId,
                           Integer q1, Integer q2, Integer q3, Integer q4, Integer q5,
                           Integer c1, Integer c2, Integer c3, Integer c4, Integer c5) {
+
+        UpdateWrapper<ExamInfo> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("paper_id", paperId).set("is_copy", 0);
+        examInfoService.update(null, updateWrapper);
 
         // 1、删除试卷中原有题目
         QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
@@ -276,30 +292,65 @@ public class PaperController {
         return "智能组卷成功！";
     }
 
-//    @GetMapping("/paperBank")
-//    public List<PaperInfoApi> getAllPaperInfo() {
-//
-//        List<PaperInfoApi> res = new ArrayList<>();
-//
-//        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-//        String now = ndf.format(new Date());
-//
-//        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
-//        examInfoQueryWrapper.select("paper_id")
-//                .eq("is_copy", 0).eq("is_public", 1)
-//                .orderBy("deadline", );
-//        List<ExamInfo> allPaperId = examInfoService.list(examInfoQueryWrapper);
-//
-//        for (ExamInfo each: allPaperId) {
-//            Integer paperId = each.getPaperId();
-//
-//
-//
-//
-//            PaperInfoApi paperInfoApi = new PaperInfoApi();
-//            paperInfoApi.setPaperId(paperId);
-//            paperInfoApi.set
-//        }
-//    }
+    @ApiOperation("获取试卷库中全部可套用试卷，返回体详情见Schemas")
+    @GetMapping("/paperBank")
+    public List<PaperInfoApi> getAllPaperInfo() {
+
+        List<PaperInfoApi> res = new ArrayList<>();
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+        examInfoQueryWrapper.eq("is_copy", 0).eq("is_public", 1)
+                .orderBy(true, false, "copied_time")
+                .orderBy(true, false, "deadline");
+//                .orderBy(true, true, "difficulty");
+        List<ExamInfo> allPaperId = examInfoService.list(examInfoQueryWrapper);
+
+        for (ExamInfo each: allPaperId) {
+            if (each == null) continue;
+            Integer paperId = each.getPaperId();
+            String publicTime = df.format(each.getDeadline());
+            String examName = each.getExamName();
+            Integer copiedTime = each.getCopiedTime();
+//            Integer difficulty = each.getDifficulty();
+
+            PaperInfoApi paperInfoApi = new PaperInfoApi();
+            paperInfoApi.setPaperId(paperId);
+            paperInfoApi.setPublicTime(publicTime);
+            paperInfoApi.setPaperName(examName);
+            paperInfoApi.setCopiedTime(copiedTime);
+//            paperInfoApi.setDifficulty(difficulty);
+            paperInfoApi.setDifficulty(1);
+
+            res.add(paperInfoApi);
+        }
+        return res;
+    }
+
+    @ApiOperation("选择现有试卷载入本试卷，返回message")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nowPaperId", value = "当前试卷Id", paramType = "path"),
+            @ApiImplicitParam(name = "referPaperId", value = "要导入的试卷Id", paramType = "path")})
+    @GetMapping("/addFromAlready/{nowPaperId}/{referPaperId}")
+    public String addFromAlready(@PathVariable Integer nowPaperId, @PathVariable Integer referPaperId) {
+
+        UpdateWrapper<ExamInfo> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("paper_id", nowPaperId).set("is_copy", 1);
+        examInfoService.update(null, updateWrapper);
+
+        QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
+        paperQueryWrapper.eq("paper_id", referPaperId)
+                .orderBy(true, true, "ques_no");
+        List<Paper> questions = paperService.list(paperQueryWrapper);
+
+        for (Paper ques: questions) {
+            if (ques == null) continue;
+            ques.setPaperId(nowPaperId);
+            ques.setId(null);
+            paperService.save(ques);
+        }
+
+        return "载入成功！您仍可在此基础上进行试题的增加、删除与修改！";
+    }
 }
