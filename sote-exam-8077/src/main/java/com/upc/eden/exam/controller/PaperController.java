@@ -302,6 +302,7 @@ public class PaperController {
 
         QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
         examInfoQueryWrapper.eq("is_copy", 0).eq("is_public", 1)
+                .orderBy(true, true, "subject_id")
                 .orderBy(true, false, "copied_time")
                 .orderBy(true, false, "deadline");
 //                .orderBy(true, true, "difficulty");
@@ -313,6 +314,7 @@ public class PaperController {
             String publicTime = df.format(each.getDeadline());
             String examName = each.getExamName();
             Integer copiedTime = each.getCopiedTime();
+            Integer subjectId = each.getSubjectId();
 //            Integer difficulty = each.getDifficulty();
 
             PaperInfoApi paperInfoApi = new PaperInfoApi();
@@ -322,6 +324,7 @@ public class PaperController {
             paperInfoApi.setCopiedTime(copiedTime);
 //            paperInfoApi.setDifficulty(difficulty);
             paperInfoApi.setDifficulty(1);
+            paperInfoApi.setSubjectId(subjectId);
 
             res.add(paperInfoApi);
         }
