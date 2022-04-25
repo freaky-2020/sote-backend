@@ -33,6 +33,15 @@ public class InvigilateController {
 
         return one.getCuttingTime();
     }
+    @GetMapping("/getLeaveTimes")
+    public Integer getLeaveTimes(Integer exam_id,Integer examinee_id,Integer present_time){
+        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+        stuExamQueryWrapper.eq("exam_id",exam_id);
+        stuExamQueryWrapper.eq("examinee_id",examinee_id);
+        stuExamQueryWrapper.eq("present_time",present_time);
+        StuExam one = stuExamService.getOne(stuExamQueryWrapper);
+        return one.getLeaveTimes();
+    }
 
     @GetMapping("/updateSc")
     public boolean updateSc(Integer exam_id,Integer examinee_id,Integer present_time,Integer scNum){
@@ -54,5 +63,25 @@ public class InvigilateController {
         stuExamUpdateWrapper.eq("examinee_id",examinee_id);
         stuExamUpdateWrapper.eq("present_time",present_time);
         return stuExamService.update(stuExam, stuExamUpdateWrapper);
+    }
+    @GetMapping("/updateLeaveTimes")
+    public boolean updateLeaveTime(Integer exam_id,Integer examinee_id,Integer present_time,Integer leaveTimes){
+        StuExam stuExam = new StuExam();
+        stuExam.setLeaveTimes(leaveTimes);
+        UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
+        stuExamUpdateWrapper.eq("exam_id",exam_id);
+        stuExamUpdateWrapper.eq("examinee_id",examinee_id);
+        stuExamUpdateWrapper.eq("present_time",present_time);
+        return stuExamService.update(stuExam,stuExamUpdateWrapper);
+    }
+    @GetMapping("/addUndetectedTime")
+    public boolean addUndetectedTime(Integer exam_id,Integer examinee_id,Integer present_time,Integer undetectedTime){
+        StuExam stuExam = new StuExam();
+        stuExam.setUndetectedTime(stuExam.getUndetectedTime()+undetectedTime);
+        UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
+        stuExamUpdateWrapper.eq("exam_id",exam_id);
+        stuExamUpdateWrapper.eq("examinee_id",examinee_id);
+        stuExamUpdateWrapper.eq("present_time",present_time);
+        return stuExamService.update(stuExam,stuExamUpdateWrapper);
     }
 }
