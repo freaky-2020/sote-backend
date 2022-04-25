@@ -8,13 +8,17 @@ import com.upc.eden.commen.clients.BankClient;
 import com.upc.eden.commen.domain.auth.SecurityUser;
 import com.upc.eden.commen.domain.bank.BankRequire;
 import com.upc.eden.commen.domain.bank.Question;
+import com.upc.eden.commen.domain.exam.ExamInfo;
 import com.upc.eden.commen.domain.exam.Paper;
+import com.upc.eden.exam.api.PaperInfoApi;
+import com.upc.eden.exam.service.ExamInfoService;
 import com.upc.eden.exam.service.PaperService;
 import io.swagger.annotations.*;
 import io.swagger.models.auth.In;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -30,6 +34,8 @@ public class PaperController {
 
     @Resource
     private PaperService paperService;
+    @Resource
+    private ExamInfoService examInfoService;
     @Resource
     private BankClient bankClient;
     @Resource
@@ -269,4 +275,31 @@ public class PaperController {
 
         return "智能组卷成功！";
     }
+
+//    @GetMapping("/paperBank")
+//    public List<PaperInfoApi> getAllPaperInfo() {
+//
+//        List<PaperInfoApi> res = new ArrayList<>();
+//
+//        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+//        String now = ndf.format(new Date());
+//
+//        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+//        examInfoQueryWrapper.select("paper_id")
+//                .eq("is_copy", 0).eq("is_public", 1)
+//                .orderBy("deadline", );
+//        List<ExamInfo> allPaperId = examInfoService.list(examInfoQueryWrapper);
+//
+//        for (ExamInfo each: allPaperId) {
+//            Integer paperId = each.getPaperId();
+//
+//
+//
+//
+//            PaperInfoApi paperInfoApi = new PaperInfoApi();
+//            paperInfoApi.setPaperId(paperId);
+//            paperInfoApi.set
+//        }
+//    }
 }
