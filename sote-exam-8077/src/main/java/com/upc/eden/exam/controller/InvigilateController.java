@@ -91,4 +91,22 @@ public class InvigilateController {
 
         return stuExamService.update(null,stuExamUpdateWrapper);
     }
+    @GetMapping("/addTotalCuttingTime")
+    public boolean addTotalCuttingTime(Integer exam_id,Integer examinee_id,Integer present_time,Integer totalCuttingTime){
+        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+        stuExamQueryWrapper.eq("exam_id",exam_id);
+        stuExamQueryWrapper.eq("examinee_id",examinee_id);
+        stuExamQueryWrapper.eq("present_time",present_time);
+        StuExam one = stuExamService.getOne(stuExamQueryWrapper);
+        Integer originTotalCuttingTime = one.getTotalCuttingTime();
+
+        UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
+        stuExamUpdateWrapper.eq("exam_id",exam_id);
+        stuExamUpdateWrapper.eq("examinee_id",examinee_id);
+        stuExamUpdateWrapper.eq("present_time",present_time);
+        stuExamUpdateWrapper.set("total_cutting_time",originTotalCuttingTime+totalCuttingTime);
+
+        return stuExamService.update(null,stuExamUpdateWrapper);
+
+    }
 }
