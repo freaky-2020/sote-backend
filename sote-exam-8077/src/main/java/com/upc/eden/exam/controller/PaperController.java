@@ -87,7 +87,7 @@ public class PaperController {
         }
 
         Random rd = new Random(userName);
-        for (int i=0; i<5; i++) {
+        for (int i=1; i<=5; i++) {
             if (res.get(i).size() > 0) Collections.shuffle(res.get(i), rd);
         }
         return res;
