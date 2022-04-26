@@ -286,4 +286,95 @@ public class ExamInfoController {
         for (int i=0; i<res.size(); i++) res.get(i).setRank(i+1);
         return res;
     }
+
+    @ApiOperation("修改考试信息，返回boolean值")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "examId", value = "试卷Id", paramType = "path"),
+            @ApiImplicitParam(name = "examName", value = "考试名", defaultValue = "高等数学"),
+            @ApiImplicitParam(name = "startTime", value = "考试开始时间，注意格式", defaultValue = "1970-01-01"),
+            @ApiImplicitParam(name = "deadline", value = "考试截止时间，注意格式", defaultValue = "2999-12-31"),
+            @ApiImplicitParam(name = "durationTime", value = "考试持续书简", defaultValue = "120"),
+            @ApiImplicitParam(name = "allowableTime", value = "允许参考次数", defaultValue = "3")})
+    @GetMapping("/update/{examId}")
+    public boolean updateExamInfo(@PathVariable Integer examId,
+                                 @RequestParam(required = false) String examName,
+                                 @RequestParam(required = false) String examNote,
+                                 @RequestParam(required = false) String startTime,
+                                 @RequestParam(required = false) String deadline,
+                                 @RequestParam(required = false) Integer durationTime,
+                                 @RequestParam(required = false) Integer allowableTime) {
+
+        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+        examInfoQueryWrapper.eq("exam_id", examId);
+        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat ndf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String oldStartTime = df.format(examInfo.getStartTime());
+        String oldDeadLine = df.format(examInfo.getDeadline());
+        ndf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        String now = ndf.format(new Date());
+
+        UpdateWrapper<ExamInfo> examInfoUpdateWrapper = new UpdateWrapper<>();
+        examInfoUpdateWrapper.eq("exam_id", examId);
+        // 1、开考前可以修改的
+        if (now.compareTo(oldStartTime) < 0) {
+            if (examName != null) examInfoUpdateWrapper.set("exam_name", examName);
+            if (examNote != null) examInfoUpdateWrapper.set("exam_note", examNote);
+            if (startTime != null) examInfoUpdateWrapper.set("start_time", startTime);
+            if (deadline != null) examInfoUpdateWrapper.set("deadline", deadline);
+            if (durationTime != null) examInfoUpdateWrapper.set("duration_time", durationTime);
+            if (allowableTime != null) {
+                QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+                stuExamQueryWrapper.eq("exam_id", examId).groupBy("examinee_id");
+                List<StuExam> stuList = stuExamService.list(stuExamQueryWrapper);
+                Integer oldAllowableTime = examInfo.getAllowableTime();
+                for (StuExam stu: stuList) {
+                    if (allowableTime > oldAllowableTime) {
+                        for (int presentTime = oldAllowableTime+1; presentTime <= allowableTime; presentTime++) {
+                            StuExam stuExam = new StuExam(stu.getExamineeId(), examId, presentTime);
+                            stuExam.setStatus(0);
+                            stuExamService.save(stuExam);
+                        }
+                    } else if (allowableTime < oldAllowableTime) {
+                        for (int presentTime = oldAllowableTime; presentTime >= allowableTime; presentTime--) {
+                            QueryWrapper<StuExam> wrapper = new QueryWrapper<>();
+                            wrapper.eq("exam_id", examId);
+                            wrapper.eq("examinee_id", stu.getExamineeId());
+                            wrapper.eq("present_time", presentTime);
+                            stuExamService.remove(wrapper);
+                        }
+                    }
+                }
+            }
+        }
+        // 2、开考后、截止前可以修改的
+        if (now.compareTo(oldStartTime) >= 0 && now.compareTo(oldDeadLine) <= 0) {
+            if (deadline != null) examInfoUpdateWrapper.set("deadline", deadline);
+            if (allowableTime != null) {
+                QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+                stuExamQueryWrapper.eq("exam_id", examId).groupBy("examinee_id");
+                List<StuExam> stuList = stuExamService.list(stuExamQueryWrapper);
+                Integer oldAllowableTime = examInfo.getAllowableTime();
+                for (StuExam stu : stuList) {
+                    if (allowableTime > oldAllowableTime) {
+                        for (int presentTime = oldAllowableTime + 1; presentTime <= allowableTime; presentTime++) {
+                            StuExam stuExam = new StuExam(stu.getExamineeId(), examId, presentTime);
+                            stuExam.setStatus(0);
+                            stuExamService.save(stuExam);
+                        }
+                    }
+                }
+            }
+        }
+        // 3、截止后可以修改的
+        if (now.compareTo(oldDeadLine) > 0) {
+            if (deadline != null) examInfoUpdateWrapper.set("deadline", deadline);
+            UpdateWrapper<StuExam> wrapper = new UpdateWrapper<>();
+            wrapper.eq("exam_id", examId).eq("status", -1).eq("details", null);
+            wrapper.set("status", 0);
+            stuExamService.update(null, wrapper);
+        }
+        return true;
+    }
 }
