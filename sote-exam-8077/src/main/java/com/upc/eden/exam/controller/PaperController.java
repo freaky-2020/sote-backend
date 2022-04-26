@@ -63,6 +63,36 @@ public class PaperController {
         return res;
     }
 
+    @ApiOperation("依据paperId拉取该试卷目前所有的题目（考生专用）：paperId拼接在路径中")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "paperId", value = "创建考试时返回的试卷Id", paramType = "path"),
+            @ApiImplicitParam(name = "userName", value = "学生账号", paramType = "path")})
+    @GetMapping("/{paperId}/{userName}/get")
+    public Map<Integer, List<Paper>> stuGetPaper(@PathVariable Integer paperId,
+                                                 @PathVariable Integer userName) {
+
+        QueryWrapper<Paper> wrapper = new QueryWrapper<>();
+        wrapper.eq("paper_id", paperId);
+        wrapper.orderBy(true, true, "ques_no");
+        List<Paper> records = paperService.list(wrapper);
+
+        Map<Integer, List<Paper>> res = new HashMap<>();
+        for (int i=1; i<=5; i++) res.put(i, new ArrayList<>());
+
+        for (Paper record: records) {
+            if (record != null) {
+                Integer typeId = record.getTypeId();
+                res.get(typeId).add(record);
+            }
+        }
+
+        Random rd = new Random(userName);
+        for (int i=0; i<5; i++) {
+            if (res.get(i).size() > 0) Collections.shuffle(res.get(i), rd);
+        }
+        return res;
+    }
+
     @ApiOperation("从题库中选择题目（可多个）加入试卷：paperId拼接在路径中，返回添加成功的条数")
     @ApiImplicitParams({@ApiImplicitParam(name = "paperId", value = "创建考试时返回的试卷Id", paramType = "path")})
     @PostMapping("/{paperId}/addFromBank")
