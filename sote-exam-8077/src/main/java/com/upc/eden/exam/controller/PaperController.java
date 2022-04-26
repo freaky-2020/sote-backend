@@ -293,8 +293,20 @@ public class PaperController {
     }
 
     @ApiOperation("获取试卷库中全部可套用试卷，返回体详情见Schemas")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "paperName", value = "试卷名（可模糊）", defaultValue = "高等数学"),
+            @ApiImplicitParam(name = "subjectId", value = "科目Id", defaultValue = "1"),
+            @ApiImplicitParam(name = "startTime", value = "创建日期起始检索值，注意格式", defaultValue = "1970-01-01"),
+            @ApiImplicitParam(name = "endTime", value = "创建日期截止检索值，注意格式", defaultValue = "2999-12-31"),
+            @ApiImplicitParam(name = "leftDiff", value = "起始难度系数", defaultValue = "1"),
+            @ApiImplicitParam(name = "rightDiff", value = "截止难度系数", defaultValue = "10")})
     @GetMapping("/paperBank")
-    public List<PaperInfoApi> getAllPaperInfo() {
+    public List<PaperInfoApi> getAllPaperInfo(@RequestParam(required = false) String paperName,
+                                              @RequestParam(required = false) Integer subjectId,
+                                              @RequestParam(required = false) String startTime,
+                                              @RequestParam(required = false) String endTime,
+                                              @RequestParam(required = false) Integer leftDiff,
+                                              @RequestParam(required = false) Integer rightDiff) {
 
         List<PaperInfoApi> res = new ArrayList<>();
 
@@ -306,6 +318,20 @@ public class PaperController {
                 .orderBy(true, false, "copied_time")
                 .orderBy(true, false, "deadline");
 //                .orderBy(true, true, "difficulty");
+
+        if (paperName != null) examInfoQueryWrapper.like("exam_name", paperName);
+        if (subjectId != null) examInfoQueryWrapper.eq("subject_id", subjectId);
+        if (startTime != null) {
+            startTime += " 00:00:00";
+            examInfoQueryWrapper.ge("deadline", startTime);
+        }
+        if (endTime != null) {
+            endTime += " 00:00:00";
+            examInfoQueryWrapper.le("deadline", endTime);
+        }
+//        if (leftDiff != null) examInfoQueryWrapper.ge("difficulty", leftDiff);
+//        if (rightDiff != null) examInfoQueryWrapper.le("difficulty", rightDiff);
+
         List<ExamInfo> allPaperId = examInfoService.list(examInfoQueryWrapper);
 
         for (ExamInfo each: allPaperId) {
@@ -314,7 +340,7 @@ public class PaperController {
             String publicTime = df.format(each.getDeadline());
             String examName = each.getExamName();
             Integer copiedTime = each.getCopiedTime();
-            Integer subjectId = each.getSubjectId();
+            Integer tSubjectId = each.getSubjectId();
 //            Integer difficulty = each.getDifficulty();
 
             PaperInfoApi paperInfoApi = new PaperInfoApi();
@@ -324,7 +350,7 @@ public class PaperController {
             paperInfoApi.setCopiedTime(copiedTime);
 //            paperInfoApi.setDifficulty(difficulty);
             paperInfoApi.setDifficulty(1);
-            paperInfoApi.setSubjectId(subjectId);
+            paperInfoApi.setSubjectId(tSubjectId);
 
             res.add(paperInfoApi);
         }
@@ -338,11 +364,15 @@ public class PaperController {
     @GetMapping("/addFromAlready/{nowPaperId}/{referPaperId}")
     public String addFromAlready(@PathVariable Integer nowPaperId, @PathVariable Integer referPaperId) {
 
+        QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
+        paperQueryWrapper.eq("paper_id", nowPaperId);
+        paperService.remove(paperQueryWrapper);
+
         UpdateWrapper<ExamInfo> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("paper_id", nowPaperId).set("is_copy", 1);
         examInfoService.update(null, updateWrapper);
 
-        QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
+        paperQueryWrapper = new QueryWrapper<>();
         paperQueryWrapper.eq("paper_id", referPaperId)
                 .orderBy(true, true, "ques_no");
         List<Paper> questions = paperService.list(paperQueryWrapper);
