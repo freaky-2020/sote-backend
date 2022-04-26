@@ -66,22 +66,29 @@ public class InvigilateController {
     }
     @GetMapping("/updateLeaveTimes")
     public boolean updateLeaveTime(Integer exam_id,Integer examinee_id,Integer present_time,Integer leaveTimes){
-        StuExam stuExam = new StuExam();
-        stuExam.setLeaveTimes(leaveTimes);
         UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
         stuExamUpdateWrapper.eq("exam_id",exam_id);
         stuExamUpdateWrapper.eq("examinee_id",examinee_id);
         stuExamUpdateWrapper.eq("present_time",present_time);
-        return stuExamService.update(stuExam,stuExamUpdateWrapper);
+        stuExamUpdateWrapper.set("leave_times",leaveTimes);
+        return stuExamService.update(null,stuExamUpdateWrapper);
     }
     @GetMapping("/addUndetectedTime")
     public boolean addUndetectedTime(Integer exam_id,Integer examinee_id,Integer present_time,Integer undetectedTime){
-        StuExam stuExam = new StuExam();
-        stuExam.setUndetectedTime(stuExam.getUndetectedTime()+undetectedTime);
+//        StuExam stuExam = new StuExam();
+        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+        stuExamQueryWrapper.eq("exam_id",exam_id);
+        stuExamQueryWrapper.eq("examinee_id",examinee_id);
+        stuExamQueryWrapper.eq("present_time",present_time);
+        StuExam one = stuExamService.getOne(stuExamQueryWrapper);
+        Integer originUndetectedTime = one.getUndetectedTime();
+
         UpdateWrapper<StuExam> stuExamUpdateWrapper = new UpdateWrapper<>();
         stuExamUpdateWrapper.eq("exam_id",exam_id);
         stuExamUpdateWrapper.eq("examinee_id",examinee_id);
         stuExamUpdateWrapper.eq("present_time",present_time);
-        return stuExamService.update(stuExam,stuExamUpdateWrapper);
+        stuExamUpdateWrapper.set("undetected_time",originUndetectedTime+undetectedTime);
+
+        return stuExamService.update(null,stuExamUpdateWrapper);
     }
 }
