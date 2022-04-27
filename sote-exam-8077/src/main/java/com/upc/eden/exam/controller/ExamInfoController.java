@@ -293,7 +293,7 @@ public class ExamInfoController {
             @ApiImplicitParam(name = "examName", value = "考试名", defaultValue = "高等数学"),
             @ApiImplicitParam(name = "startTime", value = "考试开始时间，注意格式", defaultValue = "1970-01-01"),
             @ApiImplicitParam(name = "deadline", value = "考试截止时间，注意格式", defaultValue = "2999-12-31"),
-            @ApiImplicitParam(name = "durationTime", value = "考试持续书简", defaultValue = "120"),
+            @ApiImplicitParam(name = "durationTime", value = "考试持续时间", defaultValue = "120"),
             @ApiImplicitParam(name = "allowableTime", value = "允许参考次数", defaultValue = "3")})
     @GetMapping("/update/{examId}")
     public boolean updateExamInfo(@PathVariable Integer examId,
@@ -303,6 +303,8 @@ public class ExamInfoController {
                                  @RequestParam(required = false) String deadline,
                                  @RequestParam(required = false) Integer durationTime,
                                  @RequestParam(required = false) Integer allowableTime) {
+
+        boolean res = true;
 
         QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
         examInfoQueryWrapper.eq("exam_id", examId);
@@ -325,6 +327,7 @@ public class ExamInfoController {
             if (deadline != null) examInfoUpdateWrapper.set("deadline", deadline);
             if (durationTime != null) examInfoUpdateWrapper.set("duration_time", durationTime);
             if (allowableTime != null) {
+                examInfoUpdateWrapper.set("allowable_time", allowableTime);
                 QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
                 stuExamQueryWrapper.eq("exam_id", examId).groupBy("examinee_id");
                 List<StuExam> stuList = stuExamService.list(stuExamQueryWrapper);
@@ -347,11 +350,13 @@ public class ExamInfoController {
                     }
                 }
             }
+            res = res && examInfoService.update(null, examInfoUpdateWrapper);
         }
         // 2、开考后、截止前可以修改的
         if (now.compareTo(oldStartTime) >= 0 && now.compareTo(oldDeadLine) <= 0) {
             if (deadline != null) examInfoUpdateWrapper.set("deadline", deadline);
             if (allowableTime != null) {
+                examInfoUpdateWrapper.set("allowable_time", allowableTime);
                 QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
                 stuExamQueryWrapper.eq("exam_id", examId).groupBy("examinee_id");
                 List<StuExam> stuList = stuExamService.list(stuExamQueryWrapper);
@@ -366,10 +371,12 @@ public class ExamInfoController {
                     }
                 }
             }
+            res = res && examInfoService.update(null, examInfoUpdateWrapper);
         }
         // 3、截止后可以修改的
         if (now.compareTo(oldDeadLine) > 0) {
             if (deadline != null) examInfoUpdateWrapper.set("deadline", deadline);
+            res = res && examInfoService.update(null, examInfoUpdateWrapper);
             UpdateWrapper<StuExam> wrapper = new UpdateWrapper<>();
             wrapper.eq("exam_id", examId).eq("status", -1).eq("details", null);
             wrapper.set("status", 0);
