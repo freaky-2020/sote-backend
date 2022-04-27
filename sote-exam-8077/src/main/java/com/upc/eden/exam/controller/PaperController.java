@@ -356,7 +356,7 @@ public class PaperController {
             examInfoQueryWrapper.ge("deadline", startTime);
         }
         if (endTime != null) {
-            endTime += " 00:00:00";
+            endTime += " 23:59:59";
             examInfoQueryWrapper.le("deadline", endTime);
         }
 //        if (leftDiff != null) examInfoQueryWrapper.ge("difficulty", leftDiff);
