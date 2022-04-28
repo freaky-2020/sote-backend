@@ -5,6 +5,7 @@ import com.upc.eden.commen.domain.exam.ExamDetail;
 import com.upc.eden.commen.domain.exam.ExamInfo;
 import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.commen.domain.exam.StuExam;
+import com.upc.eden.exam.api.ExamResultDataApi;
 import com.upc.eden.exam.api.ScoreSegmentApi;
 import com.upc.eden.exam.service.ExamDetailService;
 import com.upc.eden.exam.service.ExamInfoService;
@@ -54,10 +55,6 @@ public class AnalysisController {
         int[] sCounts = new int[10];
         Arrays.fill(sCounts, 0);
 
-        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
-        examInfoQueryWrapper.eq("exam_id", examId);
-        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
-
         QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
         stuExamQueryWrapper.eq("exam_id", examId);
         stuExamQueryWrapper.eq("status", 2);
@@ -93,6 +90,79 @@ public class AnalysisController {
             res.add(new ScoreSegmentApi(sCounts[i],
                     df.format((double)sCounts[i] / stuExams.size())));
         }
+        return res;
+    }
+
+    @ApiOperation("键入examId，获取该考试得分的详细统计")
+    @ApiImplicitParams({@ApiImplicitParam(name = "examId", value = "考试Id", paramType = "path")})
+    @GetMapping("/data/{examId}")
+    public ExamResultDataApi getData(@PathVariable Integer examId) {
+
+        DecimalFormat df = new DecimalFormat("0.0000");
+
+        ExamResultDataApi res = new ExamResultDataApi();
+
+        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+        stuExamQueryWrapper.eq("exam_id", examId);
+        stuExamQueryWrapper.eq("status", -1);
+        stuExamQueryWrapper.eq("status", 0);
+        stuExamQueryWrapper.eq("present_time", 1);
+        List<StuExam> t = stuExamService.list(stuExamQueryWrapper);
+        Integer absentNum = t.size();
+
+        stuExamQueryWrapper = new QueryWrapper<>();
+        stuExamQueryWrapper.eq("exam_id", examId);
+        stuExamQueryWrapper.eq("status", 2);
+        stuExamQueryWrapper.eq("present_time", 1);
+        List<StuExam> stuExams = stuExamService.list(stuExamQueryWrapper);
+        List<Integer> getScores = new ArrayList<>();
+        Integer totalScore = 0;
+        for (StuExam stu: stuExams) {
+            Integer details = stu.getDetails();
+            QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
+            examDetailQueryWrapper.eq("details", details);
+            List<ExamDetail> scores = examDetailService.list(examDetailQueryWrapper);
+            Integer getScore = 0;
+            for (ExamDetail score: scores) {
+                getScore += score.getScore();
+                if (getScores.size() == 0) totalScore += score.getMaxScore();
+            }
+            getScores.add(getScore);
+        }
+        Collections.sort(getScores, (s1, s2) -> s2 - s1);
+
+        Integer passScore = (int)Math.ceil(totalScore * 0.6);
+        Integer greatScore = (int)Math.ceil(totalScore * 0.8);
+
+        Integer passCount = 0;
+        Integer greatCount = 0;
+        Integer allScore = 0;
+        Integer max = 0;
+        Integer min = totalScore;
+        for (Integer score: getScores) {
+            if (score >= greatScore) ++greatCount;
+            if (score >= passScore) ++passCount;
+            if (score > max) max = score;
+            if (score < min) min = score;
+            allScore += score;
+        }
+        Double average = (double)allScore / stuExams.size();
+
+        res.setPostNum(stuExams.size());
+        res.setTotalNum(absentNum + stuExams.size());
+        res.setTotalScore(totalScore);
+        res.setPassScore(passScore);
+        res.setPassNum(passCount);
+        res.setPassRate(df.format((double)passCount / stuExams.size()));
+        res.setGreatScore(greatScore);
+        res.setGreatNum(greatCount);
+        res.setGreatRate(df.format((double)greatCount / stuExams.size()));
+        res.setAverage(df.format(average));
+        res.setGetRate(df.format(average / totalScore));
+        res.setMax(max);
+        res.setMin(min);
+        res.setDiff(1);
+
         return res;
     }
 }
