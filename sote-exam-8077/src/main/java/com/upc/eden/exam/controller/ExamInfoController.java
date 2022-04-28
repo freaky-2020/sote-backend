@@ -258,6 +258,10 @@ public class ExamInfoController {
                 now.setNonSynScore(-1);
                 now.setSynScore(-1);
                 now.setTotalScore(-1);
+                now.setCuttingTime(-1);
+                now.setTotalCuttingTime(-1);
+                now.setUndetectedTime(-1);
+                now.setLeaveTimes(-1);
                 res.add(now);
                 continue;
             }
@@ -280,6 +284,10 @@ public class ExamInfoController {
             now.setSynScore(synScore);
             now.setNonSynScore(nonSynScore);
             now.setTotalScore(totalScore);
+            now.setCuttingTime(stuExam.getCuttingTime());
+            now.setTotalCuttingTime(stuExam.getTotalCuttingTime());
+            now.setUndetectedTime(stuExam.getUndetectedTime());
+            now.setLeaveTimes(stuExam.getLeaveTimes());
             res.add(now);
         }
         Collections.sort(res, (r1, r2) -> (r2.getTotalScore()-r1.getTotalScore()));

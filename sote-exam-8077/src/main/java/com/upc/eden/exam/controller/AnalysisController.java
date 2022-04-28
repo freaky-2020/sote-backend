@@ -99,6 +99,7 @@ public class AnalysisController {
     public ExamResultDataApi getData(@PathVariable Integer examId) {
 
         DecimalFormat df = new DecimalFormat("0.0000");
+        DecimalFormat adf = new DecimalFormat("0.00");
 
         ExamResultDataApi res = new ExamResultDataApi();
 
@@ -157,7 +158,7 @@ public class AnalysisController {
         res.setGreatScore(greatScore);
         res.setGreatNum(greatCount);
         res.setGreatRate(df.format((double)greatCount / stuExams.size()));
-        res.setAverage(df.format(average));
+        res.setAverage(adf.format(average));
         res.setGetRate(df.format(average / totalScore));
         res.setMax(max);
         res.setMin(min);
@@ -165,4 +166,6 @@ public class AnalysisController {
 
         return res;
     }
+
+
 }
