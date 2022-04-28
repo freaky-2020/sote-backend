@@ -3,6 +3,7 @@ package com.upc.eden.exam.api;
 import com.upc.eden.commen.domain.auth.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.util.List;
@@ -34,4 +35,12 @@ public class ExamResultsApi {
     private Integer maxScore;
     @ApiModelProperty(value = "排名", example = "1")
     private Integer rank;
+    @ApiModelProperty(value = "切屏次数", example = "2")
+    private Integer cuttingTime;
+    @ApiModelProperty(value = "总切屏时长", example = "8")
+    private Integer totalCuttingTime;
+    @ApiModelProperty(value = "离开次数", example = "2")
+    private Integer undetectedTime;
+    @ApiModelProperty(value = "离开总时长", example = "17")
+    private Integer leaveTimes;
 }
