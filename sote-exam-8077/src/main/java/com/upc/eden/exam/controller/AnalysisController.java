@@ -6,6 +6,7 @@ import com.upc.eden.commen.domain.exam.ExamInfo;
 import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.commen.domain.exam.StuExam;
 import com.upc.eden.exam.api.ExamResultDataApi;
+import com.upc.eden.exam.api.QuesAnalysisApi;
 import com.upc.eden.exam.api.ScoreSegmentApi;
 import com.upc.eden.exam.service.ExamDetailService;
 import com.upc.eden.exam.service.ExamInfoService;
@@ -167,5 +168,87 @@ public class AnalysisController {
         return res;
     }
 
+    @ApiOperation("键入examId，获取该次考试的试卷分析")
+    @ApiImplicitParams({@ApiImplicitParam(name = "examId", value = "考试Id", paramType = "path")})
+    @GetMapping("/paperAnalysis/{examId}")
+    public List<QuesAnalysisApi> paperAnalysis(@PathVariable Integer examId) {
 
+        DecimalFormat df = new DecimalFormat("0.0000");
+        DecimalFormat adf = new DecimalFormat("0.00");
+
+        List<QuesAnalysisApi> res = new ArrayList<>();
+
+        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+        examInfoQueryWrapper.eq("exam_id", examId);
+        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
+        Integer paperId = examInfo.getPaperId();
+
+        QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
+        paperQueryWrapper.eq("paper_id", paperId)
+                .orderBy(true, true, "ques_no");
+        List<Paper> questions = paperService.list(paperQueryWrapper);
+
+        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+        stuExamQueryWrapper.eq("exam_id", examId);
+        stuExamQueryWrapper.eq("status", 2);
+        stuExamQueryWrapper.eq("present_time", 1);
+        List<StuExam> stus = stuExamService.list(stuExamQueryWrapper);
+        List<Integer> checkDetails = new ArrayList<>();
+        for (StuExam stu: stus) checkDetails.add(stu.getDetails());
+
+        for (Paper quesion: questions) {
+
+            Integer typeId = quesion.getTypeId();
+            Integer quesNo = quesion.getQuesNo();
+            Integer totalScore = quesion.getScore();
+
+            QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
+            examDetailQueryWrapper.eq("paper_id", paperId);
+            examDetailQueryWrapper.eq("ques_no", quesNo);
+            List<ExamDetail> details = examDetailService.list(examDetailQueryWrapper);
+
+            Integer total = 0;
+            Integer aCount = 0;
+            Integer bCount = 0;
+            Integer cCount = 0;
+            Integer dCount = 0;
+            Integer computeCount = details.size();
+
+            QuesAnalysisApi api = new QuesAnalysisApi(quesion);
+
+            for (ExamDetail detail: details) {
+                if (!checkDetails.contains(detail.getDetails())) {
+                    --computeCount;
+                    continue;
+                }
+                total += detail.getScore();
+                if (typeId == 1 || typeId == 2) {
+                    if (detail.getAnswer() == null) continue;
+                    String[] answers = detail.getAnswer().split(",");
+                    for (String answer : answers) {
+                        if (answer.equals("1")) ++aCount;
+                        if (answer.equals("2")) ++bCount;
+                        if (answer.equals("3")) ++cCount;
+                        if (answer.equals("4")) ++dCount;
+                    }
+                }
+            }
+            Double average = (double)total / computeCount;
+            api.setAverage(adf.format(average));
+            api.setGetRate(df.format(average / totalScore));
+            if (typeId == 1 || typeId == 2) {
+                api.setARate(df.format((double)aCount / computeCount));
+                api.setBRate(df.format((double)bCount / computeCount));
+                api.setCRate(df.format((double)cCount / computeCount));
+                api.setDRate(df.format((double)dCount / computeCount));
+            } else {
+                api.setARate("-");
+                api.setBRate("-");
+                api.setCRate("-");
+                api.setDRate("-");
+            }
+            res.add(api);
+        }
+        return res;
+    }
 }
