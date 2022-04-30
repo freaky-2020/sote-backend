@@ -106,8 +106,7 @@ public class AnalysisController {
 
         QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
         stuExamQueryWrapper.eq("exam_id", examId);
-        stuExamQueryWrapper.eq("status", -1);
-        stuExamQueryWrapper.eq("status", 0);
+        stuExamQueryWrapper.eq("status", -1).or().eq("status", 0);
         stuExamQueryWrapper.eq("present_time", 1);
         List<StuExam> t = stuExamService.list(stuExamQueryWrapper);
         Integer absentNum = t.size();
