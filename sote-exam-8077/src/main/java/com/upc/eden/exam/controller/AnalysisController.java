@@ -159,6 +159,7 @@ public class AnalysisController {
         res.setGreatNum(greatCount);
         res.setGreatRate(df.format((double)greatCount / stuExams.size()));
         res.setAverage(adf.format(average));
+
         res.setGetRate(df.format(average / totalScore));
         res.setMax(max);
         res.setMin(min);

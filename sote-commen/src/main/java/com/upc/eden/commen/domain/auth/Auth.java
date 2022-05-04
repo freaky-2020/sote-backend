@@ -2,6 +2,7 @@ package com.upc.eden.commen.domain.auth;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,9 +15,13 @@ import java.io.Serializable;
 public class Auth implements Serializable {
 
     @TableId(value = "id",type = IdType.AUTO)
+    @ApiModelProperty(value = "数据库id", example = "1")
     private Integer id;
+    @ApiModelProperty(value = "后端Restful接口url", example = "/exam/analysis/segment/{examId}")
     private String url;
+    @ApiModelProperty(value = "对应接口说明", example = "键入examId，获取某考试分数分段表")
     private String urlComment;
+    @ApiModelProperty(value = "该接口允许的系统角色", example = "admin,teacher")
     private String authRole;
 
     private static final long serialVersionUID = 1L;

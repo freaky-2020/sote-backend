@@ -22,6 +22,8 @@ public class ExamResultApi {
     private Integer status;
     @ApiModelProperty(value = "考生信息")
     private Integer nonSynScore;
+    @ApiModelProperty(value = "考生排名/总人数")
+    private String rank;
     @ApiModelProperty(value = "非简答题总分", example = "30")
     private Integer maxNonSynScore;
     @ApiModelProperty(value = "简答题得分", example = "45")
