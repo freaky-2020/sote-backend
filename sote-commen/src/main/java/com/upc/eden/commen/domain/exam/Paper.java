@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Data
 public class Paper implements Serializable {
 
-    @ApiModelProperty(value = "数据库Id", example = "1", hidden = true)
+    @ApiModelProperty(value = "数据库Id", example = "1")
     @TableId(value = "paper_id",type = IdType.AUTO)
     private Long id;
     @ApiModelProperty(value = "试卷Id", example = "1")

@@ -9,6 +9,7 @@ import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.commen.domain.exam.StuExam;
 import com.upc.eden.exam.api.ExamAndStuApi;
 import com.upc.eden.exam.api.ExamResultApi;
+import com.upc.eden.exam.api.ExamResultsApi;
 import com.upc.eden.exam.api.FindAllExamOfStuApi;
 import com.upc.eden.exam.service.ExamDetailService;
 import com.upc.eden.exam.service.ExamInfoService;
@@ -46,6 +47,8 @@ public class StuExamController {
     private PaperService paperService;
     @Resource
     private ExamDetailService examDetailService;
+    @Resource
+    private ExamInfoController examInfoController;
     @Resource
     private AuthClient authClient;
 
@@ -385,8 +388,14 @@ public class StuExamController {
                 }
             }
         }
+        ExamResultsApi er = null;
+        List<ExamResultsApi> results = examInfoController.getResults(examId);
+        for (ExamResultsApi era: results) {
+            if (era.getUser().getUserName().equals(userName)) {
+                er = era;
+            }
+        }
+        if (er != null) res.get(0).setRank(er.getRank() + "/" + results.size());
         return res;
     }
-
-
 }

@@ -24,7 +24,7 @@ public class ExamInfo implements Serializable {
     private Integer examId;
     @ApiModelProperty(value = "科目Id", example = "1")
     private Integer subjectId;
-    @ApiModelProperty(value = "试卷Id", example = "1", hidden = true)
+    @ApiModelProperty(value = "试卷Id", example = "1")
     private Integer paperId;
     @ApiModelProperty(value = "考试名", example = "高等数学期中测试")
     private String examName;
@@ -46,7 +46,7 @@ public class ExamInfo implements Serializable {
     private Integer allowableTime;
     @ApiModelProperty(value = "参加考试方式:{1:链接+密钥口令 2:勾选}", example = "1")
     private Integer noticeWay;
-    @ApiModelProperty(value = "密钥口令", example = "Y@%@FMF$", hidden = true)
+    @ApiModelProperty(value = "密钥口令", example = "Y@%@FMF$")
     private String word;
     @ApiModelProperty(value = "允许最多切屏次数", example = "2")
     private Integer cuttingTimes;

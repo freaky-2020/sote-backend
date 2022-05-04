@@ -2,6 +2,7 @@ package com.upc.eden.commen.domain.auth;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,7 +15,9 @@ import java.io.Serializable;
 public class Role implements Serializable {
 
     @TableId(value = "role_id",type = IdType.AUTO)
+    @ApiModelProperty(value = "角色id { 1:管理员 2:教师 3:学生 }", example = "1")
     private Integer roleId;
+    @ApiModelProperty(value = "角色名", example = "管理员")
     private String roleName;
 
     private static final long serialVersionUID = 1L;
