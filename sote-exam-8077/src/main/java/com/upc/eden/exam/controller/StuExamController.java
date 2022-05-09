@@ -7,10 +7,7 @@ import com.upc.eden.commen.domain.exam.ExamDetail;
 import com.upc.eden.commen.domain.exam.ExamInfo;
 import com.upc.eden.commen.domain.exam.Paper;
 import com.upc.eden.commen.domain.exam.StuExam;
-import com.upc.eden.exam.api.ExamAndStuApi;
-import com.upc.eden.exam.api.ExamResultApi;
-import com.upc.eden.exam.api.ExamResultsApi;
-import com.upc.eden.exam.api.FindAllExamOfStuApi;
+import com.upc.eden.exam.api.*;
 import com.upc.eden.exam.service.ExamDetailService;
 import com.upc.eden.exam.service.ExamInfoService;
 import com.upc.eden.exam.service.PaperService;
@@ -48,7 +45,7 @@ public class StuExamController {
     @Resource
     private ExamDetailService examDetailService;
     @Resource
-    private ExamInfoController examInfoController;
+    private AnalysisController analysisController;
     @Resource
     private AuthClient authClient;
 
@@ -150,7 +147,6 @@ public class StuExamController {
                 ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
                 each.setExamInfo(examInfo);
                 each.setTime(stuExamService.findFinishedTime(userName, examId));
-                each.setExamId(null);
 
                 // 按时间分类
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -166,6 +162,32 @@ public class StuExamController {
                 else res.get(1).add(each);
             }
         }
+
+        String rank = null;
+        Integer score = -1;
+        for (FindAllExamOfStuApi exam: res.get(3)) {
+            Integer examId = exam.getExamInfo().getExamId();
+            ExamResultDataApi data = analysisController.getData(examId);
+
+            ExamResultsApi er = null;
+            List<ExamResultsApi> results = examInfoService.getResultsForTeacher(examId);
+            for (ExamResultsApi era: results) {
+                if (era.getUser().getUserName().equals(userName)) {
+                    er = era;
+                }
+            }
+            if (er != null) {
+                rank = er.getRank() + "/" + results.size();
+                score = er.getTotalScore();
+            }
+            String average = data.getAverage();
+            Integer totalScore = data.getTotalScore();
+            exam.setAverage(average);
+            exam.setTotalScore(totalScore);
+            exam.setRank(rank);
+            exam.setScore(score);
+        }
+
         for (List<FindAllExamOfStuApi> e: res) Collections.sort
                 (e, (r1, r2) -> r1.getExamInfo().getStartTime().
                         compareTo(r1.getExamInfo().getStartTime()));
