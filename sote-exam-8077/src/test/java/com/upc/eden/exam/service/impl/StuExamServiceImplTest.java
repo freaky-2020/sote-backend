@@ -30,10 +30,7 @@ class StuExamServiceImplTest {
     ExamInfoService examInfoService;
 
     @Test
-    void findAllExamOfStu() {
-        List<FindAllExamOfStuApi> allExamOfStu = stuExamService.findAllExamOfStu(1904011106);
-        System.out.println(allExamOfStu);
-    }
+    void findAllExamOfStu() {}
 
     @Test
     void sasd() {

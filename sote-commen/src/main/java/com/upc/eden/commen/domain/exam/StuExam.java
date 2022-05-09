@@ -23,7 +23,7 @@ public class StuExam implements Serializable {
 
     @ApiModelProperty(value = "考生Id", example = "1")
     @TableId(value = "examinee_id",type = IdType.AUTO)
-    private Integer examineeId;
+    private String examineeId;
     @ApiModelProperty(value = "考试信息Id", example = "1")
     private Integer examId;
     @ApiModelProperty(value = "考生作答明细的外键Id", example = "1")
@@ -55,7 +55,7 @@ public class StuExam implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public StuExam(Integer examineeId, Integer examId, Integer presentTime) {
+    public StuExam(String examineeId, Integer examId, Integer presentTime) {
         this.examineeId = examineeId;
         this.examId = examId;;
         this.presentTime = presentTime;

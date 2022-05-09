@@ -298,8 +298,8 @@ public class MarkingController {
                     QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
                     stuExamQueryWrapper.eq("details", examDetail.getDetails());
                     StuExam one = stuExamService.getOne(stuExamQueryWrapper);
-                    Integer userName = one.getExamineeId();
-                    User user = authClient.getInfoByUserName(userName.toString());
+                    String userName = one.getExamineeId();
+                    User user = authClient.getInfoByUserName(userName);
                     res.add(new UserAndDetailApi(user, examDetail));
                 }
             }
