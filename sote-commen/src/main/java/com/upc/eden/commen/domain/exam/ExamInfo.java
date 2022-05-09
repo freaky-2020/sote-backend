@@ -31,7 +31,7 @@ public class ExamInfo implements Serializable {
     @ApiModelProperty(value = "考试须知", example = "本场考试允许作弊")
     private String examNote;
     @ApiModelProperty(value = "监考人Id", example = "2")
-    private Integer invigilatorId;
+    private String invigilatorId;
     @ApiModelProperty(value = "考试持续时间(分钟为单位)", example = "120")
     private Integer durationTime;
     @ApiModelProperty(value = "考试开放时间(格式为yyyy-MM-dd HH:mm:ss)", example = "2022-03-23 08:00:00")

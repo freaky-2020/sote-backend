@@ -57,7 +57,7 @@ public class StuExamController {
             @ApiImplicitParam(name = "word", value = "密钥", paramType = "path"),
             @ApiImplicitParam(name = "examineeId", value = "考生userName")})
     @GetMapping("/join/{word}")
-    public String joinByWord(@PathVariable String word, Integer examineeId) {
+    public String joinByWord(@PathVariable String word, String examineeId) {
 
         // 鉴别密钥是否有效
         QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
@@ -100,7 +100,7 @@ public class StuExamController {
     @ApiOperation("考生查看自己所有考试：{0:未开放的 1:已开放的 2:已截止的 3:已发布的}，返回所有考试的相关信息与已考次数")
     @ApiImplicitParams({@ApiImplicitParam(name = "userName", value = "考生账号", paramType = "path")})
     @GetMapping("/getExam/stu/{userName}")
-    public List<List<FindAllExamOfStuApi>> getExamForStu(@PathVariable Integer userName) {
+    public List<List<FindAllExamOfStuApi>> getExamForStu(@PathVariable String userName) {
 
         // 拉取信息之前，修正该考生所有考试的提交时间，亦即实现离线态的强制交卷
         QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
@@ -179,7 +179,7 @@ public class StuExamController {
             @ApiImplicitParam(name = "time", value = "考试次数", paramType = "path"),
     })
     @GetMapping("/start/{userName}/{examId}/{time}")
-    public Map<String, ExamAndStuApi> start(@PathVariable Integer userName, @PathVariable Integer examId,
+    public Map<String, ExamAndStuApi> start(@PathVariable String userName, @PathVariable Integer examId,
                                             @PathVariable Integer time) {
 
         HashMap<String, ExamAndStuApi> resMap = new HashMap<>();
@@ -281,7 +281,7 @@ public class StuExamController {
             @ApiImplicitParam(name = "time", value = "考试次数", paramType = "path"),
     })
     @GetMapping("/submit/{userName}/{examId}/{time}")
-    public String submit(@PathVariable Integer userName, @PathVariable Integer examId,
+    public String submit(@PathVariable String userName, @PathVariable Integer examId,
                          @PathVariable Integer time) {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -321,7 +321,7 @@ public class StuExamController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userName", value = "考生账号", paramType = "path"),
             @ApiImplicitParam(name = "examId", value = "考试号", paramType = "path"),})
-    public List<ExamResultApi> getMyExamRes(@PathVariable Integer userName,
+    public List<ExamResultApi> getMyExamRes(@PathVariable String userName,
                                             @PathVariable Integer examId) {
 
         List<ExamResultApi> res = new ArrayList<>();
@@ -389,7 +389,7 @@ public class StuExamController {
             }
         }
         ExamResultsApi er = null;
-        List<ExamResultsApi> results = examInfoController.getResults(examId);
+        List<ExamResultsApi> results = examInfoService.getResultsForTeacher(examId);
         for (ExamResultsApi era: results) {
             if (era.getUser().getUserName().equals(userName)) {
                 er = era;

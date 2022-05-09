@@ -69,7 +69,7 @@ public class PaperController {
             @ApiImplicitParam(name = "userName", value = "学生账号", paramType = "path")})
     @GetMapping("/{paperId}/{userName}/get")
     public Map<Integer, List<Paper>> stuGetPaper(@PathVariable Integer paperId,
-                                                 @PathVariable Integer userName) {
+                                                 @PathVariable String userName) {
 
         QueryWrapper<Paper> wrapper = new QueryWrapper<>();
         wrapper.eq("paper_id", paperId);
@@ -86,7 +86,7 @@ public class PaperController {
             }
         }
 
-        Random rd = new Random(userName);
+        Random rd = new Random(Integer.parseInt(userName));
         for (int i=1; i<=5; i++) {
             if (res.get(i).size() > 0) Collections.shuffle(res.get(i), rd);
         }
@@ -143,7 +143,7 @@ public class PaperController {
 
 //                SecurityUser currentUser = authClient.getCurrentUser();
 //                record.setMakerId(currentUser.getId());
-                record.setMakerId(3);
+                record.setMakerId(String.valueOf(3));
 
                 if (paperService.save(record)) ++res;
             }
@@ -198,7 +198,7 @@ public class PaperController {
 
 //        SecurityUser currentUser = authClient.getCurrentUser();
 //        record.setMakerId(currentUser.getId());
-        record.setMakerId(3);
+        record.setMakerId(String.valueOf(3));
 
         return paperService.save(record);
     }

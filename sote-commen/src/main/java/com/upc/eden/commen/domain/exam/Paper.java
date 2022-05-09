@@ -29,7 +29,7 @@ public class Paper implements Serializable {
     @ApiModelProperty(value = "题库Id", example = "3")
     private Integer bankId;
     @ApiModelProperty(value = "创建人Id", example = "2")
-    private Integer makerId;
+    private String makerId;
     @ApiModelProperty(value = "科目Id", example = "1")
     private Integer subjectId;
     @ApiModelProperty(value = "题型Id", example = "2")

@@ -14,11 +14,11 @@ public interface StuExamService extends IService<StuExam> {
 
     public Integer findMaxDetail();
 
-    public Integer findPresentTime(Integer ExamimeeId, Integer examId);
+    public Integer findPresentTime(String ExamimeeId, Integer examId);
 
-    public List<FindAllExamOfStuApi> findAllExamOfStu(Integer examineeId);
+    public List<FindAllExamOfStuApi> findAllExamOfStu(String examineeId);
 
-    public Integer findFinishedTime(Integer examineeId, Integer examId);
+    public Integer findFinishedTime(String examineeId, Integer examId);
 
     public Integer findExamineeCountByExamId(Integer examId);
 

@@ -26,17 +26,17 @@ public class StuExamServiceImpl extends ServiceImpl<StuExamMapper, StuExam>
     }
 
     @Override
-    public Integer findPresentTime(Integer examineeId, Integer examId) {
+    public Integer findPresentTime(String examineeId, Integer examId) {
         return stuExamMapper.findPresentTime(examineeId, examId);
     }
 
     @Override
-    public List<FindAllExamOfStuApi> findAllExamOfStu(Integer examineeId) {
+    public List<FindAllExamOfStuApi> findAllExamOfStu(String examineeId) {
         return stuExamMapper.findAllExamOfStu(examineeId);
     }
 
     @Override
-    public Integer findFinishedTime(Integer examineeId, Integer examId) {
+    public Integer findFinishedTime(String examineeId, Integer examId) {
         return stuExamMapper.findFinishedTime(examineeId, examId);
     }
 

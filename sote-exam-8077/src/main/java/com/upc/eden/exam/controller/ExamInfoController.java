@@ -67,8 +67,7 @@ public class ExamInfoController {
                 secret = randomSecret.getRandomSecret(16);
                 wrapper.eq("word", secret);
             } while (examInfoService.getOne(wrapper) != null);
-        }
-        else secret = null;
+        } else secret = null;
 
         examInfo.setPaperId(paperId);
         examInfo.setWord(secret);
@@ -96,7 +95,17 @@ public class ExamInfoController {
 
         QueryWrapper<ExamInfo> wrapper = new QueryWrapper<>();
         wrapper.eq("exam_id", examId);
+        ExamInfo examInfo = examInfoService.getOne(wrapper);
         boolean res = examInfoService.remove(wrapper);
+
+        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+        stuExamQueryWrapper.eq("exam_id", examId);
+        res = stuExamService.remove(stuExamQueryWrapper) && res;
+
+        QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
+        examDetailQueryWrapper.eq("paper_id", examInfo.getPaperId());
+        res = examDetailService.remove(examDetailQueryWrapper) && res;
+
         return res;
     }
 
@@ -161,8 +170,8 @@ public class ExamInfoController {
         List<StuExam> list = stuExamService.list(stuExamQueryWrapper);
         for (StuExam stuExam: list) {
             if (stuExam != null) {
-                Integer examineeId = stuExam.getExamineeId();
-                User user = authClient.getInfoByUserName(examineeId.toString());
+                String examineeId = stuExam.getExamineeId();
+                User user = authClient.getInfoByUserName(examineeId);
                 Integer finishedTime = stuExamService.findFinishedTime(examineeId, examId);
                 UserApi userApi = new UserApi(user, finishedTime);
                 res.add(userApi);
@@ -220,79 +229,82 @@ public class ExamInfoController {
     @GetMapping("/result/{examId}")
     public List<ExamResultsApi> getResults(@PathVariable Integer examId) {
 
-        List<ExamResultsApi> res = new ArrayList<>();
-
-        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
-        examInfoQueryWrapper.eq("exam_id", examId);
-        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
-        Integer paperId = examInfo.getPaperId();
-        QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
-        paperQueryWrapper.eq("paper_id", paperId);
-        List<Paper> papers = paperService.list(paperQueryWrapper);
-        Integer maxScore = 0;
-        Integer maxNonSynScore = 0;
-        Integer maxSynScore = 0;
-        for (Paper paper: papers) {
-            if(paper.getTypeId()!=5) maxNonSynScore += paper.getScore();
-            else maxSynScore += paper.getScore();
-        }
-        maxScore = maxNonSynScore + maxSynScore;
-
-        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
-        stuExamQueryWrapper.eq("exam_id", examId);
-        // 只返第一次，记录
-        stuExamQueryWrapper.eq("present_time", 1);
-        List<StuExam> stuExams = stuExamService.list(stuExamQueryWrapper);
-        for (StuExam stuExam: stuExams) {
-            if(stuExam == null) continue;
-            Integer examineeId = stuExam.getExamineeId();
-            User user = authClient.getInfoByUserName(examineeId.toString());
-            ExamResultsApi now = new ExamResultsApi();
-            now.setUser(user);
-            now.setMaxNonSynScore(maxNonSynScore);
-            now.setMaxSynScore(maxSynScore);
-            now.setMaxScore(maxScore);
-            // 缺考
-            if (stuExam.getStatus() != 2) {
-                now.setStatus(0);
-                now.setNonSynScore(-1);
-                now.setSynScore(-1);
-                now.setTotalScore(-1);
-                now.setCuttingTime(-1);
-                now.setTotalCuttingTime(-1);
-                now.setUndetectedTime(-1);
-                now.setLeaveTimes(-1);
-                res.add(now);
-                continue;
-            }
-            // 已考
-            Integer details = stuExam.getDetails();
-            QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
-            examDetailQueryWrapper.eq("details", details);
-            List<ExamDetail> detail = examDetailService.list(examDetailQueryWrapper);
-            Integer nonSynScore = 0;
-            Integer synScore = 0;
-            Integer totalScore = 0;
-            for (ExamDetail examDetail: detail) {
-                if (examDetail == null) continue;
-                Integer typeId = examDetail.getTypeId();
-                if(typeId==5) synScore += examDetail.getScore();
-                else nonSynScore += examDetail.getScore();
-            }
-            totalScore = nonSynScore + synScore;
-            now.setStatus(stuExam.getCheat() == 1 ? -1 : 1);
-            now.setSynScore(synScore);
-            now.setNonSynScore(nonSynScore);
-            now.setTotalScore(totalScore);
-            now.setCuttingTime(stuExam.getCuttingTime());
-            now.setTotalCuttingTime(stuExam.getTotalCuttingTime());
-            now.setUndetectedTime(stuExam.getUndetectedTime());
-            now.setLeaveTimes(stuExam.getLeaveTimes());
-            res.add(now);
-        }
-        Collections.sort(res, (r1, r2) -> (r2.getTotalScore()-r1.getTotalScore()));
-        for (int i=0; i<res.size(); i++) res.get(i).setRank(i+1);
+        List<ExamResultsApi> res = examInfoService.getResultsForTeacher(examId);
         return res;
+
+//        List<ExamResultsApi> res = new ArrayList<>();
+//
+//        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+//        examInfoQueryWrapper.eq("exam_id", examId);
+//        ExamInfo examInfo = examInfoService.getOne(examInfoQueryWrapper);
+//        Integer paperId = examInfo.getPaperId();
+//        QueryWrapper<Paper> paperQueryWrapper = new QueryWrapper<>();
+//        paperQueryWrapper.eq("paper_id", paperId);
+//        List<Paper> papers = paperService.list(paperQueryWrapper);
+//        Integer maxScore = 0;
+//        Integer maxNonSynScore = 0;
+//        Integer maxSynScore = 0;
+//        for (Paper paper: papers) {
+//            if(paper.getTypeId()!=5) maxNonSynScore += paper.getScore();
+//            else maxSynScore += paper.getScore();
+//        }
+//        maxScore = maxNonSynScore + maxSynScore;
+//
+//        QueryWrapper<StuExam> stuExamQueryWrapper = new QueryWrapper<>();
+//        stuExamQueryWrapper.eq("exam_id", examId);
+//        // 只返第一次，记录
+//        stuExamQueryWrapper.eq("present_time", 1);
+//        List<StuExam> stuExams = stuExamService.list(stuExamQueryWrapper);
+//        for (StuExam stuExam: stuExams) {
+//            if(stuExam == null) continue;
+//            Integer examineeId = stuExam.getExamineeId();
+//            User user = authClient.getInfoByUserName(examineeId.toString());
+//            ExamResultsApi now = new ExamResultsApi();
+//            now.setUser(user);
+//            now.setMaxNonSynScore(maxNonSynScore);
+//            now.setMaxSynScore(maxSynScore);
+//            now.setMaxScore(maxScore);
+//            // 缺考
+//            if (stuExam.getStatus() != 2) {
+//                now.setStatus(0);
+//                now.setNonSynScore(-1);
+//                now.setSynScore(-1);
+//                now.setTotalScore(-1);
+//                now.setCuttingTime(-1);
+//                now.setTotalCuttingTime(-1);
+//                now.setUndetectedTime(-1);
+//                now.setLeaveTimes(-1);
+//                res.add(now);
+//                continue;
+//            }
+//            // 已考
+//            Integer details = stuExam.getDetails();
+//            QueryWrapper<ExamDetail> examDetailQueryWrapper = new QueryWrapper<>();
+//            examDetailQueryWrapper.eq("details", details);
+//            List<ExamDetail> detail = examDetailService.list(examDetailQueryWrapper);
+//            Integer nonSynScore = 0;
+//            Integer synScore = 0;
+//            Integer totalScore = 0;
+//            for (ExamDetail examDetail: detail) {
+//                if (examDetail == null) continue;
+//                Integer typeId = examDetail.getTypeId();
+//                if(typeId==5) synScore += examDetail.getScore();
+//                else nonSynScore += examDetail.getScore();
+//            }
+//            totalScore = nonSynScore + synScore;
+//            now.setStatus(stuExam.getCheat() == 1 ? -1 : 1);
+//            now.setSynScore(synScore);
+//            now.setNonSynScore(nonSynScore);
+//            now.setTotalScore(totalScore);
+//            now.setCuttingTime(stuExam.getCuttingTime());
+//            now.setTotalCuttingTime(stuExam.getTotalCuttingTime());
+//            now.setUndetectedTime(stuExam.getUndetectedTime());
+//            now.setLeaveTimes(stuExam.getLeaveTimes());
+//            res.add(now);
+//        }
+//        Collections.sort(res, (r1, r2) -> (r2.getTotalScore()-r1.getTotalScore()));
+//        for (int i=0; i<res.size(); i++) res.get(i).setRank(i+1);
+//        return res;
     }
 
     @ApiOperation("修改考试信息，返回boolean值")
