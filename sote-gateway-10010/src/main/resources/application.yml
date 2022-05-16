@@ -28,6 +28,8 @@ secure:
       - "/exam/client/**"
       - "/auth/user/add"
       - "/auth/user/referee"
+      - "/auth/openSocket/**"
+      - "/auth/sendMessageTest"
 #      - "/**"
 ribbon:
   eager-load:
