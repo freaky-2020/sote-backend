@@ -120,6 +120,11 @@ public class ExamInfoServiceImpl extends ServiceImpl<ExamInfoMapper, ExamInfo>
         for (int i=0; i<res.size(); i++) res.get(i).setRank(i+1);
         return res;
     }
+
+    @Override
+    public Integer findMaxExamId() {
+        return examInfoMapper.findMaxExamId();
+    }
 }
 
 

@@ -22,4 +22,6 @@ public class ExamInfoApi {
     private Integer paperId;
     @ApiModelProperty(value = "本场考试的唯一密钥口令", example = "FDNMSO#EF#AMBFX%")
     private String word;
+    @ApiModelProperty(value = "本场考试的唯一考试Id", example = "1")
+    private Integer examId;
 }
