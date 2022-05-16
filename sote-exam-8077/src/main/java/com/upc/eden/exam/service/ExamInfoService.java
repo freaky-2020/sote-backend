@@ -15,4 +15,6 @@ public interface ExamInfoService extends IService<ExamInfo> {
 
     public List<ExamResultsApi> getResultsForTeacher(Integer examId);
 
+    public Integer findMaxExamId();
+
 }

@@ -55,10 +55,13 @@ public class ExamInfoController {
     @ApiOperation("添加考试相关信息：返回本场考试唯一试卷Id与唯一密钥口令，详见Schemas")
     public ExamInfoApi add(ExamInfo examInfo) {
 
+        Integer maxExamId = examInfoService.findMaxExamId();
+        Integer examId;
+        examId = maxExamId == null ? 1 : maxExamId + 1;
+
         Integer maxPaperId = examInfoService.findMaxPaperId();
         Integer paperId;
-        if (maxPaperId == null) paperId = 1;
-        else paperId = maxPaperId + 1;
+        paperId = maxPaperId == null ? 1 : maxPaperId + 1;
 
         String secret;
         if (examInfo.getNoticeWay()==1) {
@@ -69,12 +72,34 @@ public class ExamInfoController {
             } while (examInfoService.getOne(wrapper) != null);
         } else secret = null;
 
+        examInfo.setExamId(examId);
         examInfo.setPaperId(paperId);
         examInfo.setWord(secret);
 //        examInfo.setInvigilatorId(authClient.getCurrentUser().getId());
 
         examInfoService.save(examInfo);
-        return new ExamInfoApi(paperId, secret);
+        return new ExamInfoApi(paperId, secret, examId);
+    }
+
+    @ApiOperation("指定学生加入考试")
+    @ApiImplicitParams({@ApiImplicitParam(name = "examId", value = "考试信息Id", paramType = "path")})
+    @PostMapping("/addStu/{examId}")
+    public boolean addStuToExam(List<User> users, @PathVariable Integer examId) {
+
+        boolean res = true;
+
+        QueryWrapper<ExamInfo> examInfoQueryWrapper = new QueryWrapper<>();
+        examInfoQueryWrapper.eq("exam_id", examId);
+        ExamInfo exam = examInfoService.getOne(examInfoQueryWrapper);
+        Integer allowableTime = exam.getAllowableTime();
+
+        for (User user: users) {
+            for (int pst = 1; pst <= allowableTime; pst++) {
+                StuExam stuExam = new StuExam(user.getUserName(), examId, allowableTime);
+                res = res && stuExamService.save(stuExam);
+            }
+        }
+        return res;
     }
 
     @ApiOperation("修改考试相关信息：考试Id与参加考试方式不可修改")
